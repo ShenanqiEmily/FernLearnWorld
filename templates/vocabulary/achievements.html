@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Achievements | FernLearnWorld{% endblock title %}
+
+{% block content %}
+
+<style>
+.ach-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+}
+
+.ach-hero {
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 30px;
+    padding: 34px;
+    box-shadow: 0 14px 36px rgba(236,72,153,.10);
+    margin-bottom: 24px;
+}
+
+.ach-title {
+    font-size: 38px;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.ach-sub {
+    color: #64748b;
+    line-height: 1.8;
+}
+
+.ach-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.ach-card {
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 26px;
+    padding: 26px;
+    text-align: center;
+    box-shadow: 0 14px 36px rgba(236,72,153,.08);
+}
+
+.ach-card.locked {
+    opacity: .45;
+    filter: grayscale(1);
+}
+
+.ach-icon {
+    font-size: 54px;
+    margin-bottom: 14px;
+}
+
+.ach-name {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.ach-desc {
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.ach-status {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 900;
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.ach-status.locked {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+@media(max-width:1000px) {
+    .ach-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="ach-page">
+
+    <div class="ach-hero">
+        <h1 class="ach-title">🏆 My Achievements</h1>
+        <p class="ach-sub">
+            เหรียญรางวัลที่คุณได้รับจากการเรียน Quiz และการจบหลักสูตร JLPT N5
+        </p>
+    </div>
+
+    <div class="ach-grid">
+
+        {% for achievement in all_achievements %}
+
+            <div class="ach-card {% if achievement.id not in earned_ids %}locked{% endif %}">
+
+                <div class="ach-icon">
+                    {{ achievement.icon }}
+                </div>
+
+                <div class="ach-name">
+                    {{ achievement.title }}
+                </div>
+
+                <div class="ach-desc">
+                    {{ achievement.description }}
+                </div>
+
+                {% if achievement.id in earned_ids %}
+                    <div class="ach-status">
+                        ได้รับแล้ว
+                    </div>
+                {% else %}
+                    <div class="ach-status locked">
+                        ยังไม่ปลดล็อก
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% empty %}
+            <p>ยังไม่มี Badge ในระบบ</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock content %}

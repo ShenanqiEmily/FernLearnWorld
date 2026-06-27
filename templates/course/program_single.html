@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ program.title }} | Lesson Map
+{% endblock title %}
+
+{% block content %}
+
+<style>
+.fern-lesson-page{
+    padding:34px;
+    background:#fff7fb;
+    min-height:100vh;
+}
+
+.fern-header{
+    background:white;
+    border:1px solid #fbcfe8;
+    border-radius:28px;
+    padding:32px;
+    margin-bottom:26px;
+    display:grid;
+    grid-template-columns:1.4fr .6fr;
+    gap:24px;
+    align-items:center;
+    box-shadow:0 14px 36px rgba(236,72,153,.08);
+}
+
+.fern-title{
+    font-size:38px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+.fern-summary{
+    color:#64748b;
+    line-height:1.7;
+}
+
+.fern-badge{
+    display:inline-block;
+    background:#fdf2f8;
+    color:#ec4899;
+    padding:8px 16px;
+    border-radius:999px;
+    font-weight:900;
+    margin-bottom:12px;
+}
+
+.fern-illustration{
+    height:170px;
+    border-radius:24px;
+    background:linear-gradient(135deg,#ffe4f1,#dbeafe);
+    display:grid;
+    place-items:center;
+    font-size:70px;
+}
+
+.fern-map-layout{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:26px;
+}
+
+.fern-lesson-list{
+    background:white;
+    border:1px solid #fbcfe8;
+    border-radius:28px;
+    padding:22px;
+    box-shadow:0 14px 36px rgba(236,72,153,.08);
+    max-height:620px;
+    overflow-y:auto;
+}
+
+.fern-lesson-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px;
+    border-radius:20px;
+    margin-bottom:14px;
+    background:white;
+    border:1px solid #eef2f7;
+    text-decoration:none;
+    color:inherit;
+    transition:.2s;
+}
+
+.fern-lesson-item:hover{
+    transform:translateY(-2px);
+    background:linear-gradient(135deg,#fff1f8,#eff6ff);
+    border-color:#fbcfe8;
+}
+
+.fern-lesson-item.completed{
+    background:linear-gradient(135deg,#ecfdf5,#eff6ff);
+    border-color:#86efac;
+}
+
+.fern-lesson-item.locked{
+    opacity:.55;
+    cursor:not-allowed;
+    background:#f8fafc;
+}
+
+.fern-step{
+    min-width:46px;
+    height:46px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ec4899,#3b82f6);
+    color:white;
+    display:grid;
+    place-items:center;
+    font-weight:900;
+}
+
+.fern-lesson-name{
+    font-weight:900;
+    color:#0f172a;
+}
+
+.fern-lesson-code{
+    color:#64748b;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.fern-detail-card{
+    background:white;
+    border:1px solid #fbcfe8;
+    border-radius:28px;
+    padding:36px;
+    box-shadow:0 14px 36px rgba(236,72,153,.08);
+}
+
+.fern-detail-title{
+    font-size:32px;
+    font-weight:900;
+    color:#0f172a;
+    margin-bottom:12px;
+}
+
+.fern-progress{
+    height:14px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    margin:18px 0;
+}
+
+.fern-progress span{
+    display:block;
+    height:100%;
+    background:linear-gradient(90deg,#ec4899,#8b5cf6,#3b82f6);
+}
+
+.fern-check-list{
+    list-style:none;
+    padding:0;
+    margin:22px 0;
+}
+
+.fern-check-list li{
+    margin-bottom:12px;
+    color:#334155;
+}
+
+.fern-check-list li::before{
+    content:"✓";
+    color:#ec4899;
+    font-weight:900;
+    margin-right:8px;
+}
+
+.fern-btn,
+.fern-btn-light{
+    display:inline-block;
+    padding:14px 24px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:900;
+    margin-right:10px;
+}
+
+.fern-btn{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white !important;
+}
+
+.fern-btn-light{
+    background:#eff6ff;
+    color:#2563eb !important;
+    border:1px solid #bfdbfe;
+}
+
+@media(max-width:1000px){
+    .fern-header,
+    .fern-map-layout{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="fern-lesson-page">
+
+    <div class="fern-header">
+        <div>
+            <div class="fern-badge">Lesson Map</div>
+            <h1 class="fern-title">{{ program.title }}</h1>
+            <p class="fern-summary">{{ program.summary }}</p>
+        </div>
+
+        <div class="fern-illustration">
+            ⛩️
+        </div>
+    </div>
+
+    <div class="fern-map-layout">
+
+        <div class="fern-lesson-list">
+
+            {% for item in lesson_list %}
+
+                {% if item.is_unlocked %}
+                    <a href="{% url 'course_detail' item.course.slug %}"
+                       class="fern-lesson-item {% if item.is_completed %}completed{% endif %}">
+                {% else %}
+                    <div class="fern-lesson-item locked">
+                {% endif %}
+
+                    <div class="fern-step">
+                        {% if item.is_completed %}
+                            ✅
+                        {% elif item.is_unlocked %}
+                            {{ forloop.counter }}
+                        {% else %}
+                            🔒
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <div class="fern-lesson-name">
+                            {{ item.course.title }}
+                        </div>
+                        <div class="fern-lesson-code">
+                            {{ item.course.code }}
+                        </div>
+                    </div>
+
+                {% if item.is_unlocked %}
+                    </a>
+                {% else %}
+                    </div>
+                {% endif %}
+
+            {% empty %}
+                <p>ยังไม่มีบทเรียนในคอร์สนี้</p>
+            {% endfor %}
+
+        </div>
+
+        <div class="fern-detail-card">
+
+            <h2 class="fern-detail-title">
+                เริ่มเรียน JLPT N5
+            </h2>
+
+            <p class="fern-summary">
+                เรียนตามลำดับบทเรียน เมื่อทำ Quiz ผ่าน 70% ระบบจะปลดล็อกบทถัดไปให้อัตโนมัติ
+            </p>
+
+            <div class="fern-progress">
+                <span style="width:25%;"></span>
+            </div>
+
+            <p>ทำบทเรียนให้ผ่านเพื่อปลดล็อก Lesson ถัดไป</p>
+
+            <ul class="fern-check-list">
+                <li>เรียนคำศัพท์จากฐานข้อมูลจริง</li>
+                <li>ฝึกประโยคตัวอย่าง</li>
+                <li>ฝึกพูดตาม</li>
+                <li>ทำ Quiz เพื่อปลดล็อกบทต่อไป</li>
+            </ul>
+
+            <a href="/th/programs/" class="fern-btn-light">
+                กลับไปเลือกคอร์ส
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,277 @@
+{% extends 'registration/registration_base.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+FernLearnWorld - Login
+{% endblock title %}
+
+{% block content %}
+
+<style>
+  body {
+    background: #fff7fb;
+  }
+
+  .fern-login-page {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .fern-login-wrap {
+    width: 100%;
+    max-width: 980px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 18px 45px rgba(236, 72, 153, 0.14);
+  }
+
+  .fern-login-left {
+    padding: 44px;
+    background: linear-gradient(135deg, #ffe4f1, #dbeafe);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .fern-logo-badge {
+    width: 86px;
+    height: 86px;
+    border-radius: 26px;
+    background: white;
+    display: grid;
+    place-items: center;
+    font-size: 44px;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .fern-login-title {
+    font-size: 38px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.25;
+    margin-bottom: 14px;
+  }
+
+  .fern-login-title span {
+    color: #ec4899;
+  }
+
+  .fern-login-sub {
+    color: #475569;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .fern-mini-card {
+    margin-top: 24px;
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 20px;
+    padding: 16px;
+    color: #334155;
+    font-weight: 700;
+  }
+
+  .fern-login-right {
+    padding: 44px;
+  }
+
+  .fern-form-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+
+  .fern-form-sub {
+    color: #64748b;
+    margin-bottom: 26px;
+  }
+
+  .fern-label {
+    font-weight: 800;
+    color: #334155;
+    margin-bottom: 8px;
+  }
+
+  .fern-input {
+    height: 50px;
+    border-radius: 16px !important;
+    border: 1px solid #fbcfe8 !important;
+    padding: 12px 16px;
+    box-shadow: none !important;
+  }
+
+  .fern-input:focus {
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12) !important;
+  }
+
+  .fern-login-btn {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    padding: 14px 22px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    margin-top: 10px;
+  }
+
+  .fern-error {
+    display: block;
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    padding: 12px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .fern-links {
+    margin-top: 18px;
+    text-align: center;
+    color: #64748b;
+  }
+
+  .fern-links a {
+    color: #2563eb;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .fern-register-box {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 18px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    text-align: center;
+  }
+
+  .fern-register-box a {
+    color: #2563eb;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  @media (max-width: 850px) {
+    .fern-login-wrap {
+      grid-template-columns: 1fr;
+    }
+
+    .fern-login-left,
+    .fern-login-right {
+      padding: 32px;
+    }
+
+    .fern-login-title {
+      font-size: 30px;
+    }
+  }
+</style>
+
+<div class="fern-login-page">
+  <div class="fern-login-wrap">
+
+    <div class="fern-login-left">
+      <div style="display:flex; gap:12px; margin-bottom:22px;">
+        <div class="fern-logo-badge">⛩️</div>
+        <div class="fern-logo-badge">🏯</div>
+        <div class="fern-logo-badge">🤖</div>
+      </div>
+
+      <h1 class="fern-login-title">
+        Welcome to <span>FernLearnWorld</span>
+      </h1>
+
+      <p class="fern-login-sub">
+         แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนด้วย AI
+    ฝึกคำศัพท์ ประโยค การออกเสียง Quiz และติดตามความก้าวหน้า
+    เหมาะสำหรับ JLPT N5-N1 และ HSK 3-6
+      </p>
+
+      <div class="fern-mini-card">
+        🎯 Vocabulary → Sentence → Speaking → Quiz → Achievement
+      </div>
+    </div>
+
+    <div class="fern-login-right">
+      <div class="fern-form-title">
+        {% trans "Sign in" %}
+      </div>
+
+      <div class="fern-form-sub">
+        เข้าสู่ระบบเพื่อเรียนต่อและบันทึกความคืบหน้าของคุณ
+      </div>
+
+      <form action="" method="POST" id="login-form">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <span class="fern-error">
+          <i class="fas fa-exclamation-circle"></i>
+          {% trans "Invalid ID & Password." %}
+        </span>
+        {% endif %}
+
+        <div class="form-group mb-3">
+          <label class="fern-label" for="username_id">
+            <i class="fas fa-user me-2"></i>
+            {% trans "Username / ID Number" %}
+          </label>
+          <input type="text" name="username" id="username_id" class="form-control fern-input" required>
+          <div id="message-wrapper"></div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="fern-label" for="password_id">
+            <i class="fas fa-key me-2"></i>
+            {% trans "Password" %}
+          </label>
+          <input type="password" name="password" id="password_id" class="form-control fern-input" required>
+        </div>
+
+        <button type="submit" class="fern-login-btn" id="login-btn">
+          <i class="fas fa-sign-in-alt me-2"></i>
+          {% trans "SIGN IN" %}
+        </button>
+      </form>
+
+      <div class="fern-links">
+        <a href="{% url 'password_reset' %}">
+          {% trans "Forgot password?" %}
+        </a>
+      </div>
+
+      <div class="fern-register-box">
+        ยังไม่มีบัญชี?
+        <a href="/th/accounts/register/">
+          สมัครเป็นนักเรียน
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script>
+  $('#login-form').submit(function () {
+    $('#login-btn').addClass('disabled');
+    $('#login-btn').html(`<i class="fas fa-sign-in-alt me-2"></i> Signing you in...`);
+  });
+</script>
+{% endblock %}

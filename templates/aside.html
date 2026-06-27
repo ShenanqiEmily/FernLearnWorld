@@ -1,0 +1,247 @@
+{% load static %}
+{% load i18n %}
+
+<style>
+
+#side-nav {
+    width: 270px;
+    background: #ffffff;
+    min-height: 100vh;
+    border-right: 1px solid #f1f5f9;
+}
+
+.top-side {
+    padding: 28px 20px;
+    text-align: center;
+    background: #fff7fb;
+    border-bottom: 1px solid #fce7f3;
+}
+
+.top-side img {
+    width: 140px;
+}
+
+.fern-role {
+    margin-top: 12px;
+}
+
+.fern-role mark {
+    background: #fce7f3;
+    color: #ec4899;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.fern-menu {
+    padding: 18px 14px;
+}
+
+.fern-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fern-menu li {
+    margin-bottom: 10px;
+}
+
+.fern-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    padding: 14px 18px;
+    border-radius: 18px;
+    color: #334155;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.fern-menu li a:hover {
+    background: #fdf2f8;
+    color: #ec4899;
+}
+
+.fern-menu li.active a {
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    color: white;
+    box-shadow: 0 10px 20px rgba(236,72,153,0.2);
+}
+
+.fern-menu li i {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #fce7f3;
+    color: #ec4899;
+    font-size: 16px;
+}
+
+.fern-menu li.active i {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.fern-footer {
+    padding: 20px;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.fern-footer select {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    margin-bottom: 14px;
+}
+
+</style>
+
+{% url 'home' as hom %}
+{% url 'dashboard' as dash %}
+{% url 'profile' as prof %}
+{% url 'programs' as pro %}
+{% url 'quiz_progress' as qpr %}
+{% url 'edit_profile' as ep %}
+
+<div id="side-nav">
+
+    <div class="top-side">
+
+        <a href="/">
+            <img src="{% static 'img/fernLogo.png' %}" alt="FernLearnWorld">
+        </a>
+
+        <div class="fern-role">
+            <mark>
+                {{ request.user.get_user_role }}
+            </mark>
+        </div>
+
+    </div>
+
+    <div class="fern-menu">
+
+        <ul>
+
+            <li class="{% if request.path == dash %}active{% endif %}">
+                <a href="{% url 'dashboard' %}">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li class="{% if request.path == hom %}active{% endif %}">
+                <a href="{% url 'home' %}">
+                    <i class="fas fa-compass"></i>
+                    Home
+                </a>
+            </li>
+
+            <li class="{% if request.path == pro %}active{% endif %}">
+                <a href="{% url 'programs' %}">
+                    <i class="fas fa-book-open"></i>
+                    Courses
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fas fa-language"></i>
+                    Vocabulary
+                </a>
+            </li>
+
+            <li>
+                <a href="/th/ai-tutor/">
+                <i class="fas fa-comments"></i>
+                    AI Tutor
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fas fa-microphone"></i>
+                    Speaking Practice
+                </a>
+            </li>
+
+
+            <li class="{% if request.path == prof %}active{% endif %}">
+                <a href="{% url 'profile' %}">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </a>
+            </li>
+            <li class="{% if '/vocabulary/profile-progress/' in request.path %}active{% endif %}">
+                <a href="/th/vocabulary/profile-progress/">
+                    <i class="fas fa-chart-line"></i>
+                    My Progress
+                </a>
+            </li>
+            <li class="{% if '/vocabulary/achievements/' in request.path %}active{% endif %}">
+                <a href="/th/vocabulary/achievements/">
+                    <i class="fas fa-trophy"></i>
+                    Achievements
+                </a>
+            </li>
+
+            <li class="{% if request.path == ep %}active{% endif %}">
+                <a href="{% url 'edit_profile' %}">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </li>
+
+            {% if request.user.is_superuser %}
+            <li>
+                <a href="/admin/">
+                    <i class="fas fa-user-shield"></i>
+                    Admin Backend
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+
+    </div>
+
+    <div class="fern-footer">
+
+        <form action="{% url 'set_language' %}" method="post" id="lang-form">
+            {% csrf_token %}
+
+            <select name="language" id="lang-select">
+
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+
+                {% for language in languages %}
+                <option value="{{ language.code }}"
+                    {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                    {{ language.name_local }}
+                </option>
+                {% endfor %}
+
+            </select>
+        </form>
+
+        <p>
+            FernLearnWorld © 2026
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+document.getElementById("lang-select").addEventListener("change", function() {
+    document.getElementById("lang-form").submit();
+});
+</script>

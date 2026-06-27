@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sentence Practice | FernLearnWorld{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-sentence-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+    }
+
+    .fern-title {
+        font-size: 34px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .fern-progress-wrap {
+        width: 260px;
+    }
+
+    .fern-progress {
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .fern-progress span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+    }
+
+    .fern-layout {
+        display: grid;
+        grid-template-columns: 1fr 330px;
+        gap: 24px;
+    }
+
+    .fern-card {
+        background: white;
+        border-radius: 30px;
+        padding: 30px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, 0.10);
+    }
+
+    .fern-main-card {
+        text-align: center;
+
+    }
+
+    .fern-card-inner {
+        display: grid;
+        grid-template-columns: 60px 1fr 60px;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .fern-nav-btn {
+        width: 54px;
+        height: 54px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white;
+        font-size: 22px;
+    }
+
+    .fern-label {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #fdf2f8;
+        color: #ec4899;
+        font-weight: 900;
+        margin-bottom: 18px;
+    }
+
+    .fern-jp {
+        font-size: clamp(34px, 5vw, 56px);
+        font-weight: 900;
+        color: #0f172a;
+        white-space: nowrap;
+        overflow-x: auto;
+        line-height: 1.25;
+        padding-bottom: 8px;
+    }
+
+    .fern-reading {
+        font-size: 22px;
+        color: #8b5cf6;
+        font-weight: 800;
+        margin-top: 12px;
+    }
+
+    .fern-th {
+        font-size: 26px;
+        color: #ec4899;
+        font-weight: 900;
+        margin-top: 12px;
+    }
+
+    .fern-en {
+        font-size: 18px;
+        color: #64748b;
+        margin-top: 8px;
+    }
+
+
+    .fern-wave {
+        height: 42px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        margin: 10px 0;
+    }
+
+    .fern-wave span {
+        width: 8px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #ec4899, #3b82f6);
+    }
+
+    .fern-wave span:nth-child(1) {
+        height: 18px;
+    }
+
+    .fern-wave span:nth-child(2) {
+        height: 34px;
+    }
+
+    .fern-wave span:nth-child(3) {
+        height: 48px;
+    }
+
+    .fern-wave span:nth-child(4) {
+        height: 28px;
+    }
+
+    .fern-wave span:nth-child(5) {
+        height: 40px;
+    }
+
+    .fern-btn-row {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+    }
+
+    .fern-btn,
+    .fern-btn-light {
+        padding: 14px 24px;
+        border-radius: 16px;
+        font-weight: 900;
+        text-decoration: none;
+        border: none;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+
+    .fern-result {
+        display: none;
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 18px;
+        background: #ecfdf5;
+        color: #047857;
+        font-weight: 800;
+    }
+
+    .fern-side-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 18px;
+    }
+
+    .fern-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: 520px;
+        overflow-y: auto;
+    }
+
+    .fern-list li {
+        padding: 14px;
+        border-radius: 16px;
+        background: #fff7fb;
+        border: 1px solid #fbcfe8;
+        margin-bottom: 12px;
+        cursor: pointer;
+    }
+
+    .fern-list li:hover {
+        background: #f3e8ff;
+    }
+
+    .fern-ai-note {
+        padding: 18px;
+        border-radius: 20px;
+        background: #eff6ff;
+        color: #334155;
+        line-height: 1.8;
+    }
+
+    @media(max-width: 1000px) {
+        .fern-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .fern-card-inner {
+            grid-template-columns: 1fr;
+        }
+
+        .fern-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+        }
+    }
+</style>
+
+<div class="fern-sentence-page">
+
+    <div class="fern-header">
+        <div>
+            <h1 class="fern-title">ฝึกประโยคตัวอย่าง</h1>
+            {% if course %}
+            <p>{{ course.title }}</p>
+            {% else %}
+            <p>All Lessons</p>
+            {% endif %}
+        </div>
+
+        <div class="fern-progress-wrap">
+            <p id="sentenceCounter">1 / {{ vocabularies|length }}</p>
+            <div class="fern-progress">
+                <span id="sentenceProgress"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="fern-layout">
+
+        <div class="fern-card fern-main-card">
+
+            <div class="fern-card-inner">
+
+                <button class="fern-nav-btn" onclick="prevSentence()">←</button>
+
+                <div>
+                    <div class="fern-label">Sentence Practice</div>
+
+                    <div class="fern-jp" id="sentenceText">-</div>
+                    <div class="fern-reading" id="sentenceReading">-</div>
+                    <div class="fern-th" id="sentenceTh">-</div>
+                    <div class="fern-en" id="sentenceEn">-</div>
+
+
+                    <div class="fern-btn-row">
+
+                        {% if course_code %}
+                        <a href="/th/vocabulary/{{ course_code }}/" class="fern-btn-light">
+                            ← กลับคำศัพท์
+                        </a>
+                        {% else %}
+                        <a href="/th/vocabulary/" class="fern-btn-light">
+                            ← กลับคำศัพท์
+                        </a>
+                        {% endif %}
+
+
+                        <button class="fern-btn-light" onclick="speakSentence()">
+                            🔊 ฟังเสียงประโยค
+                        </button>
+
+                        <button class="fern-btn" onclick="startSentenceSpeaking()">
+                            🎙️ พูดตามประโยคนี้
+                        </button>
+
+                        {% if course_code %}
+                        <a href="/th/vocabulary/quiz/{{ course_code }}/" class="fern-btn-light">
+                            ทำแบบฝึกหัด
+                        </a>
+                        {% else %}
+                        <a href="/th/vocabulary/quiz/JP-N5-001/" class="fern-btn-light">
+                            ทำแบบฝึกหัด
+                        </a>
+                        {% endif %}
+                        <!-- <button class="fern-btn" onclick="nextSentence()">
+                            ถัดไป →
+                        </button> -->
+                    </div>
+
+                    <div id="sentenceResult" class="fern-result">
+                        กดเริ่มพูด แล้วพูดตามประโยคด้านบน
+                    </div>
+                </div>
+
+                <button class="fern-nav-btn" onclick="nextSentence()">→</button>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="fern-card">
+                <div class="fern-side-title">ประโยคในบทนี้</div>
+
+                <ul class="fern-list">
+                    {% for vocab in vocabularies %}
+                    <li onclick="jumpToSentence({{ forloop.counter0 }})">
+                        <b>{{ vocab.example_sentence|default:vocab.word }}</b><br>
+                        <small>{{ vocab.example_translation_th|default:vocab.meaning_th }}</small>
+                    </li>
+                    {% empty %}
+                    <li>ยังไม่มีประโยคในระบบ</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <br>
+
+            <div class="fern-card">
+                <div class="fern-side-title">AI Tip</div>
+                <div class="fern-ai-note" id="aiTip">เลือกประโยคเพื่อดูคำแนะนำ</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+    let sentenceData = [
+    {% for vocab in vocabularies %}
+{
+    word: "{{ vocab.word|escapejs }}",
+        reading: "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
+            meaning_th: "{{ vocab.meaning_th|escapejs }}",
+                meaning_en: "{{ vocab.meaning_en|escapejs }}",
+                    sentence: "{{ vocab.example_sentence|default:vocab.word|escapejs }}",
+                        sentence_reading: "{{ vocab.example_reading|default:vocab.reading|escapejs }}",
+                            sentence_th: "{{ vocab.example_translation_th|default:vocab.meaning_th|escapejs }}",
+                                sentence_en: "{{ vocab.example_translation_en|default:vocab.meaning_en|escapejs }}"
+},
+{% endfor %}
+];
+</script>
+<script src="{% static 'js/pages/sentence.js' %}"></script>
+
+<script>
+    updateSentence();
+</script>
+{% endblock content %}

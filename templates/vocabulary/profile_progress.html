@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile Progress | FernLearnWorld{% endblock title %}
+
+{% block content %}
+
+<style>
+.progress-page{
+    padding:34px;
+    background:#fff7fb;
+    min-height:100vh;
+}
+
+.progress-card{
+    background:white;
+    border:1px solid #fbcfe8;
+    border-radius:30px;
+    padding:34px;
+    box-shadow:0 14px 36px rgba(236,72,153,.10);
+    margin-bottom:24px;
+}
+
+.progress-title{
+    font-size:36px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+.progress-sub{
+    color:#64748b;
+}
+
+.progress-bar{
+    height:14px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    margin:18px 0;
+}
+
+.progress-bar span{
+    display:block;
+    height:100%;
+    background:linear-gradient(90deg,#ec4899,#8b5cf6,#3b82f6);
+}
+
+.stat-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-top:24px;
+}
+
+.stat-box{
+    background:#fff7fb;
+    border:1px solid #fbcfe8;
+    border-radius:22px;
+    padding:24px;
+    text-align:center;
+}
+
+.stat-num{
+    font-size:34px;
+    font-weight:900;
+    color:#ec4899;
+}
+
+.lesson-list{
+    display:grid;
+    gap:14px;
+}
+
+.lesson-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px;
+    border-radius:20px;
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+}
+
+.lesson-done{
+    background:#ecfdf5;
+    border-color:#86efac;
+}
+
+.lesson-score{
+    font-weight:900;
+    color:#ec4899;
+}
+
+@media(max-width:900px){
+    .stat-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="progress-page">
+
+    <div class="progress-card">
+        <h1 class="progress-title">Profile Progress</h1>
+        <p class="progress-sub">ความคืบหน้าการเรียน JLPT N5 ของคุณ</p>
+
+        <div class="progress-bar">
+            <span style="width:{{ overall_percent }}%;"></span>
+        </div>
+
+        <p><b>{{ overall_percent }}%</b> completed</p>
+
+        <div class="stat-grid">
+
+            <div class="stat-box">
+                <div class="stat-num">{{ completed_lessons }}</div>
+                <div>Lessons Completed</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-num">{{ total_lessons }}</div>
+                <div>Total Lessons</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-num">{{ total_xp }}</div>
+                <div>Total XP</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="progress-card">
+        <h2>Lesson History</h2>
+
+        <div class="lesson-list">
+            {% for progress in progresses %}
+                <div class="lesson-item {% if progress.completed %}lesson-done{% endif %}">
+                    <div>
+                        <b>{{ progress.course.title }}</b><br>
+                        <small>{{ progress.course.code }}</small>
+                    </div>
+
+                    <div class="lesson-score">
+                        {% if progress.completed %}
+                            ✅ {{ progress.score }}%
+                        {% else %}
+                            ❌ {{ progress.score }}%
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p>ยังไม่มีประวัติการเรียน ลองทำ Quiz ให้จบบทก่อน</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

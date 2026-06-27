@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Vocabulary | FernLearnWorld
+{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-container {
+        padding: 30px;
+        background: #fff7fb;
+        min-height: 100vh;
+    }
+
+    .fern-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .fern-progress-wrapper {
+        min-width: 220px;
+    }
+
+    .fern-progress-bar {
+        width: 100%;
+        height: 12px;
+        background: #f3f4f6;
+        border-radius: 30px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .fern-progress-bar span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        border-radius: 30px;
+        transition: 0.3s;
+    }
+
+    .fern-vocab-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+    }
+
+    .fern-vocab-card,
+    .fern-side-list {
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        border: 1px solid #fbcfe8;
+    }
+
+    .fern-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .fern-card-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+    }
+
+    .fern-word {
+        font-size: clamp(44px, 6vw, 82px);
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 18px;
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        line-height: 1.25;
+        padding-bottom: 8px;
+    }
+
+    .fern-reading {
+        font-size: 26px;
+        color: #8b5cf6;
+        margin-bottom: 15px;
+    }
+
+    .fern-meaning-th {
+        font-size: 34px;
+        font-weight: 800;
+        color: #ec4899;
+        margin-bottom: 10px;
+    }
+
+    .fern-meaning-en {
+        font-size: 22px;
+        color: #6b7280;
+    }
+
+    .fern-example {
+        margin-top: 36px;
+        background: #faf5ff;
+        border-radius: 20px;
+        padding: 22px;
+        line-height: 2;
+        text-align: left;
+    }
+
+    .fern-example-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .fern-example-sentence {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .fern-example-reading {
+        color: #8b5cf6;
+    }
+
+    .fern-example-th {
+        color: #ec4899;
+        font-weight: 700;
+    }
+
+    .fern-nav-btn {
+        width: 60px;
+        height: 60px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white;
+        font-size: 24px;
+    }
+
+    .fern-action-row,
+    .fern-bottom-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 28px;
+    }
+
+    .fern-bottom-row {
+        justify-content: center;
+    }
+
+    .fern-small-btn,
+    .fern-sound-btn {
+        border: none;
+        background: #f3f4f6;
+        padding: 12px 18px;
+        border-radius: 14px;
+        font-weight: 700;
+    }
+
+    .fern-sound-btn {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+
+    .fern-next-btn,
+    .fern-main-btn {
+        display: inline-block;
+        padding: 14px 28px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+        text-decoration: none;
+        border: none;
+        font-weight: 800;
+    }
+
+    .fern-side-list {
+        max-height: 700px;
+        overflow: auto;
+    }
+
+    .fern-side-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .fern-side-list li {
+        padding: 16px;
+        border-radius: 16px;
+        cursor: pointer;
+        margin-bottom: 12px;
+        background: #faf5ff;
+    }
+
+    .fern-side-list li:hover {
+        background: #f3e8ff;
+    }
+
+    .fern-side-list span {
+        display: block;
+        font-weight: 800;
+    }
+
+    .fern-side-list small {
+        color: #6b7280;
+    }
+
+    @media(max-width: 992px) {
+        .fern-vocab-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .fern-word {
+            font-size: clamp(36px, 10vw, 56px);
+        }
+    }
+</style>
+<!-- <script src="{% static 'js/ai/speech.js' %}"></script>
+<script src="{% static 'js/ai/speech_score.js' %}"></script> -->
+
+<div class="fern-container">
+
+    <div class="fern-topbar">
+        <div>
+            <h2>คำศัพท์ JLPT N5</h2>
+            <p>เรียนคำศัพท์พร้อมคำอ่าน คำแปล และตัวอย่างประโยค</p>
+        </div>
+
+        <div class="fern-progress-wrapper">
+            <div class="fern-progress-bar">
+                <span id="vocabProgress"></span>
+            </div>
+            <p id="vocabCounter">1 / {{ vocabularies|length }}</p>
+        </div>
+    </div>
+
+    <div class="fern-vocab-layout">
+
+        <div class="fern-vocab-card">
+
+            <div class="fern-card-top">
+
+                <button onclick="prevVocab()" class="fern-nav-btn">←</button>
+
+                <div class="fern-card-center">
+
+                    <div class="fern-word" id="vocabWord">-</div>
+
+                    <div class="fern-reading show-reading" id="vocabReading">-</div>
+
+                    <div class="fern-meaning-th show-th" id="vocabMeaningTh">-</div>
+
+                    <div class="fern-meaning-en show-en" id="vocabMeaningEn">-</div>
+
+                    <div class="fern-action-row" style="justify-content:center;">
+                        <button class="fern-sound-btn" onclick="speakCurrentWord()">
+                            🔊 ฟังเสียงคำศัพท์
+                        </button>
+
+                        <button class="fern-sound-btn" onclick="startWordSpeaking()">
+                            🎙️ พูดตามคำนี้
+                        </button>
+                    </div>
+
+                    <div id="speechResultBox" style="display:none; margin-top:18px; 
+                        padding:16px; border-radius:18px; font-weight:800;">
+                    </div>
+
+                </div>
+
+                <button onclick="nextVocab()" class="fern-nav-btn">→</button>
+
+            </div>
+
+            <div class="fern-example show-example">
+
+                <div class="fern-example-head">
+                    <b>ตัวอย่างประโยค:</b>
+
+                    <button class="fern-sound-btn" onclick="speakCurrentSentence()">
+                        🔊 ฟังเสียงประโยค
+                    </button>
+                </div>
+
+                <div class="fern-example-sentence" id="vocabExampleSentence">-</div>
+                <div class="fern-example-reading show-reading" id="vocabExampleReading">-</div>
+                <div class="fern-example-th" id="vocabExampleTh">-</div>
+                <div class="fern-example-en show-en" id="vocabExampleEn">-</div>
+
+            </div>
+
+            <div class="fern-action-row">
+                <button class="fern-small-btn" onclick="toggleClass('.show-reading')">
+                    ซ่อน/แสดง คำอ่าน
+                </button>
+
+                <button class="fern-small-btn" onclick="toggleClass('.show-th')">
+                    ซ่อน/แสดง คำแปลไทย
+                </button>
+
+                <button class="fern-small-btn" onclick="toggleClass('.show-en')">
+                    ซ่อน/แสดง อังกฤษ
+                </button>
+
+                <button class="fern-small-btn" onclick="toggleClass('.show-example')">
+                    ซ่อน/แสดง ตัวอย่าง
+                </button>
+            </div>
+
+            <div class="fern-bottom-row">
+                {% if course_code %}
+                <a href="/th/vocabulary/sentence/{{ course_code }}/" class="fern-next-btn">
+                    ไปหน้าประโยค →
+                </a>
+                {% else %}
+                <a href="/th/vocabulary/sentence/" class="fern-next-btn">
+                    ไปหน้าประโยค →
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="fern-side-list">
+
+            <h4>รายการคำศัพท์</h4>
+
+            <ul>
+                {% for vocab in vocabularies %}
+                <li onclick="jumpToVocab({{ forloop.counter0 }})">
+                    <span>{{ vocab.word }}</span>
+                    <small>{{ vocab.meaning_th }}</small>
+                </li>
+                {% empty %}
+                <li>
+                    <span>ยังไม่มีคำศัพท์</span>
+                    <small>กรุณา import CSV ก่อน</small>
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+    
+let vocabs = [
+    {% for vocab in vocabularies %}
+{
+    word: "{{ vocab.word|escapejs }}",
+        reading: "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
+            meaning_th: "{{ vocab.meaning_th|escapejs }}",
+                meaning_en: "{{ vocab.meaning_en|escapejs }}",
+                    example_sentence: "{{ vocab.example_sentence|escapejs }}",
+                        example_reading: "{{ vocab.example_reading|escapejs }}",
+                            example_translation_th: "{{ vocab.example_translation_th|escapejs }}",
+                                example_translation_en: "{{ vocab.example_translation_en|escapejs }}"
+},
+{% endfor %}
+];
+</script>
+<script src="{% static 'js/pages/vocabulary.js' %}"></script>
+
+<script>
+    updateVocabCard();
+</script>
+{% endblock content %}

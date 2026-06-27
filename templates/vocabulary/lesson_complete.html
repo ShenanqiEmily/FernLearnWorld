@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Lesson Complete | FernLearnWorld
+{% endblock title %}
+
+{% block content %}
+
+<style>
+.fern-complete-page{
+    padding:34px;
+    background:linear-gradient(135deg,#fff7fb,#eff6ff);
+    min-height:100vh;
+}
+
+.fern-complete-card{
+    max-width:980px;
+    margin:0 auto;
+    background:white;
+    border-radius:36px;
+    padding:46px;
+    border:1px solid #fbcfe8;
+    box-shadow:0 18px 45px rgba(236,72,153,.14);
+    text-align:center;
+}
+
+.fern-trophy{font-size:92px;margin-bottom:14px;}
+.fern-title{font-size:44px;font-weight:900;color:#0f172a;}
+.fern-sub{color:#64748b;font-size:18px;margin:14px 0 30px;}
+
+.fern-xp{
+    display:inline-block;
+    padding:14px 26px;
+    border-radius:999px;
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white;
+    font-size:24px;
+    font-weight:900;
+    margin-bottom:28px;
+}
+
+.fern-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin:28px 0;
+}
+
+.fern-stat{
+    background:#fff7fb;
+    border:1px solid #fbcfe8;
+    border-radius:24px;
+    padding:22px;
+}
+
+.fern-stat-num{
+    font-size:34px;
+    font-weight:900;
+    color:#ec4899;
+}
+
+.fern-stat-label{
+    color:#64748b;
+    font-weight:700;
+}
+
+.fern-progress-box{
+    background:#f8fafc;
+    border-radius:24px;
+    padding:24px;
+    margin-top:30px;
+    text-align:left;
+}
+
+.fern-progress-top{
+    display:flex;
+    justify-content:space-between;
+    font-weight:900;
+    margin-bottom:12px;
+}
+
+.fern-progress{
+    height:14px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.fern-progress span{
+    display:block;
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg,#ec4899,#8b5cf6,#3b82f6);
+}
+
+.fern-rewards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-top:28px;
+}
+
+.fern-reward{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:22px;
+    padding:20px;
+}
+
+.fern-reward-icon{font-size:38px;margin-bottom:10px;}
+
+.fern-btn-row{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-top:34px;
+}
+
+.fern-btn,
+.fern-btn-light{
+    padding:14px 24px;
+    border-radius:16px;
+    font-weight:900;
+    text-decoration:none;
+    border:none;
+}
+
+.fern-btn{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white !important;
+}
+
+.fern-btn-light{
+    background:#eff6ff;
+    color:#2563eb !important;
+    border:1px solid #bfdbfe;
+}
+
+@media(max-width:900px){
+    .fern-stats,.fern-rewards{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="fern-complete-page">
+
+    <div class="fern-complete-card">
+
+        <div class="fern-trophy">
+            {% if passed %}🏆{% else %}💪{% endif %}
+        </div>
+
+        <h1 class="fern-title">
+            {% if passed %}
+                Lesson Complete!
+            {% else %}
+                Try Again!
+            {% endif %}
+        </h1>
+
+        <p class="fern-sub">
+            {% if course %}
+                {{ course.title }}
+            {% else %}
+                All Lessons
+            {% endif %}
+        </p>
+
+        <div class="fern-xp">
+            {% if passed %}+120 XP{% else %}+20 XP{% endif %}
+        </div>
+
+        <div class="fern-stats">
+
+            <div class="fern-stat">
+                <div class="fern-stat-num">
+                    {{ vocabularies_count|default:0 }}
+                </div>
+                <div class="fern-stat-label">Words Learned</div>
+            </div>
+
+            <div class="fern-stat">
+                <div class="fern-stat-num">
+                    {{ score }}%
+                </div>
+                <div class="fern-stat-label">Accuracy</div>
+            </div>
+
+            <div class="fern-stat">
+                <div class="fern-stat-num">
+                    {% if passed %}✅{% else %}❌{% endif %}
+                </div>
+                <div class="fern-stat-label">
+                    {% if passed %}Passed{% else %}Not Passed{% endif %}
+                </div>
+            </div>
+
+            <div class="fern-stat">
+                <div class="fern-stat-num">
+                    {% if score >= 90 %}A{% elif score >= 80 %}B{% elif score >= 70 %}C{% else %}D{% endif %}
+                </div>
+                <div class="fern-stat-label">Grade</div>
+            </div>
+
+        </div>
+
+        <div class="fern-progress-box">
+
+            <div class="fern-progress-top">
+                <span>
+                    {% if course %}
+                        {{ course.code }} Progress
+                    {% else %}
+                        Lesson Progress
+                    {% endif %}
+                </span>
+
+                <span>
+                    {% if passed %}100%{% else %}60%{% endif %}
+                </span>
+            </div>
+
+            <div class="fern-progress">
+                <span style="{% if passed %}width:100%;{% else %}width:60%;{% endif %}"></span>
+            </div>
+
+        </div>
+
+        <div class="fern-rewards">
+
+            <div class="fern-reward">
+                <div class="fern-reward-icon">🔥</div>
+                <b>Streak Saved</b>
+                <p>เรียนต่อเนื่องสำเร็จ</p>
+            </div>
+
+            <div class="fern-reward">
+                <div class="fern-reward-icon">🎙️</div>
+                <b>Speaking Practice</b>
+                <p>ฝึกพูดผ่านแล้ว</p>
+            </div>
+
+            <div class="fern-reward">
+                <div class="fern-reward-icon">📚</div>
+                <b>Vocab Master</b>
+                <p>เรียนครบคำศัพท์ในบท</p>
+            </div>
+
+        </div>
+
+        <div class="fern-btn-row">
+
+            {% if course_code %}
+            <a href="/th/vocabulary/{{ course_code }}/" class="fern-btn-light">
+                ทบทวนคำศัพท์
+            </a>
+            {% else %}
+            <a href="/th/vocabulary/" class="fern-btn-light">
+                ทบทวนคำศัพท์
+            </a>
+            {% endif %}
+
+            <a href="/th/programs/1/detail/" class="fern-btn-light">
+                กลับ Lesson Map
+            </a>
+
+            <a href="/th/ai-tutor/" class="fern-btn-light">
+                🤖 คุยกับ AI Tutor
+            </a>
+
+            <a href="/th/programs/1/detail/" class="fern-btn">
+                ไปเลือก Lesson ถัดไป →
+            </a>
+            <a href="/th/vocabulary/profile-progress/">
+                📈 My Progress
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

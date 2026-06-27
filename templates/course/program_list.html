@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.fern-courses-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+}
+
+.fern-page-title {
+    font-size: 34px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.fern-page-subtitle {
+    color: #64748b;
+    font-size: 17px;
+    margin-bottom: 28px;
+}
+
+.fern-course-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 26px;
+}
+
+.fern-course-card {
+    background: #ffffff;
+    border: 1px solid #fbcfe8;
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.10);
+    transition: 0.25s;
+}
+
+.fern-course-card:hover {
+    transform: translateY(-6px);
+}
+
+.fern-course-image {
+    height: 190px;
+    border-radius: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 76px;
+}
+
+.japanese-bg {
+    background: linear-gradient(135deg, #ffe4f1, #fff1f8);
+}
+
+.chinese-bg {
+    background: linear-gradient(135deg, #dbeafe, #f0f9ff);
+}
+
+.fern-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #fdf2f8;
+    color: #ec4899;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.fern-course-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.fern-course-desc {
+    color: #64748b;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.fern-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+}
+
+.fern-feature-list li {
+    margin-bottom: 10px;
+    color: #334155;
+}
+
+.fern-feature-list li::before {
+    content: "✓";
+    color: #ec4899;
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+.fern-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    color: white !important;
+    text-decoration: none;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-weight: 800;
+}
+
+.fern-btn-light {
+    display: inline-block;
+    background: #eff6ff;
+    color: #2563eb !important;
+    text-decoration: none;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-weight: 800;
+    border: 1px solid #bfdbfe;
+}
+
+@media(max-width: 900px) {
+    .fern-course-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="fern-courses-page">
+
+    <h1 class="fern-page-title">เลือกภาษาที่ต้องการเรียน</h1>
+    <p class="fern-page-subtitle">
+        เลือกเส้นทางการเรียนของคุณ: JLPT สำหรับภาษาญี่ปุ่น หรือ HSK สำหรับภาษาจีน
+    </p>
+
+    <div class="fern-course-grid">
+
+        <div class="fern-course-card">
+            <div class="fern-course-image japanese-bg">
+                ⛩️
+            </div>
+
+            <div class="fern-badge">JLPT N5 - N2</div>
+
+            <div class="fern-course-title">ภาษาญี่ปุ่น</div>
+
+            <p class="fern-course-desc">
+                เรียนคำศัพท์ ประโยค ไวยากรณ์ และฝึกพูดตามสำหรับผู้เริ่มต้นถึงระดับกลางสูง
+            </p>
+
+            <ul class="fern-feature-list">
+                <li>เหมาะสำหรับ JLPT N5, N4, N3, N2</li>
+                <li>มีคำศัพท์และประโยคตัวอย่าง</li>
+                <li>ฝึกพูดตามและใช้ AI ช่วยตรวจ</li>
+            </ul>
+
+            <a href="/th/programs/1/detail/" class="fern-btn">
+                เริ่มเรียนภาษาญี่ปุ่น
+            </a>
+        </div>
+
+        <div class="fern-course-card">
+            <div class="fern-course-image chinese-bg">
+                🏯
+            </div>
+
+            <div class="fern-badge">HSK 3 - HSK 6</div>
+
+            <div class="fern-course-title">ภาษาจีน</div>
+
+            <p class="fern-course-desc">
+                เรียนพินอิน คำศัพท์ ประโยคสนทนา และฝึกพูดกับ AI Tutor แบบเป็นขั้นตอน
+            </p>
+
+            <ul class="fern-feature-list">
+                <li>เหมาะสำหรับ HSK 3, HSK 4, HSK 5, HSK 6</li>
+                <li>มีพินอิน คำแปลไทย และอังกฤษ</li>
+                <li>ฝึกประโยคจริงและบทสนทนา</li>
+            </ul>
+
+            <a href="/th/programs/2/detail/" class="fern-btn-light">
+                เริ่มเรียนภาษาจีน
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

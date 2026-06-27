@@ -1,0 +1,520 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+AI Tutor
+{% endblock title %}
+
+{% block content %}
+
+<style>
+
+.fern-ai-page{
+    padding:30px;
+    background:#fff7fb;
+    min-height:100vh;
+}
+
+.fern-ai-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    gap:20px;
+}
+
+.fern-ai-title{
+    font-size:38px;
+    font-weight:900;
+    color:#111827;
+}
+
+.fern-ai-sub{
+    color:#6b7280;
+}
+
+.fern-ai-controls{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.fern-mini-btn{
+    border:none;
+    background:#f3f4f6;
+    padding:12px 18px;
+    border-radius:14px;
+    font-weight:700;
+}
+
+.fern-ai-layout{
+    display:grid;
+    grid-template-columns:1fr 340px;
+    gap:24px;
+}
+
+.fern-chat-box{
+    background:white;
+    border-radius:30px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(236,72,153,0.08);
+    border:1px solid #fbcfe8;
+}
+
+.fern-message{
+    display:flex;
+    margin-bottom:20px;
+}
+
+.fern-message.ai{
+    justify-content:flex-start;
+}
+
+.fern-message.user{
+    justify-content:flex-end;
+}
+
+.fern-bubble{
+    max-width:75%;
+    padding:20px;
+    border-radius:24px;
+    background:#faf5ff;
+}
+
+.fern-message.user .fern-bubble{
+    background:linear-gradient(
+        135deg,
+        #ec4899,
+        #8b5cf6
+    );
+
+    color:white;
+}
+
+.fern-japanese{
+    font-size:32px;
+    font-weight:900;
+    color:#111827;
+    margin-bottom:12px;
+}
+
+.fern-message.user .fern-japanese{
+    color:white;
+}
+
+.fern-reading{
+    color:#8b5cf6;
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+.fern-message.user .fern-reading{
+    color:#fbcfe8;
+}
+
+.fern-translate{
+    line-height:1.9;
+}
+
+.fern-chat-actions{
+    margin-top:30px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.fern-main-btn{
+    border:none;
+    background:linear-gradient(
+        135deg,
+        #ec4899,
+        #8b5cf6
+    );
+
+    color:white;
+    padding:14px 24px;
+    border-radius:16px;
+    font-weight:800;
+}
+
+.fern-side-card{
+    background:white;
+    border-radius:30px;
+    padding:26px;
+    box-shadow:0 10px 30px rgba(236,72,153,0.08);
+    border:1px solid #fbcfe8;
+}
+
+.fern-side-title{
+    font-size:22px;
+    font-weight:900;
+    margin-bottom:20px;
+}
+
+.fern-vocab-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.fern-vocab-list li{
+    padding:14px;
+    border-radius:16px;
+    background:#faf5ff;
+    margin-bottom:12px;
+}
+
+.fern-vocab-list span{
+    display:block;
+    font-weight:800;
+}
+
+.fern-vocab-list small{
+    color:#6b7280;
+}
+
+@media(max-width:992px){
+
+    .fern-ai-layout{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+<div class="fern-ai-page">
+
+    <div class="fern-ai-top">
+
+        <div>
+            <div class="fern-ai-title">
+                AI Tutor
+            </div>
+
+            <div class="fern-ai-sub">
+                ฝึกสนทนา เรียนรู้คำศัพท์ และตัวอย่างประโยค
+            </div>
+        </div>
+
+        <div class="fern-ai-controls">
+
+            <button
+                class="fern-mini-btn"
+                onclick="showLang('th')"
+            >
+                TH
+            </button>
+
+            <button
+                class="fern-mini-btn"
+                onclick="showLang('en')"
+            >
+                EN
+            </button>
+
+            <button
+                class="fern-mini-btn"
+                onclick="showLang('all')"
+            >
+                ALL
+            </button>
+
+            <button
+                class="fern-mini-btn"
+                onclick="changeAITopic()"
+            >
+                🔄 เปลี่ยนคำศัพท์
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="fern-ai-layout">
+
+        <div class="fern-chat-box">
+
+            <div class="fern-message ai">
+
+                <div class="fern-bubble">
+
+                    <div
+                        class="fern-japanese"
+                        id="aiQuestionJp"
+                    >
+                        -
+                    </div>
+
+                    <div
+                        class="fern-reading"
+                        id="aiQuestionReading"
+                    >
+                        -
+                    </div>
+
+                    <div class="fern-translate">
+
+                        <div
+                            class="lang-th"
+                            id="aiAnswerTh"
+                        >
+                            -
+                        </div>
+
+                        <div
+                            class="lang-en"
+                            id="aiAnswerEn"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="fern-message ai">
+
+                <div class="fern-bubble">
+
+                    <div
+                        class="fern-japanese"
+                        id="aiExampleJp"
+                    >
+                        -
+                    </div>
+
+                    <div
+                        class="fern-reading"
+                        id="aiExampleReading"
+                    >
+                        -
+                    </div>
+
+                    <div class="fern-translate">
+
+                        <div
+                            class="lang-th"
+                            id="aiExampleTh"
+                        >
+                            -
+                        </div>
+
+                        <div
+                            class="lang-en"
+                            id="aiExampleEn"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="fern-chat-actions">
+
+                <button
+                    class="fern-main-btn"
+                    onclick="changeAITopic()"
+                >
+                    คำศัพท์ถัดไป
+                </button>
+
+                <a
+                    href="/th/vocabulary/"
+                    class="fern-main-btn"
+                >
+                    ไปหน้า Vocabulary
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="fern-side-card">
+
+            <div class="fern-side-title">
+                คำศัพท์ในระบบ
+            </div>
+
+            <ul class="fern-vocab-list">
+
+                {% for vocab in vocabularies %}
+
+                <li>
+
+                    <span>
+                        {{ vocab.word }}
+                    </span>
+
+                    <small>
+                        {{ vocab.meaning_th }}
+                    </small>
+
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let vocabData = [
+
+    {% for vocab in vocabularies %}
+
+    {
+        word:
+            "{{ vocab.word|escapejs }}",
+
+        reading:
+            "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
+
+        meaning_th:
+            "{{ vocab.meaning_th|escapejs }}",
+
+        meaning_en:
+            "{{ vocab.meaning_en|escapejs }}",
+
+        example_sentence:
+            "{{ vocab.example_sentence|escapejs }}",
+
+        example_reading:
+            "{{ vocab.example_reading|escapejs }}",
+
+        example_th:
+            "{{ vocab.example_translation_th|escapejs }}",
+
+        example_en:
+            "{{ vocab.example_translation_en|escapejs }}"
+    },
+
+    {% endfor %}
+
+];
+
+let aiIndex = 0;
+
+function changeAITopic(){
+
+    if(vocabData.length === 0) return;
+
+    let vocab = vocabData[aiIndex];
+
+    document.getElementById(
+        "aiQuestionJp"
+    ).innerText =
+        "คำว่า「" + vocab.word + "」ใช้ยังไง?";
+
+    document.getElementById(
+        "aiQuestionReading"
+    ).innerText =
+        vocab.reading;
+
+    document.getElementById(
+        "aiAnswerTh"
+    ).innerText =
+        "TH: คำนี้แปลว่า " +
+        vocab.meaning_th;
+
+    document.getElementById(
+        "aiAnswerEn"
+    ).innerText =
+        "EN: It means " +
+        vocab.meaning_en;
+
+    document.getElementById(
+        "aiExampleJp"
+    ).innerText =
+        vocab.example_sentence ||
+        vocab.word;
+
+    document.getElementById(
+        "aiExampleReading"
+    ).innerText =
+        vocab.example_reading ||
+        vocab.reading;
+
+    document.getElementById(
+        "aiExampleTh"
+    ).innerText =
+        "TH: " +
+        (
+            vocab.example_th ||
+            vocab.meaning_th
+        );
+
+    document.getElementById(
+        "aiExampleEn"
+    ).innerText =
+        "EN: " +
+        (
+            vocab.example_en ||
+            vocab.meaning_en
+        );
+
+    aiIndex++;
+
+    if(aiIndex >= vocabData.length){
+
+        aiIndex = 0;
+    }
+}
+
+function showLang(lang){
+
+    let th =
+        document.querySelectorAll(".lang-th");
+
+    let en =
+        document.querySelectorAll(".lang-en");
+
+    th.forEach(
+        el => el.style.display = "none"
+    );
+
+    en.forEach(
+        el => el.style.display = "none"
+    );
+
+    if(lang === "th"){
+
+        th.forEach(
+            el => el.style.display = "block"
+        );
+    }
+
+    if(lang === "en"){
+
+        en.forEach(
+            el => el.style.display = "block"
+        );
+    }
+
+    if(lang === "all"){
+
+        th.forEach(
+            el => el.style.display = "block"
+        );
+
+        en.forEach(
+            el => el.style.display = "block"
+        );
+    }
+}
+
+changeAITopic();
+
+</script>
+
+{% endblock content %}

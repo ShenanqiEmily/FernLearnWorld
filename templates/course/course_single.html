@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ course.title }}
+{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-page {
+        padding: 30px;
+        background: #fff7fb;
+        min-height: 100vh;
+    }
+
+    .fern-hero,
+    .fern-card {
+        background: white;
+        border-radius: 30px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, .08);
+    }
+
+    .fern-hero {
+        padding: 40px;
+    }
+
+    .fern-badge {
+        display: inline-block;
+        background: #fdf2f8;
+        color: #ec4899;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .fern-title {
+        font-size: 42px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        color: #0f172a;
+    }
+
+    .fern-summary {
+        color: #64748b;
+        line-height: 1.8;
+    }
+
+    .fern-progress-title {
+        margin-top: 30px;
+        font-weight: 800;
+    }
+
+    .fern-progress {
+        height: 14px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 12px;
+    }
+
+    .fern-progress-fill {
+        width: 20%;
+        height: 100%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+    }
+
+    .fern-grid {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 24px;
+    }
+
+    .fern-card {
+        padding: 30px;
+    }
+
+    .fern-card-title {
+        font-size: 24px;
+        font-weight: 900;
+        margin-bottom: 20px;
+        color: #0f172a;
+    }
+
+    .fern-desc {
+        color: #64748b;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .fern-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .fern-stat {
+        text-align: center;
+        background: #fff7fb;
+        border-radius: 22px;
+        padding: 22px;
+        border: 1px solid #fce7f3;
+    }
+
+    .fern-stat-number {
+        font-size: 36px;
+        font-weight: 900;
+        color: #ec4899;
+    }
+
+    .fern-stat-label {
+        color: #64748b;
+        margin-top: 8px;
+        font-weight: 700;
+    }
+
+    .fern-info-box {
+        margin-top: 22px;
+        padding: 18px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #fff1f8, #eff6ff);
+        border: 1px solid #fbcfe8;
+        color: #334155;
+        font-weight: 700;
+        line-height: 1.8;
+    }
+
+    .fern-btn-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    .fern-btn {
+        padding: 14px 28px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 900;
+        display: inline-block;
+    }
+
+    .fern-btn-primary {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-secondary {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+
+    .fern-preview {
+        text-align: center;
+    }
+
+    .fern-word {
+        font-size: 60px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .fern-reading {
+        font-size: 22px;
+        color: #8b5cf6;
+        margin-top: 8px;
+    }
+
+    .fern-meaning {
+        font-size: 22px;
+        color: #ec4899;
+        font-weight: 800;
+        margin-top: 8px;
+    }
+
+    .fern-mock-icon {
+        font-size: 72px;
+        margin-bottom: 18px;
+    }
+
+    .fern-check-list {
+        list-style: none;
+        padding: 0;
+        margin: 18px 0 0;
+    }
+
+    .fern-check-list li {
+        margin-bottom: 12px;
+        color: #334155;
+    }
+
+    .fern-check-list li::before {
+        content: "✓";
+        color: #ec4899;
+        font-weight: 900;
+        margin-right: 8px;
+    }
+
+    @media(max-width: 991px) {
+        .fern-grid,
+        .fern-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .fern-title {
+            font-size: 30px;
+        }
+    }
+</style>
+
+<div class="fern-page">
+
+    <div class="fern-hero">
+
+        <div class="fern-badge">
+            {{ course.code }}
+        </div>
+
+        <h1 class="fern-title">
+            {{ course.title }}
+        </h1>
+
+        <p class="fern-summary">
+            {{ course.summary }}
+        </p>
+
+        <div class="fern-progress-title">
+            {% if course.code == "JP-N5-025" %}
+                Final Review Progress
+            {% else %}
+                Progress 20%
+            {% endif %}
+        </div>
+
+        <div class="fern-progress">
+            <div class="fern-progress-fill"></div>
+        </div>
+
+    </div>
+
+    <div class="fern-grid">
+
+        <div class="fern-card">
+
+            {% if course.code == "JP-N5-025" %}
+
+                <div class="fern-card-title">
+                    🏆 Final Review & Mock Test
+                </div>
+
+                <p class="fern-desc">
+                    บทนี้เป็นแบบทดสอบสรุป JLPT N5 ทั้งหมด ระบบจะสุ่มข้อสอบจากคำศัพท์และประโยคบทที่ 1-24
+                    เพื่อวัดความพร้อมก่อนจบหลักสูตร N5
+                </p>
+
+                <div class="fern-stats">
+
+                    <div class="fern-stat">
+                        <div class="fern-stat-number">50</div>
+                        <div class="fern-stat-label">Mock Test</div>
+                    </div>
+
+                    <div class="fern-stat">
+                        <div class="fern-stat-number">1-24</div>
+                        <div class="fern-stat-label">Review Lessons</div>
+                    </div>
+
+                    <div class="fern-stat">
+                        <div class="fern-stat-number">70%</div>
+                        <div class="fern-stat-label">Pass Score</div>
+                    </div>
+
+                </div>
+
+                <div class="fern-info-box">
+                    เป้าหมาย: ทบทวนคำศัพท์ ประโยค การอ่าน และความเข้าใจทั้งหมดของ JLPT N5
+                    ถ้าทำคะแนนได้ 70% ขึ้นไป ถือว่าผ่าน Final Review
+                </div>
+
+                <ul class="fern-check-list">
+                    <li>สุ่มคำศัพท์จาก JP-N5-001 ถึง JP-N5-024</li>
+                    <li>ทบทวนคำแปล คำอ่าน และประโยคตัวอย่าง</li>
+                    <li>เหมาะสำหรับเช็กความพร้อมก่อนขึ้น N4</li>
+                </ul>
+
+                <div class="fern-btn-row">
+                    <a href="/th/vocabulary/quiz/JP-N5-025/" class="fern-btn fern-btn-primary">
+                        🏆 เริ่ม Mock Test
+                    </a>
+
+                    <a href="/th/programs/1/detail/" class="fern-btn fern-btn-secondary">
+                        ← กลับ Lesson Map
+                    </a>
+                </div>
+
+            {% else %}
+
+                <div class="fern-card-title">
+                    บทเรียนนี้มีอะไรบ้าง
+                </div>
+
+                <div class="fern-stats">
+
+                    <div class="fern-stat">
+                        <div class="fern-stat-number">
+                            {{ vocab_count }}
+                        </div>
+                        <div class="fern-stat-label">
+                            คำศัพท์
+                        </div>
+                    </div>
+
+                    <div class="fern-stat">
+                        <div class="fern-stat-number">
+                            {{ sentence_count }}
+                        </div>
+                        <div class="fern-stat-label">
+                            ประโยค
+                        </div>
+                    </div>
+
+                    <div class="fern-stat">
+                        <div class="fern-stat-number">
+                            10
+                        </div>
+                        <div class="fern-stat-label">
+                            Quiz
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="fern-info-box">
+                    เรียนตามลำดับ: คำศัพท์ → ประโยค → ฝึกพูด → Quiz
+                    เมื่อทำคะแนน Quiz ผ่าน 70% ระบบจะปลดล็อกบทถัดไป
+                </div>
+
+                <div class="fern-btn-row">
+                    <a href="/th/vocabulary/{{ course.code }}/" class="fern-btn fern-btn-primary">
+                        🚀 เริ่มเรียน
+                    </a>
+
+                    <a href="/th/programs/1/detail/" class="fern-btn fern-btn-secondary">
+                        ← กลับ Lesson Map
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="fern-card">
+
+            {% if course.code == "JP-N5-025" %}
+
+                <div class="fern-preview">
+                    <div class="fern-mock-icon">🏆</div>
+
+                    <div class="fern-card-title">
+                        N5 Final Test
+                    </div>
+
+                    <p class="fern-desc">
+                        ข้อสอบสุ่ม 50 ข้อจากทุกบทที่เรียนมา
+                    </p>
+
+                    <div class="fern-info-box">
+                        แนะนำ: ทบทวนบท 1-24 ก่อนเริ่มทำ Mock Test
+                    </div>
+                </div>
+
+            {% else %}
+
+                <div class="fern-card-title">
+                    ตัวอย่างคำศัพท์
+                </div>
+
+                <div class="fern-preview">
+
+                    {% if sample_vocab %}
+
+                    <div class="fern-word">
+                        {{ sample_vocab.word }}
+                    </div>
+
+                    <div class="fern-reading">
+                        {{ sample_vocab.reading }}
+                    </div>
+
+                    <div class="fern-meaning">
+                        {{ sample_vocab.meaning_th }}
+                    </div>
+
+                    {% else %}
+
+                    <div class="fern-word">
+                        —
+                    </div>
+
+                    <p>
+                        ยังไม่มีข้อมูลคำศัพท์
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

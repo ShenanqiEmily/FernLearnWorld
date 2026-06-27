@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Next Lesson | FernLearnWorld
+{% endblock title %}
+
+{% block content %}
+
+<style>
+.fern-next-page{
+    padding:34px;
+    background:#fff7fb;
+    min-height:100vh;
+}
+
+.fern-card{
+    max-width:980px;
+    margin:0 auto;
+    background:white;
+    border-radius:34px;
+    padding:44px;
+    border:1px solid #fbcfe8;
+    box-shadow:0 18px 45px rgba(236,72,153,.12);
+}
+
+.fern-title{
+    font-size:42px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+.fern-sub{
+    color:#64748b;
+    font-size:18px;
+    margin:14px 0 28px;
+}
+
+.fern-lesson-box{
+    background:linear-gradient(135deg,#fff1f8,#eff6ff);
+    border-radius:28px;
+    padding:32px;
+    margin:26px 0;
+}
+
+.fern-badge{
+    display:inline-block;
+    background:#fdf2f8;
+    color:#ec4899;
+    padding:8px 16px;
+    border-radius:999px;
+    font-weight:900;
+    margin-bottom:16px;
+}
+
+.fern-list{
+    list-style:none;
+    padding:0;
+    margin:22px 0;
+}
+
+.fern-list li{
+    padding:14px;
+    background:white;
+    border-radius:16px;
+    margin-bottom:12px;
+    border:1px solid #fbcfe8;
+}
+
+.fern-btn-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.fern-btn,
+.fern-btn-light{
+    padding:14px 24px;
+    border-radius:16px;
+    font-weight:900;
+    text-decoration:none;
+}
+
+.fern-btn{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white !important;
+}
+
+.fern-btn-light{
+    background:#eff6ff;
+    color:#2563eb !important;
+    border:1px solid #bfdbfe;
+}
+</style>
+
+<div class="fern-next-page">
+
+    <div class="fern-card">
+
+        <div class="fern-badge">Next Lesson</div>
+
+        <h1 class="fern-title">
+            Lesson 2: Numbers & Time
+        </h1>
+
+        <p class="fern-sub">
+            บทต่อไปจะเรียนตัวเลข เวลา และประโยคพื้นฐานที่ใช้ในชีวิตประจำวัน
+        </p>
+
+        <div class="fern-lesson-box">
+            <h3>ในบทนี้คุณจะได้เรียน</h3>
+
+            <ul class="fern-list">
+                <li>🔢 ตัวเลข 1–100 ภาษาญี่ปุ่น</li>
+                <li>⏰ การบอกเวลา เช่น いま なんじですか</li>
+                <li>💬 ประโยคถามเวลาและตอบเวลา</li>
+                <li>🎙️ ฝึกพูดตามพร้อม AI ประเมินจำลอง</li>
+            </ul>
+        </div>
+
+        <div class="fern-btn-row">
+            <a href="/th/vocabulary/" class="fern-btn">
+                เริ่ม Lesson 2
+            </a>
+
+            <a href="/th/programs/" class="fern-btn-light">
+                กลับหน้า Courses
+            </a>
+
+            <a href="/th/dashboard/" class="fern-btn-light">
+                กลับ Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}
