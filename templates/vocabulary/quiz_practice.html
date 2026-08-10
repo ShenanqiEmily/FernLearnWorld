@@ -8,236 +8,236 @@ Quiz Practice | FernLearnWorld
 {% block content %}
 
 <script>
-let quizData = [
-{% for vocab in vocabularies %}
-{
-    word: "{{ vocab.word|escapejs }}",
-    reading: "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
-    correct: "{{ vocab.meaning_th|escapejs }}"
-},
-{% endfor %}
+    let quizData = [
+        {% for vocab in vocabularies %}
+    {
+        word: "{{ vocab.word|escapejs }}",
+            reading: "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
+                correct: "{{ vocab.meaning_th|escapejs }}"
+    },
+    {% endfor %}
 ];
 
-let allMeanings = [
-{% for vocab in vocabularies %}
-"{{ vocab.meaning_th|escapejs }}",
-{% endfor %}
+    let allMeanings = [
+        {% for vocab in vocabularies %}
+    "{{ vocab.meaning_th|escapejs }}",
+        {% endfor %}
 ];
 
-const completeUrl =
-"{% if course_code %}/th/vocabulary/complete/{{ course_code }}/{% else %}/th/vocabulary/complete/{% endif %}";
+    const completeUrl =
+        "{% if course_code %}/th/vocabulary/complete/{{ course_code }}/{% else %}/th/vocabulary/complete/{% endif %}";
 </script>
 
 <script src="{% static 'js/pages/quiz.js' %}"></script>
 
 <style>
-.fern-quiz-page {
-    padding: 24px 34px;
-    background: #fff7fb;
-}
+    .fern-quiz-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
 
-.fern-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 22px;
-}
-
-.fern-title {
-    font-size: 34px;
-    font-weight: 900;
-    color: #0f172a;
-}
-
-.fern-sub {
-    color: #64748b;
-}
-
-.fern-progress-wrap {
-    width: 260px;
-}
-
-.fern-progress {
-    width: 100%;
-    height: 12px;
-    background: #e5e7eb;
-    border-radius: 999px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.fern-progress span {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
-    transition: .3s;
-}
-
-.fern-quiz-card {
-    max-width: 1100px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 30px;
-    padding: 34px;
-    border: 1px solid #fbcfe8;
-    box-shadow: 0 14px 36px rgba(236,72,153,.08);
-}
-
-.fern-question {
-    text-align: center;
-    margin-bottom: 28px;
-}
-
-.fern-label {
-    display: inline-block;
-    padding: 8px 16px;
-    border-radius: 999px;
-    background: #fdf2f8;
-    color: #ec4899;
-    font-weight: 900;
-    margin-bottom: 18px;
-}
-
-.fern-word {
-    font-size: clamp(44px, 6vw, 78px);
-    font-weight: 900;
-    color: #0f172a;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow-x: auto;
-    padding-bottom: 8px;
-}
-
-.fern-reading {
-    font-size: 24px;
-    color: #8b5cf6;
-    margin-top: 12px;
-    font-weight: 800;
-}
-
-.fern-score-box {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin: 22px 0;
-}
-
-.fern-score-item {
-    min-width: 150px;
-    padding: 16px 20px;
-    border-radius: 20px;
-    background: #fff7fb;
-    border: 1px solid #fbcfe8;
-    text-align: center;
-}
-
-.fern-score-num {
-    font-size: 28px;
-    font-weight: 900;
-    color: #ec4899;
-}
-
-.fern-score-label {
-    color: #64748b;
-    font-weight: 700;
-}
-
-.fern-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-top: 22px;
-}
-
-.fern-option {
-    border: none;
-    border-radius: 20px;
-    padding: 20px;
-    background: #f8fafc;
-    border: 2px solid transparent;
-    text-align: left;
-    transition: .2s;
-    font-size: 20px;
-    font-weight: 800;
-}
-
-.fern-option:hover {
-    border-color: #c4b5fd;
-    background: #faf5ff;
-}
-
-.fern-option.correct {
-    background: #ecfdf5;
-    border-color: #10b981;
-    color: #047857;
-}
-
-.fern-option.wrong {
-    background: #fef2f2;
-    border-color: #ef4444;
-    color: #b91c1c;
-}
-
-.fern-result {
-    margin-top: 22px;
-    border-radius: 20px;
-    padding: 18px;
-    display: none;
-    font-weight: 900;
-    text-align: center;
-}
-
-.fern-result.correct {
-    background: #ecfdf5;
-    color: #047857;
-}
-
-.fern-result.wrong {
-    background: #fef2f2;
-    color: #b91c1c;
-}
-
-.fern-btn-row {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 26px;
-}
-
-.fern-btn,
-.fern-btn-light {
-    padding: 14px 24px;
-    border-radius: 16px;
-    text-decoration: none;
-    font-weight: 900;
-    border: none;
-}
-
-.fern-btn {
-    background: linear-gradient(135deg, #ec4899, #8b5cf6);
-    color: white !important;
-}
-
-.fern-btn-light {
-    background: #eff6ff;
-    color: #2563eb !important;
-    border: 1px solid #bfdbfe;
-}
-
-@media(max-width: 900px) {
     .fern-top {
-        flex-direction: column;
-        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 22px;
+    }
+
+    .fern-title {
+        font-size: 34px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .fern-sub {
+        color: #64748b;
+    }
+
+    .fern-progress-wrap {
+        width: 260px;
+    }
+
+    .fern-progress {
+        width: 100%;
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .fern-progress span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        transition: .3s;
+    }
+
+    .fern-quiz-card {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 30px;
+        padding: 34px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, .08);
+    }
+
+    .fern-question {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .fern-label {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #fdf2f8;
+        color: #ec4899;
+        font-weight: 900;
+        margin-bottom: 18px;
+    }
+
+    .fern-word {
+        font-size: clamp(44px, 6vw, 78px);
+        font-weight: 900;
+        color: #0f172a;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    .fern-reading {
+        font-size: 24px;
+        color: #8b5cf6;
+        margin-top: 12px;
+        font-weight: 800;
+    }
+
+    .fern-score-box {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 22px 0;
+    }
+
+    .fern-score-item {
+        min-width: 150px;
+        padding: 16px 20px;
+        border-radius: 20px;
+        background: #fff7fb;
+        border: 1px solid #fbcfe8;
+        text-align: center;
+    }
+
+    .fern-score-num {
+        font-size: 28px;
+        font-weight: 900;
+        color: #ec4899;
+    }
+
+    .fern-score-label {
+        color: #64748b;
+        font-weight: 700;
     }
 
     .fern-options {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 22px;
     }
-}
+
+    .fern-option {
+        border: none;
+        border-radius: 20px;
+        padding: 20px;
+        background: #f8fafc;
+        border: 2px solid transparent;
+        text-align: left;
+        transition: .2s;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .fern-option:hover {
+        border-color: #c4b5fd;
+        background: #faf5ff;
+    }
+
+    .fern-option.correct {
+        background: #ecfdf5;
+        border-color: #10b981;
+        color: #047857;
+    }
+
+    .fern-option.wrong {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #b91c1c;
+    }
+
+    .fern-result {
+        margin-top: 22px;
+        border-radius: 20px;
+        padding: 18px;
+        display: none;
+        font-weight: 900;
+        text-align: center;
+    }
+
+    .fern-result.correct {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .fern-result.wrong {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .fern-btn-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 26px;
+    }
+
+    .fern-btn,
+    .fern-btn-light {
+        padding: 14px 24px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 900;
+        border: none;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+
+    @media(max-width: 900px) {
+        .fern-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .fern-options {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 
@@ -303,15 +303,15 @@ const completeUrl =
                 ← ข้อก่อนหน้า
             </button>
 
-            <button class="fern-btn-light" onclick="nextQuiz()">
+            <button class="fern-btn" id="nextQuizBtn" onclick="nextQuiz()">
                 ข้อถัดไป →
             </button>
 
-    
-
-            <a id="completeLessonBtn" href="#" class="fern-btn">
-                จบบทเรียน →
+            <a id="completeLessonBtn" href="#" data-complete-url="/th/vocabulary/complete/{{ course_code }}/"
+                class="fern-btn" style="display: none;">
+                ส่งคะแนน →
             </a>
+        
 
         </div>
 

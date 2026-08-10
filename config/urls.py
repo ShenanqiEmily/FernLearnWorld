@@ -29,6 +29,8 @@ urlpatterns += i18n_patterns(
     path("accounts/api/", include("accounts.api.urls", namespace="accounts-api")),
     path("classroom/", include("virtual_classroom.urls", namespace="virtual_classroom")),
     path("vocabulary/", include("vocabulary.urls")),
+    path("flashcards/", include("flashcards.urls")),
+    path("practice/", include("practice.urls")),
 )
 
 

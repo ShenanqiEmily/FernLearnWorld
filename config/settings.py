@@ -31,6 +31,39 @@ ALLOWED_HOSTS = config(
     default="localhost,127.0.0.1"
 ).split(",")
 
+# Render (and most PaaS) auto-injects the service's public hostname in this
+# var — pick it up automatically so you don't have to hardcode/duplicate it
+# in ALLOWED_HOSTS by hand.
+RENDER_EXTERNAL_HOSTNAME = config("RENDER_EXTERNAL_HOSTNAME", default="")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in config("CSRF_TRUSTED_ORIGINS", default="").split(",") if origin
+]
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
+# Production hardening — only takes effect when DEBUG=False, so local dev
+# (DEBUG=True) behaves exactly as it did before. Django's own security
+# checklist (manage.py check --deploy) recommends all of these.
+if not DEBUG:
+    # Render (like Heroku/most PaaS) terminates TLS at its edge and forwards
+    # plain HTTP internally, marking the original scheme in this header.
+    # Without telling Django to trust it, SECURE_SSL_REDIRECT below causes
+    # an infinite redirect loop (Django never sees the request as "secure").
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=2592000, cast=int)  # 30 days
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = "DENY"
+
 # change the default user models to our custom model
 AUTH_USER_MODEL = "accounts.User"
 
@@ -67,6 +100,8 @@ PROJECT_APPS = [
     "payments.apps.PaymentsConfig",
     "virtual_classroom.apps.VirtualClassroomConfig",
     "vocabulary.apps.VocabularyConfig",
+    "flashcards.apps.FlashcardsConfig",
+    "practice.apps.PracticeConfig",
       # Add virtual classroom app
 ]
 
@@ -115,12 +150,24 @@ ASGI_APPLICATION = "config.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+# Most PaaS hosts (Heroku, Render, Railway, ...) inject a DATABASE_URL env
+# var pointing at a managed Postgres instance. If it's set, use it; otherwise
+# fall back to local SQLite so `local.txt`-only dev environments (no
+# dj-database-url/psycopg2 installed) keep working unchanged.
+DATABASE_URL = config("DATABASE_URL", default="")
+if DATABASE_URL:
+    import dj_database_url
+
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
 
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -241,15 +288,33 @@ STATICFILES_FINDERS = [
 ]
 
 # Media files config
+# Local filesystem by default (fine for dev, but most hosts wipe local disk
+# on every deploy — uploaded profile pictures etc. would vanish). If an S3
+# bucket is configured via env vars, switch to it instead. django-storages
+# and boto3 only need to be installed where this is actually used
+# (requirements/production.txt), since the import is gated behind the env
+# check below.
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
+if AWS_STORAGE_BUCKET_NAME:
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
+    AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="us-east-1")
+    AWS_S3_CUSTOM_DOMAIN = config(
+        "AWS_S3_CUSTOM_DOMAIN",
+        default=f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com",
+    )
+    AWS_DEFAULT_ACL = None
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_LOCATION = "media"
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
 
 # -----------------------------------
 # E-mail configuration
 
-# EMAIL_BACKEND = config(
-#     "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
-# )
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
@@ -262,7 +327,16 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_FROM_ADDRESS = config("EMAIL_FROM_ADDRESS", default="test@example.com")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="test@example.com")
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Console backend in dev so emails just print to the terminal. In production
+# (DEBUG=False) this was previously still hardcoded to console — meaning
+# password-reset etc. emails silently never sent. Now uses real SMTP unless
+# overridden via EMAIL_BACKEND.
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = config(
+        "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+    )
 
 # crispy config
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -285,6 +359,10 @@ REST_FRAMEWORK = {
 # Strip payment config
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
 STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY", default="")
+
+# AI Tutor (Anthropic Claude API)
+ANTHROPIC_API_KEY = config("ANTHROPIC_API_KEY", default="")
+AI_TUTOR_MODEL = config("AI_TUTOR_MODEL", default="claude-haiku-4-5")
 
 # LOGGING
 # ------------------------------------------------------------------------------

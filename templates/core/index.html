@@ -1,9 +1,60 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblock title %}
+
+{% block sidebar %}{% endblock %}
+{% block topbar %}{% endblock %}
+
 {% block content %}
 
 <style>
+.fern-public-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 34px;
+    background: white;
+    border-bottom: 1px solid #fbcfe8;
+}
+
+.fern-public-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.fern-public-logo img {
+    height: 36px;
+}
+
+.fern-public-nav-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.fern-nav-btn,
+.fern-nav-btn-light {
+    padding: 10px 20px;
+    border-radius: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.fern-nav-btn {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white !important;
+}
+
+.fern-nav-btn-light {
+    color: #334155 !important;
+}
+
 .fern-home {
     padding: 34px;
     min-height: 100vh;
@@ -127,6 +178,17 @@
 }
 </style>
 
+<div class="fern-public-nav">
+    <a href="{% url 'home' %}" class="fern-public-logo">
+        <img src="{% static 'img/fernLogo.png' %}" alt="FernLearnWorld">
+    </a>
+
+    <div class="fern-public-nav-actions">
+        <a href="{% url 'login' %}" class="fern-nav-btn-light">เข้าสู่ระบบ</a>
+        <a href="{% url 'register' %}" class="fern-nav-btn">สมัครสมาชิกฟรี</a>
+    </div>
+</div>
+
 <div class="fern-home">
 
     <div class="fern-home-hero">
@@ -143,8 +205,8 @@
             </p>
 
             <div class="fern-home-actions">
-                <a href="/th/programs/" class="fern-btn">เริ่มเรียนเลย</a>
-                <a href="#" class="fern-btn-light">คุยกับ AI Tutor</a>
+                <a href="{% url 'register' %}" class="fern-btn">เริ่มเรียนฟรี</a>
+                <a href="{% url 'programs' %}" class="fern-btn-light">ดูคอร์สเรียนทั้งหมด</a>
             </div>
         </div>
 

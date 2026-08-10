@@ -249,7 +249,8 @@
 
     <div class="fern-header">
         <div>
-            <h1 class="fern-title">ฝึกประโยคตัวอย่าง</h1>
+            <h1 class="fern-title">
+            </h1>
             {% if course %}
             <p>{{ course.title }}</p>
             {% else %}
@@ -358,22 +359,33 @@
 
 </div>
 <script>
+    window.SENTENCE_PAGE = {
+        courseCode: "{{ course_code|default:''|escapejs }}",
+        courseLanguage: "{{ course.language|default:''|escapejs }}"
+    };
+
     let sentenceData = [
-    {% for vocab in vocabularies %}
-{
-    word: "{{ vocab.word|escapejs }}",
-        reading: "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
-            meaning_th: "{{ vocab.meaning_th|escapejs }}",
-                meaning_en: "{{ vocab.meaning_en|escapejs }}",
-                    sentence: "{{ vocab.example_sentence|default:vocab.word|escapejs }}",
-                        sentence_reading: "{{ vocab.example_reading|default:vocab.reading|escapejs }}",
-                            sentence_th: "{{ vocab.example_translation_th|default:vocab.meaning_th|escapejs }}",
-                                sentence_en: "{{ vocab.example_translation_en|default:vocab.meaning_en|escapejs }}"
-},
-{% endfor %}
+        {% for vocab in vocabularies %}
+    {
+        word: "{{ vocab.word|escapejs }}",
+            reading: "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
+                pinyin: "{{ vocab.pinyin|escapejs }}",
+                    speech_aliases: "{{ vocab.speech_aliases|default:''|escapejs }}",
+                        meaning_th: "{{ vocab.meaning_th|escapejs }}",
+                            meaning_en: "{{ vocab.meaning_en|escapejs }}",
+                                language: "{{ vocab.language|default:''|escapejs }}",
+                                    level: "{{ vocab.level|default:''|escapejs }}",
+                                        course_code: "{{ course_code|default:''|escapejs }}",
+                                            sentence: "{{ vocab.example_sentence|default:vocab.word|escapejs }}",
+                                                sentence_reading: "{{ vocab.example_reading|default:vocab.reading|escapejs }}",
+                                                    sentence_th: "{{ vocab.example_translation_th|default:vocab.meaning_th|escapejs }}",
+                                                        sentence_en: "{{ vocab.example_translation_en|default:vocab.meaning_en|escapejs }}"
+    },
+    {% endfor %}
 ];
 </script>
-<script src="{% static 'js/pages/sentence.js' %}"></script>
+<script src="{% static 'js/utils/speech-lang.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/pages/sentence.js' %}?v={% now 'U' %}"></script>
 
 <script>
     updateSentence();

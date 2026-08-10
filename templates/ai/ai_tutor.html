@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-AI Tutor
+AI Tutor | FernLearnWorld
 {% endblock title %}
 
 {% block content %}
@@ -15,55 +15,133 @@ AI Tutor
     min-height:100vh;
 }
 
-.fern-ai-top{
+.at-hero{
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    margin-bottom:30px;
-    gap:20px;
-}
-
-.fern-ai-title{
-    font-size:38px;
-    font-weight:900;
-    color:#111827;
-}
-
-.fern-ai-sub{
-    color:#6b7280;
-}
-
-.fern-ai-controls{
-    display:flex;
-    gap:12px;
+    gap:26px;
     flex-wrap:wrap;
-}
-
-.fern-mini-btn{
-    border:none;
-    background:#f3f4f6;
-    padding:12px 18px;
-    border-radius:14px;
-    font-weight:700;
-}
-
-.fern-ai-layout{
-    display:grid;
-    grid-template-columns:1fr 340px;
-    gap:24px;
-}
-
-.fern-chat-box{
     background:white;
     border-radius:30px;
-    padding:30px;
+    padding:32px;
+    margin-bottom:30px;
     box-shadow:0 10px 30px rgba(236,72,153,0.08);
     border:1px solid #fbcfe8;
 }
 
+.at-avatar{
+    width:84px;
+    height:84px;
+    border-radius:24px;
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    display:grid;
+    place-items:center;
+    font-size:42px;
+    flex-shrink:0;
+}
+
+.at-hero-title{
+    font-size:28px;
+    font-weight:900;
+    color:#111827;
+    margin-bottom:6px;
+}
+
+.at-hero-sub{
+    color:#6b7280;
+    margin-bottom:16px;
+}
+
+.at-start-btn{
+    border:none;
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white;
+    font-weight:800;
+    padding:12px 24px;
+    border-radius:14px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+}
+
+.at-layout{
+    display:grid;
+    grid-template-columns:260px minmax(0,1fr);
+    gap:24px;
+    align-items:start;
+}
+
+.at-mode-list{
+    background:white;
+    border-radius:26px;
+    padding:16px;
+    box-shadow:0 10px 30px rgba(236,72,153,0.08);
+    border:1px solid #fbcfe8;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.at-mode-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    border:none;
+    background:transparent;
+    text-align:left;
+    padding:14px 16px;
+    border-radius:16px;
+    cursor:pointer;
+    font-weight:700;
+    color:#374151;
+}
+
+.at-mode-item:hover{
+    background:#fdf2f8;
+}
+
+.at-mode-item.active{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white;
+}
+
+.at-mode-icon{
+    font-size:20px;
+}
+
+.at-mode-desc{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:#9ca3af;
+    margin-top:2px;
+}
+
+.at-mode-item.active .at-mode-desc{
+    color:rgba(255,255,255,0.85);
+}
+
+.at-chat-panel{
+    background:white;
+    border-radius:30px;
+    padding:26px;
+    box-shadow:0 10px 30px rgba(236,72,153,0.08);
+    border:1px solid #fbcfe8;
+    display:flex;
+    flex-direction:column;
+    min-height:560px;
+}
+
+.at-messages{
+    flex:1;
+    overflow-y:auto;
+    max-height:520px;
+    margin-bottom:18px;
+    padding-right:6px;
+}
+
 .fern-message{
     display:flex;
-    margin-bottom:20px;
+    margin-bottom:16px;
 }
 
 .fern-message.ai{
@@ -76,290 +154,160 @@ AI Tutor
 
 .fern-bubble{
     max-width:75%;
-    padding:20px;
-    border-radius:24px;
+    padding:16px 18px;
+    border-radius:22px;
     background:#faf5ff;
+    white-space:pre-wrap;
+    line-height:1.7;
 }
 
 .fern-message.user .fern-bubble{
-    background:linear-gradient(
-        135deg,
-        #ec4899,
-        #8b5cf6
-    );
-
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
     color:white;
 }
 
-.fern-japanese{
-    font-size:32px;
-    font-weight:900;
-    color:#111827;
-    margin-bottom:12px;
-}
-
-.fern-message.user .fern-japanese{
-    color:white;
-}
-
-.fern-reading{
-    color:#8b5cf6;
-    font-size:20px;
-    margin-bottom:10px;
-}
-
-.fern-message.user .fern-reading{
-    color:#fbcfe8;
-}
-
-.fern-translate{
-    line-height:1.9;
-}
-
-.fern-chat-actions{
-    margin-top:30px;
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-}
-
-.fern-main-btn{
+.at-sound-btn{
+    display:inline-block;
+    margin-top:10px;
     border:none;
-    background:linear-gradient(
-        135deg,
-        #ec4899,
-        #8b5cf6
-    );
-
-    color:white;
-    padding:14px 24px;
-    border-radius:16px;
-    font-weight:800;
+    background:#eff6ff;
+    color:#2563eb;
+    border:1px solid #bfdbfe;
+    padding:6px 12px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
 }
 
-.fern-side-card{
-    background:white;
-    border-radius:30px;
-    padding:26px;
-    box-shadow:0 10px 30px rgba(236,72,153,0.08);
+.at-error-bubble{
+    background:#fff1f2;
+    color:#be123c;
+    border:1px solid #fecdd3;
+}
+
+.at-suggested-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:14px;
+}
+
+.at-chip{
     border:1px solid #fbcfe8;
+    background:#fdf2f8;
+    color:#db2777;
+    padding:8px 14px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
 }
 
-.fern-side-title{
-    font-size:22px;
-    font-weight:900;
-    margin-bottom:20px;
+.at-chip:hover{
+    background:#fce7f3;
 }
 
-.fern-vocab-list{
-    list-style:none;
-    padding:0;
-    margin:0;
+.at-composer{
+    display:flex;
+    gap:10px;
+    align-items:flex-end;
 }
 
-.fern-vocab-list li{
-    padding:14px;
+.at-textarea{
+    flex:1;
+    border:1px solid #fbcfe8;
+    border-radius:18px;
+    padding:14px 16px;
+    resize:none;
+    font-size:15px;
+    min-height:52px;
+    max-height:140px;
+}
+
+.at-mic-btn,
+.at-send-btn{
+    border:none;
     border-radius:16px;
-    background:#faf5ff;
-    margin-bottom:12px;
+    width:52px;
+    height:52px;
+    font-size:20px;
+    cursor:pointer;
+    flex-shrink:0;
 }
 
-.fern-vocab-list span{
-    display:block;
-    font-weight:800;
+.at-mic-btn{
+    background:#eff6ff;
+    color:#2563eb;
+    border:1px solid #bfdbfe;
 }
 
-.fern-vocab-list small{
-    color:#6b7280;
+.at-mic-btn.recording{
+    background:#fee2e2;
+    color:#dc2626;
+    border-color:#fecaca;
 }
 
-@media(max-width:992px){
+.at-send-btn{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white;
+}
 
-    .fern-ai-layout{
+.at-typing{
+    color:#9ca3af;
+    font-style:italic;
+    padding:0 4px 10px;
+}
+
+@media(max-width:900px){
+    .at-layout{
         grid-template-columns:1fr;
     }
 
+    .at-mode-list{
+        flex-direction:row;
+        overflow-x:auto;
+    }
+
+    .at-mode-item{
+        flex-shrink:0;
+    }
 }
 
 </style>
 
 <div class="fern-ai-page">
 
-    <div class="fern-ai-top">
-
+    <div class="at-hero">
+        <div class="at-avatar">🤖</div>
         <div>
-            <div class="fern-ai-title">
-                AI Tutor
-            </div>
-
-            <div class="fern-ai-sub">
-                ฝึกสนทนา เรียนรู้คำศัพท์ และตัวอย่างประโยค
-            </div>
+            <div class="at-hero-title">สวัสดี! ผมคือ AI Tutor ของ FernLearnWorld</div>
+            <div class="at-hero-sub">เลือกโหมดด้านซ้าย แล้วเริ่มฝึกภาษาญี่ปุ่น/จีนกับผมได้เลย</div>
+            <a href="#atChatPanel" class="at-start-btn">Start Learning →</a>
         </div>
-
-        <div class="fern-ai-controls">
-
-            <button
-                class="fern-mini-btn"
-                onclick="showLang('th')"
-            >
-                TH
-            </button>
-
-            <button
-                class="fern-mini-btn"
-                onclick="showLang('en')"
-            >
-                EN
-            </button>
-
-            <button
-                class="fern-mini-btn"
-                onclick="showLang('all')"
-            >
-                ALL
-            </button>
-
-            <button
-                class="fern-mini-btn"
-                onclick="changeAITopic()"
-            >
-                🔄 เปลี่ยนคำศัพท์
-            </button>
-
-        </div>
-
     </div>
 
-    <div class="fern-ai-layout">
+    <div class="at-layout">
 
-        <div class="fern-chat-box">
+        <div class="at-mode-list" id="atModeList"></div>
 
-            <div class="fern-message ai">
+        <div class="at-chat-panel" id="atChatPanel">
 
-                <div class="fern-bubble">
+            <div class="at-messages" id="atMessages"></div>
 
-                    <div
-                        class="fern-japanese"
-                        id="aiQuestionJp"
-                    >
-                        -
-                    </div>
+            <div class="at-suggested-row" id="atSuggestedRow"></div>
 
-                    <div
-                        class="fern-reading"
-                        id="aiQuestionReading"
-                    >
-                        -
-                    </div>
+            <div class="at-composer">
+                <textarea
+                    class="at-textarea"
+                    id="atTextarea"
+                    placeholder="พิมพ์ข้อความของคุณ..."
+                    rows="1"
+                ></textarea>
 
-                    <div class="fern-translate">
-
-                        <div
-                            class="lang-th"
-                            id="aiAnswerTh"
-                        >
-                            -
-                        </div>
-
-                        <div
-                            class="lang-en"
-                            id="aiAnswerEn"
-                        >
-                            -
-                        </div>
-
-                    </div>
-
-                </div>
-
+                <button class="at-mic-btn" id="atMicBtn" title="พูดใส่ไมค์">🎙️</button>
+                <button class="at-send-btn" id="atSendBtn" title="ส่ง">➤</button>
             </div>
-
-            <div class="fern-message ai">
-
-                <div class="fern-bubble">
-
-                    <div
-                        class="fern-japanese"
-                        id="aiExampleJp"
-                    >
-                        -
-                    </div>
-
-                    <div
-                        class="fern-reading"
-                        id="aiExampleReading"
-                    >
-                        -
-                    </div>
-
-                    <div class="fern-translate">
-
-                        <div
-                            class="lang-th"
-                            id="aiExampleTh"
-                        >
-                            -
-                        </div>
-
-                        <div
-                            class="lang-en"
-                            id="aiExampleEn"
-                        >
-                            -
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="fern-chat-actions">
-
-                <button
-                    class="fern-main-btn"
-                    onclick="changeAITopic()"
-                >
-                    คำศัพท์ถัดไป
-                </button>
-
-                <a
-                    href="/th/vocabulary/"
-                    class="fern-main-btn"
-                >
-                    ไปหน้า Vocabulary
-                </a>
-
-            </div>
-
-        </div>
-
-        <div class="fern-side-card">
-
-            <div class="fern-side-title">
-                คำศัพท์ในระบบ
-            </div>
-
-            <ul class="fern-vocab-list">
-
-                {% for vocab in vocabularies %}
-
-                <li>
-
-                    <span>
-                        {{ vocab.word }}
-                    </span>
-
-                    <small>
-                        {{ vocab.meaning_th }}
-                    </small>
-
-                </li>
-
-                {% endfor %}
-
-            </ul>
 
         </div>
 
@@ -367,154 +315,13 @@ AI Tutor
 
 </div>
 
+{{ ai_tutor_modes|json_script:"ai-tutor-modes" }}
+{{ ai_tutor_mode_order|json_script:"ai-tutor-mode-order" }}
+
 <script>
-
-let vocabData = [
-
-    {% for vocab in vocabularies %}
-
-    {
-        word:
-            "{{ vocab.word|escapejs }}",
-
-        reading:
-            "{{ vocab.reading|default:vocab.pinyin|escapejs }}",
-
-        meaning_th:
-            "{{ vocab.meaning_th|escapejs }}",
-
-        meaning_en:
-            "{{ vocab.meaning_en|escapejs }}",
-
-        example_sentence:
-            "{{ vocab.example_sentence|escapejs }}",
-
-        example_reading:
-            "{{ vocab.example_reading|escapejs }}",
-
-        example_th:
-            "{{ vocab.example_translation_th|escapejs }}",
-
-        example_en:
-            "{{ vocab.example_translation_en|escapejs }}"
-    },
-
-    {% endfor %}
-
-];
-
-let aiIndex = 0;
-
-function changeAITopic(){
-
-    if(vocabData.length === 0) return;
-
-    let vocab = vocabData[aiIndex];
-
-    document.getElementById(
-        "aiQuestionJp"
-    ).innerText =
-        "คำว่า「" + vocab.word + "」ใช้ยังไง?";
-
-    document.getElementById(
-        "aiQuestionReading"
-    ).innerText =
-        vocab.reading;
-
-    document.getElementById(
-        "aiAnswerTh"
-    ).innerText =
-        "TH: คำนี้แปลว่า " +
-        vocab.meaning_th;
-
-    document.getElementById(
-        "aiAnswerEn"
-    ).innerText =
-        "EN: It means " +
-        vocab.meaning_en;
-
-    document.getElementById(
-        "aiExampleJp"
-    ).innerText =
-        vocab.example_sentence ||
-        vocab.word;
-
-    document.getElementById(
-        "aiExampleReading"
-    ).innerText =
-        vocab.example_reading ||
-        vocab.reading;
-
-    document.getElementById(
-        "aiExampleTh"
-    ).innerText =
-        "TH: " +
-        (
-            vocab.example_th ||
-            vocab.meaning_th
-        );
-
-    document.getElementById(
-        "aiExampleEn"
-    ).innerText =
-        "EN: " +
-        (
-            vocab.example_en ||
-            vocab.meaning_en
-        );
-
-    aiIndex++;
-
-    if(aiIndex >= vocabData.length){
-
-        aiIndex = 0;
-    }
-}
-
-function showLang(lang){
-
-    let th =
-        document.querySelectorAll(".lang-th");
-
-    let en =
-        document.querySelectorAll(".lang-en");
-
-    th.forEach(
-        el => el.style.display = "none"
-    );
-
-    en.forEach(
-        el => el.style.display = "none"
-    );
-
-    if(lang === "th"){
-
-        th.forEach(
-            el => el.style.display = "block"
-        );
-    }
-
-    if(lang === "en"){
-
-        en.forEach(
-            el => el.style.display = "block"
-        );
-    }
-
-    if(lang === "all"){
-
-        th.forEach(
-            el => el.style.display = "block"
-        );
-
-        en.forEach(
-            el => el.style.display = "block"
-        );
-    }
-}
-
-changeAITopic();
-
+    window.AI_TUTOR_CHAT_URL = "{% url 'ai_tutor_chat' %}";
 </script>
+
+<script src="{% static 'js/pages/ai_tutor.js' %}"></script>
 
 {% endblock content %}

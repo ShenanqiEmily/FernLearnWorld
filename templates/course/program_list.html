@@ -70,6 +70,11 @@
     margin-bottom: 14px;
 }
 
+.fern-badge-blue {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
 .fern-course-title {
     font-size: 30px;
     font-weight: 900;
@@ -86,7 +91,7 @@
 .fern-feature-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 24px 0;
+    margin: 0 0 22px 0;
 }
 
 .fern-feature-list li {
@@ -99,6 +104,86 @@
     color: #ec4899;
     font-weight: 900;
     margin-right: 8px;
+}
+
+.fern-level-box {
+    background: #fff7fb;
+    border: 1px solid #fce7f3;
+    border-radius: 22px;
+    padding: 16px;
+    margin: 0 0 22px 0;
+}
+
+.fern-level-box-blue {
+    background: #f8fbff;
+    border-color: #dbeafe;
+}
+
+.fern-level-title {
+    font-size: 15px;
+    color: #475569;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.fern-level-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.fern-level-btn {
+    min-height: 64px;
+    border-radius: 16px;
+    border: 1px solid #fbcfe8;
+    background: #ffffff;
+    color: #be185d !important;
+    text-decoration: none;
+    font-weight: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.fern-level-btn span {
+    font-size: 18px;
+}
+
+.fern-level-btn small {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+.fern-level-btn:hover {
+    background: #fdf2f8;
+    transform: translateY(-2px);
+}
+
+.fern-level-btn.active {
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    border-color: transparent;
+    color: #ffffff !important;
+}
+
+.fern-level-btn.active small {
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.fern-level-btn-blue {
+    border-color: #bfdbfe;
+    color: #2563eb !important;
+}
+
+.fern-level-btn-blue:hover {
+    background: #eff6ff;
+}
+
+.fern-level-btn-blue.active {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    color: #ffffff !important;
 }
 
 .fern-btn {
@@ -122,9 +207,29 @@
     border: 1px solid #bfdbfe;
 }
 
+.fern-small-note {
+    margin-top: 18px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
 @media(max-width: 900px) {
     .fern-course-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 520px) {
+    .fern-courses-page {
+        padding: 24px;
+    }
+
+    .fern-level-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fern-page-title {
+        font-size: 28px;
     }
 }
 </style>
@@ -143,7 +248,7 @@
                 ⛩️
             </div>
 
-            <div class="fern-badge">JLPT N5 - N2</div>
+            <div class="fern-badge">JLPT N5 - N1</div>
 
             <div class="fern-course-title">ภาษาญี่ปุ่น</div>
 
@@ -152,14 +257,48 @@
             </p>
 
             <ul class="fern-feature-list">
-                <li>เหมาะสำหรับ JLPT N5, N4, N3, N2</li>
+                <li>เหมาะสำหรับ JLPT N5, N4, N3, N2，N1</li>
                 <li>มีคำศัพท์และประโยคตัวอย่าง</li>
                 <li>ฝึกพูดตามและใช้ AI ช่วยตรวจ</li>
             </ul>
 
-            <a href="/th/programs/1/detail/" class="fern-btn">
-                เริ่มเรียนภาษาญี่ปุ่น
-            </a>
+            <div class="fern-level-box">
+                <div class="fern-level-title">เลือกระดับภาษาญี่ปุ่น</div>
+
+                <div class="fern-level-grid">
+                    <a href="/th/programs/1/detail/?level=N5" class="fern-level-btn active">
+                        <span>N5</span>
+                        <small>เริ่มต้น</small>
+                    </a>
+
+                    <a href="/th/programs/1/detail/?level=N4" class="fern-level-btn">
+                        <span>N4</span>
+                        <small>ต่อยอด</small>
+                    </a>
+
+                    <a href="/th/programs/1/detail/?level=N3" class="fern-level-btn">
+                        <span>N3</span>
+                        <small>ระดับกลาง</small>
+                    </a>
+
+                    <a href="/th/programs/1/detail/?level=N2" class="fern-level-btn">
+                        <span>N2</span>
+                        <small>ใช้งานจริง</small>
+                    </a>
+                    <a href="/th/programs/1/detail/?level=N1" class="fern-level-btn">
+                        <span>N1</span>
+                        <small>ขั้นเทพ</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- <a href="/th/programs/1/detail/?level=N5" class="fern-btn">
+                เริ่มเรียน N5
+            </a> -->
+
+            <div class="fern-small-note">
+                แนะนำเริ่มจาก N5 ก่อน หากยังไม่เคยเรียนพื้นฐานภาษาญี่ปุ่น
+            </div>
         </div>
 
         <div class="fern-course-card">
@@ -167,23 +306,63 @@
                 🏯
             </div>
 
-            <div class="fern-badge">HSK 3 - HSK 6</div>
+            <div class="fern-badge fern-badge-blue">HSK 1 - HSK 6</div>
 
             <div class="fern-course-title">ภาษาจีน</div>
 
             <p class="fern-course-desc">
-                เรียนพินอิน คำศัพท์ ประโยคสนทนา และฝึกพูดกับ AI Tutor แบบเป็นขั้นตอน
+                เรียนพินอิน คำศัพท์ ประโยคสนทนา จากคำศัพท์ระบบใหม่ระบบ HSK และฝึกพูดกับ AI Tutor
             </p>
 
             <ul class="fern-feature-list">
-                <li>เหมาะสำหรับ HSK 3, HSK 4, HSK 5, HSK 6</li>
+                <li>เหมาะสำหรับ HSK 1 - HSK 6 ระบบใหม่</li>
                 <li>มีพินอิน คำแปลไทย และอังกฤษ</li>
                 <li>ฝึกประโยคจริงและบทสนทนา</li>
             </ul>
 
-            <a href="/th/programs/2/detail/" class="fern-btn-light">
-                เริ่มเรียนภาษาจีน
-            </a>
+            <div class="fern-level-box fern-level-box-blue">
+                <div class="fern-level-title">เลือกระดับภาษาจีน</div>
+
+                <div class="fern-level-grid">
+                    <a href="/th/programs/2/detail/?level=HSK1" class="fern-level-btn fern-level-btn-blue active">
+                        <span>HSK 1</span>
+                        <small>เริ่มต้น</small>
+                    </a>
+
+                    <a href="/th/programs/2/detail/?level=HSK2" class="fern-level-btn fern-level-btn-blue">
+                        <span>HSK 2</span>
+                        <small>ฝึกหัด</small>
+                    </a>
+
+                    <a href="/th/programs/2/detail/?level=HSK3" class="fern-level-btn fern-level-btn-blue">
+                        <span>HSK 3</span>
+                        <small>เริ่มต่อยอด</small>
+                    </a>
+
+                    <a href="/th/programs/2/detail/?level=HSK4" class="fern-level-btn fern-level-btn-blue">
+                        <span>HSK 4</span>
+                        <small>สนทนา</small>
+                    </a>
+
+                    <a href="/th/programs/2/detail/?level=HSK5" class="fern-level-btn fern-level-btn-blue">
+                        <span>HSK 5</span>
+                        <small>ระดับสูง</small>
+                    </a>
+
+                    <a href="/th/programs/2/detail/?level=HSK6" class="fern-level-btn fern-level-btn-blue">
+                        <span>HSK 6</span>
+                        <small>ขั้นสูง</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- <a href="/th/programs/2/detail/?level=HSK3" class="fern-btn-light">
+                เริ่มเรียน HSK 3
+            </a> -->
+
+            <div class="fern-small-note">
+                เหมาะสำหรับผู้ที่มีพื้นฐานพินอินและคำศัพท์จีนมาบ้างแล้ว
+            </div>
         </div>
 
     </div>

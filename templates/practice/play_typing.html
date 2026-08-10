@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mode.label }} | Practice Hub{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-typing-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .fern-title {
+        font-size: 30px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .fern-sub {
+        color: #64748b;
+    }
+
+    .fern-progress-wrap {
+        width: 260px;
+    }
+
+    .fern-progress {
+        width: 100%;
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .fern-progress span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        transition: .3s;
+    }
+
+    .fern-typing-card {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 30px;
+        padding: 34px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, .08);
+        text-align: center;
+    }
+
+    .fern-prompt {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.7;
+        margin-bottom: 22px;
+    }
+
+    .fern-audio-btn {
+        border: none;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white;
+        font-size: 40px;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(139, 92, 246, .25);
+        margin-bottom: 22px;
+    }
+
+    .fern-typing-input {
+        width: 100%;
+        border: 2px solid #fbcfe8;
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+
+    .fern-typing-input:focus {
+        border-color: #ec4899;
+        outline: none;
+    }
+
+    .fern-result {
+        margin-top: 18px;
+        border-radius: 18px;
+        padding: 16px;
+        display: none;
+        font-weight: 800;
+    }
+
+    .fern-result.good { background: #ecfdf5; color: #047857; }
+    .fern-result.warn { background: #fff7ed; color: #c2410c; }
+
+    .fern-score-box {
+        margin-top: 14px;
+        font-weight: 800;
+        color: #64748b;
+    }
+
+    .fern-btn-row {
+        margin-top: 22px;
+    }
+
+    .fern-btn, .fern-btn-light {
+        padding: 14px 24px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 900;
+        border: none;
+        display: inline-block;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+</style>
+
+<div class="fern-typing-page">
+
+    <div class="fern-top">
+        <div>
+            <div class="fern-title">{{ mode.icon }} {{ mode.label }}</div>
+            <div class="fern-sub">{{ title }}</div>
+        </div>
+
+        <div class="fern-progress-wrap">
+            <div id="typingCounter">1 / {{ items|length }}</div>
+            <div class="fern-progress"><span id="typingProgress"></span></div>
+        </div>
+    </div>
+
+    <div class="fern-typing-card">
+
+        <button id="typingAudioBtn" class="fern-audio-btn" style="display:none;" onclick="typingPlayAudio()">🔊</button>
+        <div id="typingPrompt" class="fern-prompt"></div>
+
+        <input type="text" id="typingInput" class="fern-typing-input" placeholder="พิมพ์คำตอบที่นี่" autocomplete="off">
+
+        <button class="fern-btn" onclick="typingSubmit()">ตรวจคำตอบ</button>
+
+        <div class="fern-result" id="typingResult"></div>
+        <div class="fern-score-box" id="typingScoreBox">คะแนนเฉลี่ย: -</div>
+
+        <div class="fern-btn-row">
+            <a href="{% url 'practice:mode_picker' mode=mode_key %}" class="fern-btn-light">← กลับ</a>
+            <a id="typingFinishBtn" href="#"
+                data-complete-url="{% url 'practice:complete' mode=mode_key course_code=group %}"
+                class="fern-btn" style="display:none;">ส่งคะแนน →</a>
+        </div>
+
+    </div>
+
+</div>
+
+{{ items|json_script:"typing-items" }}
+<script src="{% static 'js/utils/speech-lang.js' %}"></script>
+<script src="{% static 'js/utils/scoring.js' %}"></script>
+<script src="{% static 'js/pages/practice_typing.js' %}"></script>
+
+{% endblock content %}

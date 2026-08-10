@@ -150,10 +150,24 @@
                 </a>
             </li>
 
-            <li>
+            <!-- <li>
                 <a href="#">
                     <i class="fas fa-language"></i>
                     Vocabulary
+                </a>
+            </li> -->
+
+            <li class="{% if '/flashcards/' in request.path %}active{% endif %}">
+                <a href="{% url 'flashcards:home' %}">
+                    <i class="fas fa-clone"></i>
+                    Flashcards
+                </a>
+            </li>
+
+            <li class="{% if '/practice/' in request.path %}active{% endif %}">
+                <a href="{% url 'practice:hub' %}">
+                    <i class="fas fa-dumbbell"></i>
+                    Practice Hub
                 </a>
             </li>
 
@@ -164,12 +178,12 @@
                 </a>
             </li>
 
-            <li>
+            <!-- <li>
                 <a href="#">
                     <i class="fas fa-microphone"></i>
                     Speaking Practice
                 </a>
-            </li>
+            </li> -->
 
 
             <li class="{% if request.path == prof %}active{% endif %}">

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-{{ program.title }} | Lesson Map
+{{ display_course_title|default:program.title }} | Lesson Map
 {% endblock title %}
 
 {% block content %}
@@ -31,6 +31,8 @@
     font-size:38px;
     font-weight:900;
     color:#0f172a;
+    margin-bottom:10px;
+    line-height:1.25;
 }
 
 .fern-summary{
@@ -55,6 +57,42 @@
     display:grid;
     place-items:center;
     font-size:70px;
+}
+
+.fern-level-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+}
+
+.fern-level-tab{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:74px;
+    padding:10px 16px;
+    border-radius:999px;
+    text-decoration:none;
+    font-weight:900;
+    color:#64748b !important;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    transition:.2s;
+}
+
+.fern-level-tab:hover{
+    transform:translateY(-2px);
+    border-color:#fbcfe8;
+    color:#ec4899 !important;
+    background:#fff7fb;
+}
+
+.fern-level-tab.active{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:white !important;
+    border-color:transparent;
+    box-shadow:0 10px 24px rgba(236,72,153,.18);
 }
 
 .fern-map-layout{
@@ -118,6 +156,7 @@
 .fern-lesson-name{
     font-weight:900;
     color:#0f172a;
+    line-height:1.45;
 }
 
 .fern-lesson-code{
@@ -141,18 +180,41 @@
     margin-bottom:12px;
 }
 
+.fern-progress-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    margin-top:24px;
+    color:#334155;
+    font-weight:900;
+}
+
+.fern-progress-number{
+    color:#ec4899;
+    font-size:24px;
+    font-weight:900;
+}
+
 .fern-progress{
     height:14px;
     background:#e5e7eb;
     border-radius:999px;
     overflow:hidden;
-    margin:18px 0;
+    margin:14px 0 12px;
 }
 
 .fern-progress span{
     display:block;
     height:100%;
     background:linear-gradient(90deg,#ec4899,#8b5cf6,#3b82f6);
+    transition:width .25s ease;
+}
+
+.fern-progress-text{
+    color:#64748b;
+    font-weight:700;
+    margin-bottom:22px;
 }
 
 .fern-check-list{
@@ -181,6 +243,7 @@
     text-decoration:none;
     font-weight:900;
     margin-right:10px;
+    margin-bottom:10px;
 }
 
 .fern-btn{
@@ -206,13 +269,38 @@
 
     <div class="fern-header">
         <div>
-            <div class="fern-badge">Lesson Map</div>
-            <h1 class="fern-title">{{ program.title }}</h1>
-            <p class="fern-summary">{{ program.summary }}</p>
+            <div class="fern-badge">
+                Lesson Map{% if level_label %} • {{ level_label }}{% endif %}
+            </div>
+
+            <h1 class="fern-title">
+                {{ display_course_title|default:program.title }}
+            </h1>
+
+            <p class="fern-summary">
+                {{ program.summary }}
+            </p>
+
+            {% if level_options %}
+                <div class="fern-level-tabs">
+                    {% for level in level_options %}
+                        <a
+                            href="?level={{ level }}"
+                            class="fern-level-tab {% if level == selected_level %}active{% endif %}"
+                        >
+                            {{ level }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="fern-illustration">
-            ⛩️
+            {% if program.id == 2 %}
+                🏮
+            {% else %}
+                ⛩️
+            {% endif %}
         </div>
     </div>
 
@@ -255,7 +343,7 @@
                 {% endif %}
 
             {% empty %}
-                <p>ยังไม่มีบทเรียนในคอร์สนี้</p>
+                <p>ยังไม่มีบทเรียนในระดับนี้</p>
             {% endfor %}
 
         </div>
@@ -263,25 +351,38 @@
         <div class="fern-detail-card">
 
             <h2 class="fern-detail-title">
-                เริ่มเรียน JLPT N5
+                เริ่มเรียน {{ level_label|default:program.title }}
             </h2>
 
             <p class="fern-summary">
                 เรียนตามลำดับบทเรียน เมื่อทำ Quiz ผ่าน 70% ระบบจะปลดล็อกบทถัดไปให้อัตโนมัติ
             </p>
 
-            <div class="fern-progress">
-                <span style="width:25%;"></span>
+            <div class="fern-progress-head">
+                <span>ความคืบหน้า {{ level_label|default:program.title }}</span>
+                <span class="fern-progress-number">{{ level_progress_percent|default:0 }}%</span>
             </div>
 
-            <p>ทำบทเรียนให้ผ่านเพื่อปลดล็อก Lesson ถัดไป</p>
+            <div class="fern-progress">
+                <span style="width:{{ level_progress_percent|default:0 }}%;"></span>
+            </div>
+
+            <p class="fern-progress-text">
+                ผ่านแล้ว {{ completed_lessons|default:0 }} / {{ total_lessons|default:0 }} บท
+            </p>
 
             <ul class="fern-check-list">
                 <li>เรียนคำศัพท์จากฐานข้อมูลจริง</li>
                 <li>ฝึกประโยคตัวอย่าง</li>
                 <li>ฝึกพูดตาม</li>
-                <li>ทำ Quiz เพื่อปลดล็อกบทต่อไป</li>
+                <li>ทำ Quiz เพื่อบันทึกความคืบหน้า</li>
             </ul>
+
+            {% if next_lesson %}
+                <a href="{% url 'course_detail' next_lesson.slug %}" class="fern-btn">
+                    เรียนต่อ →
+                </a>
+            {% endif %}
 
             <a href="/th/programs/" class="fern-btn-light">
                 กลับไปเลือกคอร์ส

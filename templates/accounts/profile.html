@@ -36,12 +36,28 @@ Profile & Progress | FernLearnWorld
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ec4899, #3b82f6);
-    display: grid;
-    place-items: center;
-    color: white;
-    font-size: 54px;
+    object-fit: cover;
+    border: 4px solid #fce7f3;
+    box-shadow: 0 10px 24px rgba(139, 92, 246, 0.2);
     margin: 0 auto 18px;
+}
+
+.fern-xp-badge {
+    display: inline-block;
+    margin-top: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 14px;
+}
+
+.fern-achievement-empty {
+    grid-column: 1 / -1;
+    color: #9ca3af;
+    text-align: center;
+    padding: 10px;
 }
 
 .fern-name {
@@ -184,21 +200,21 @@ Profile & Progress | FernLearnWorld
 
         <div class="fern-card fern-profile-main">
 
-            <div class="fern-avatar">
-                👤
-            </div>
+            <img src="{{ request.user.get_picture }}" alt="avatar" class="fern-avatar">
 
             <div class="fern-name">
                 {{ request.user.get_full_name|default:request.user.username }}
             </div>
 
             <div class="fern-role">
-                FernLearnWorld Learner
+                {{ request.user.get_user_role }}
             </div>
 
             <div class="fern-level-badge">
-                Level 3 · JLPT N5 Beginner
+                🇯🇵 ญี่ปุ่น {{ japanese_progress.percent }}% · 🇨🇳 จีน {{ chinese_progress.percent }}%
             </div>
+            <br>
+            <div class="fern-xp-badge">⭐ {{ practice_xp }} XP</div>
 
             <div class="fern-btn-row">
                 <a href="{% url 'edit_profile' %}" class="fern-btn-light">
@@ -217,18 +233,18 @@ Profile & Progress | FernLearnWorld
             <div class="fern-stat-grid">
 
                 <div class="fern-card fern-stat">
-                    <div class="fern-stat-number">120</div>
+                    <div class="fern-stat-number">{{ words_learned }}</div>
                     <div class="fern-stat-label">คำศัพท์ที่เรียนแล้ว</div>
                 </div>
 
                 <div class="fern-card fern-stat">
-                    <div class="fern-stat-number">85%</div>
+                    <div class="fern-stat-number">{{ average_score }}%</div>
                     <div class="fern-stat-label">คะแนนเฉลี่ย</div>
                 </div>
 
                 <div class="fern-card fern-stat">
-                    <div class="fern-stat-number">7</div>
-                    <div class="fern-stat-label">Streak วัน</div>
+                    <div class="fern-stat-number">🔥 {{ streak }}</div>
+                    <div class="fern-stat-label">Streak วัน (Flashcards)</div>
                 </div>
 
             </div>
@@ -241,31 +257,21 @@ Profile & Progress | FernLearnWorld
 
                 <div class="fern-course-progress">
                     <div class="fern-course-top">
-                        <span>JLPT N5 Japanese Course</span>
-                        <span>45%</span>
+                        <span>🇯🇵 ภาษาญี่ปุ่น ({{ japanese_progress.done }} / {{ japanese_progress.total }} บท)</span>
+                        <span>{{ japanese_progress.percent }}%</span>
                     </div>
                     <div class="fern-progress">
-                        <span style="width:45%;"></span>
+                        <span style="width:{{ japanese_progress.percent }}%;"></span>
                     </div>
                 </div>
 
                 <div class="fern-course-progress">
                     <div class="fern-course-top">
-                        <span>HSK 3 Chinese Course</span>
-                        <span>20%</span>
+                        <span>🇨🇳 ภาษาจีน ({{ chinese_progress.done }} / {{ chinese_progress.total }} บท)</span>
+                        <span>{{ chinese_progress.percent }}%</span>
                     </div>
                     <div class="fern-progress">
-                        <span style="width:20%;"></span>
-                    </div>
-                </div>
-
-                <div class="fern-course-progress">
-                    <div class="fern-course-top">
-                        <span>Speaking Practice</span>
-                        <span>60%</span>
-                    </div>
-                    <div class="fern-progress">
-                        <span style="width:60%;"></span>
+                        <span style="width:{{ chinese_progress.percent }}%;"></span>
                     </div>
                 </div>
 
@@ -275,26 +281,25 @@ Profile & Progress | FernLearnWorld
 
             <div class="fern-card">
 
-                <div class="fern-section-title">
+                <div class="fern-section-title" style="display:flex; justify-content:space-between; align-items:center;">
                     Achievement
+                    <a href="/th/vocabulary/achievements/" class="fern-btn-light" style="padding:8px 16px; font-size:13px;">
+                        ดูทั้งหมด →
+                    </a>
                 </div>
 
                 <div class="fern-achievement-grid">
 
+                    {% for user_achievement in recent_achievements %}
                     <div class="fern-achievement">
-                        <div class="fern-achievement-icon">🔥</div>
-                        <b>7 Days Streak</b>
+                        <div class="fern-achievement-icon">{{ user_achievement.achievement.icon }}</div>
+                        <b>{{ user_achievement.achievement.title }}</b>
                     </div>
-
-                    <div class="fern-achievement">
-                        <div class="fern-achievement-icon">🎙️</div>
-                        <b>Speaking Beginner</b>
+                    {% empty %}
+                    <div class="fern-achievement-empty">
+                        ยังไม่ได้รับเหรียญรางวัล — ลองเริ่มเรียนหรือฝึกใน Practice Hub ดูนะ
                     </div>
-
-                    <div class="fern-achievement">
-                        <div class="fern-achievement-icon">📚</div>
-                        <b>100 Vocab Master</b>
-                    </div>
+                    {% endfor %}
 
                 </div>
 

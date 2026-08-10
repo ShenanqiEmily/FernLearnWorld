@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ผลคะแนน | Practice Hub{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-complete-page {
+        padding: 60px 34px;
+        background: #fff7fb;
+        display: flex;
+        justify-content: center;
+    }
+
+    .fern-complete-card {
+        max-width: 520px;
+        width: 100%;
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+        text-align: center;
+    }
+
+    .fern-complete-icon {
+        font-size: 56px;
+        margin-bottom: 12px;
+    }
+
+    .fern-complete-score {
+        font-size: 48px;
+        font-weight: 900;
+        color: #ec4899;
+        margin-bottom: 8px;
+    }
+
+    .fern-complete-status {
+        font-weight: 900;
+        margin-bottom: 20px;
+    }
+
+    .fern-complete-status.passed {
+        color: #047857;
+    }
+
+    .fern-complete-status.failed {
+        color: #c2410c;
+    }
+
+    .fern-xp-line {
+        margin-bottom: 26px;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .fern-btn-row {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .fern-btn,
+    .fern-btn-light {
+        padding: 14px 24px;
+        border-radius: 16px;
+        font-weight: 900;
+        text-decoration: none;
+        border: none;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+</style>
+
+<div class="fern-complete-page">
+
+    <div class="fern-complete-card">
+
+        <div class="fern-complete-icon">{% if passed %}🎉{% else %}🔄{% endif %}</div>
+
+        <div class="fern-complete-score">{{ score }}%</div>
+
+        <div class="fern-complete-status {% if passed %}passed{% else %}failed{% endif %}">
+            {% if passed %}ผ่านแล้ว!{% else %}ยังไม่ผ่าน ลองอีกครั้งนะ{% endif %}
+        </div>
+
+        <div class="fern-xp-line">
+            {% if xp_earned > 0 %}
+                ⭐ ได้รับ {{ xp_earned }} XP
+            {% else %}
+                ⭐ ไม่มี XP ใหม่ (เคยผ่านโหมดนี้ในบทนี้แล้ว)
+            {% endif %}
+        </div>
+
+        <div class="fern-btn-row">
+            <a href="{% url 'practice:hub' %}" class="fern-btn-light">← กลับ Practice Hub</a>
+
+            {% if mode_key == "speaking" %}
+            <a href="{% url 'practice:speaking' course_code=course_code %}" class="fern-btn">เล่นอีกครั้ง</a>
+            {% elif mode_key == "vocab_mc" %}
+            <a href="{% url 'practice:vocab_mc' course_code=course_code %}" class="fern-btn">เล่นอีกครั้ง</a>
+            {% else %}
+            <a href="{% url 'practice:play' mode=mode_key group=course_code %}" class="fern-btn">เล่นอีกครั้ง</a>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

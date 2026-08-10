@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Flashcards | FernLearnWorld
+{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-container {
+        padding: 30px;
+        background: #fff7fb;
+        min-height: 100vh;
+    }
+
+    .fern-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .fern-page-title h2 {
+        margin: 0 0 8px;
+        font-size: clamp(26px, 3vw, 38px);
+        font-weight: 900;
+        color: #111827;
+    }
+
+    .fern-page-title p {
+        margin: 0;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .fc-stats-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .fc-stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 16px 22px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        border: 1px solid #fbcfe8;
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .fc-stat-value {
+        font-size: 28px;
+        font-weight: 900;
+        color: #ec4899;
+    }
+
+    .fc-stat-label {
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .fc-progress-wrap {
+        margin-bottom: 30px;
+    }
+
+    .fc-progress-bar {
+        width: 100%;
+        height: 14px;
+        background: #f3f4f6;
+        border-radius: 30px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    .fc-progress-bar span {
+        display: block;
+        height: 100%;
+        width: {{ overall_percent }}%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        border-radius: 30px;
+    }
+
+    .fc-search {
+        margin-bottom: 30px;
+    }
+
+    .fc-search form {
+        display: flex;
+        gap: 10px;
+        max-width: 480px;
+    }
+
+    .fc-search input {
+        flex: 1;
+        border: 1px solid #fbcfe8;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+
+    .fc-search button {
+        border: none;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white;
+        font-weight: 800;
+        padding: 14px 22px;
+        border-radius: 16px;
+    }
+
+    .fc-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+
+    .fc-category-card {
+        background: white;
+        border-radius: 30px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        border: 1px solid #fbcfe8;
+        text-decoration: none;
+        display: block;
+        transition: 0.2s;
+    }
+
+    .fc-category-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 34px rgba(139, 92, 246, 0.18);
+    }
+
+    .fc-category-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        background: #fce7f3;
+        color: #ec4899;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+    }
+
+    .fc-category-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .fc-category-meta {
+        color: #6b7280;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .fc-category-due {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: #fce7f3;
+        color: #db2777;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .fc-search-results {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        border: 1px solid #fbcfe8;
+    }
+
+    .fc-search-results h4 {
+        margin: 0 0 16px;
+        font-weight: 900;
+    }
+
+    .fc-result-item {
+        padding: 14px;
+        border-radius: 16px;
+        background: #faf5ff;
+        margin-bottom: 10px;
+    }
+
+    .fc-result-item b {
+        color: #111827;
+    }
+
+    .fc-result-item span {
+        color: #6b7280;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="fern-container">
+
+    <div class="fern-topbar">
+        <div class="fern-page-title">
+            <h2>Flashcard Learning Center</h2>
+            <p>ทบทวนคำศัพท์ ไวยากรณ์ และคันจิ ด้วยระบบ Spaced Repetition</p>
+        </div>
+
+        <div class="fc-stats-row">
+            <div class="fc-stat-card">
+                <div class="fc-stat-value">{{ due_today_total }}</div>
+                <div class="fc-stat-label">ต้องทบทวนวันนี้</div>
+            </div>
+            <div class="fc-stat-card">
+                <div class="fc-stat-value">🔥 {{ streak }}</div>
+                <div class="fc-stat-label">Streak (วันติดต่อกัน)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fc-progress-wrap">
+        <div class="fc-progress-bar"><span></span></div>
+        <p style="margin:0; color:#374151; font-weight:700;">ความคืบหน้ารวม {{ overall_percent }}%</p>
+    </div>
+
+    <div class="fc-search">
+        <form method="get">
+            <input type="text" name="q" value="{{ query }}" placeholder="ค้นหาคำศัพท์ ไวยากรณ์ หรือคันจิ...">
+            <button type="submit">ค้นหา</button>
+        </form>
+    </div>
+
+    {% if query %}
+    <div class="fc-search-results" style="margin-bottom:30px;">
+        <h4>ผลการค้นหาสำหรับ "{{ query }}"</h4>
+
+        {% for item in search_results %}
+        <div class="fc-result-item">
+            <b>{{ item.front_main }}</b>
+            <span>{{ item.back_main }}</span>
+        </div>
+        {% empty %}
+        <p style="color:#6b7280;">ไม่พบผลลัพธ์</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="fc-categories">
+        {% for cat in categories %}
+        <a href="{% url 'flashcards:deck_list' cat.key %}" class="fc-category-card">
+            <div class="fc-category-icon">
+                {% if cat.key == 'vocabulary' %}📚{% elif cat.key == 'grammar' %}📝{% else %}🈺{% endif %}
+            </div>
+            <div class="fc-category-title">{{ cat.label }}</div>
+            <div class="fc-category-meta">{{ cat.total }} การ์ดทั้งหมด</div>
+            {% if cat.due > 0 %}
+            <div class="fc-category-due">ทบทวนวันนี้ {{ cat.due }} ใบ</div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock content %}

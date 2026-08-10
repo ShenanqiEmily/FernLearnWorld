@@ -189,7 +189,7 @@ FernLearnWorld Dashboard
             </h1>
 
             <p class="fern-text">
-                ฝึกคำศัพท์ ประโยค การออกเสียง Quiz และติดตามความคืบหน้าการเรียน JLPT N5 ของคุณ
+                ฝึกคำศัพท์ ประโยค การออกเสียง Quiz และติดตามความคืบหน้าการเรียนภาษาญี่ปุ่นและจีนของคุณ
             </p>
 
             <div class="fern-progress">
@@ -210,7 +210,7 @@ FernLearnWorld Dashboard
 
         <div class="fern-ai-box">
             <div class="fern-ai-bubble">こんにちは！วันนี้มาเรียนต่อกันไหม?</div>
-            <div class="fern-ai-bubble">ทำ Quiz ผ่าน 70% เพื่อปลดล็อกบทถัดไปนะ</div>
+            <div class="fern-ai-bubble">มาเก่งภาษาญี่ปุ่นไปด้วยกันนะ</div>
             <div class="fern-ai-avatar">🤖</div>
         </div>
 
@@ -218,29 +218,51 @@ FernLearnWorld Dashboard
 
     <div class="fern-grid">
 
-        <!-- <div class="fern-card">
+        <div class="fern-card">
             <div class="fern-mini-title">Lessons Completed</div>
             <div class="fern-stat">{{ completed_lessons }}</div>
             <p>บทที่เรียนผ่านแล้ว</p>
-        </div> -->
-
-            <!-- <div class="fern-card">
-                <div class="fern-mini-title">Total Lessons</div>
-                <div class="fern-stat">{{ total_lessons }}</div>
-                <p>บทเรียน JLPT N5</p>
-            </div> -->
-
-        <!-- <div class="fern-card">
-            <div class="fern-mini-title">Total XP</div>
-            <div class="fern-stat">{{ total_xp }}</div>
-            <p>XP จากบทที่ผ่าน</p>
         </div>
 
         <div class="fern-card">
-            <div class="fern-mini-title">N5 Progress</div>
+            <div class="fern-mini-title">Total Lessons</div>
+            <div class="fern-stat">{{ total_lessons }}</div>
+            <p>บทเรียนทั้งหมด (ญี่ปุ่น + จีน)</p>
+        </div>
+
+        <div class="fern-card">
+            <div class="fern-mini-title">Total XP</div>
+            <div class="fern-stat">⭐ {{ total_xp }}</div>
+            <p>จาก Practice Hub</p>
+        </div>
+
+        <div class="fern-card">
+            <div class="fern-mini-title">Overall Progress</div>
             <div class="fern-stat">{{ overall_percent }}%</div>
-            <p>ความคืบหน้ารวม</p>
-        </div> -->
+            <p>ความคืบหน้ารวมทุกบทเรียน</p>
+        </div>
+
+    </div>
+
+    <div class="fern-extra-grid">
+
+        <a href="/th/practice/" class="fern-card" style="text-decoration:none; display:block;">
+            <div class="fern-mini-title">🏋️ Practice Hub</div>
+            <div class="fern-stat">⭐ {{ total_xp }}</div>
+            <p>ฝึกพูด · ทำแบบทดสอบคำศัพท์ · สะสม XP</p>
+        </a>
+
+        <a href="/th/flashcards/" class="fern-card" style="text-decoration:none; display:block;">
+            <div class="fern-mini-title">🗂️ Flashcards</div>
+            <div class="fern-stat">{{ flashcards_due_today }}</div>
+            <p>ใบที่ต้องทบทวนวันนี้</p>
+        </a>
+
+        <a href="/th/vocabulary/achievements/" class="fern-card" style="text-decoration:none; display:block;">
+            <div class="fern-mini-title">🏆 Achievements</div>
+            <div class="fern-stat">→</div>
+            <p>ดูเหรียญรางวัลที่ปลดล็อกแล้ว</p>
+        </a>
 
     </div>
     <div class="fern-extra-grid">
@@ -267,12 +289,12 @@ FernLearnWorld Dashboard
         {% if next_lesson %}
             <p><b>{{ next_lesson.title }}</b></p>
             <p>{{ next_lesson.code }}</p>
-            <a href="{{ next_lesson.get_absolute_url }}" class="fern-btn-light">
+            <a href="/th/vocabulary/{{ next_lesson.code }}/" class="fern-btn-light">
                 เรียนต่อ →
             </a>
         {% else %}
             <div class="fern-stat">🏆</div>
-            <p>จบ JLPT N5 แล้ว</p>
+            <p>เรียนจบทุกบทแล้ว</p>
         {% endif %}
     </div>
     </div>

@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ group_label }} | {{ category_label }}
+{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-container {
+        padding: 30px;
+        background: #fff7fb;
+        min-height: 100vh;
+    }
+
+    .fc-back-link {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: #8b5cf6;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .fc-study-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .fc-study-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #111827;
+    }
+
+    .fc-study-progress {
+        font-weight: 800;
+        color: #374151;
+    }
+
+    .fc-card-wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        perspective: 1600px;
+    }
+
+    .fc-card {
+        background: white;
+        border-radius: 30px;
+        padding: 46px 36px;
+        min-height: 340px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.1);
+        border: 1px solid #fbcfe8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .fc-front-main {
+        font-size: clamp(36px, 6vw, 60px);
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .fc-front-sub {
+        font-size: 20px;
+        color: #8b5cf6;
+        margin-bottom: 10px;
+    }
+
+    .fc-hint {
+        margin-top: 20px;
+        color: #9ca3af;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .fc-back-main {
+        font-size: clamp(24px, 3.5vw, 34px);
+        font-weight: 900;
+        color: #ec4899;
+        margin-bottom: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .fc-back-sub {
+        color: #6b7280;
+        margin-bottom: 18px;
+    }
+
+    .fc-example {
+        background: #faf5ff;
+        border-radius: 20px;
+        padding: 18px;
+        width: 100%;
+        text-align: left;
+        line-height: 1.8;
+    }
+
+    .fc-card.flipped .fc-back {
+        display: flex;
+    }
+
+    .fc-card .fc-back {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .fc-card.flipped .fc-front {
+        display: none;
+    }
+
+    .fc-action-row {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .fc-sound-btn,
+    .fc-ai-btn {
+        border: none;
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+        padding: 10px 16px;
+        border-radius: 14px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .fc-ai-btn {
+        background: #f3f4f6;
+        color: #9ca3af;
+        border-color: #e5e7eb;
+        cursor: not-allowed;
+    }
+
+    .fc-grade-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .fc-grade-btn {
+        border: none;
+        padding: 16px 8px;
+        border-radius: 16px;
+        font-weight: 900;
+        color: white;
+        cursor: pointer;
+    }
+
+    .fc-grade-again { background: #ef4444; }
+    .fc-grade-hard { background: #f59e0b; }
+    .fc-grade-good { background: #10b981; }
+    .fc-grade-easy { background: #3b82f6; }
+
+    .fc-empty-state,
+    .fc-done-state {
+        max-width: 640px;
+        margin: 40px auto;
+        text-align: center;
+        background: white;
+        border-radius: 30px;
+        padding: 50px 30px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        border: 1px solid #fbcfe8;
+    }
+
+    .fc-done-state h3 {
+        font-size: 26px;
+        font-weight: 900;
+        margin-bottom: 12px;
+    }
+</style>
+
+<div class="fern-container">
+
+    <a href="{% url 'flashcards:deck_list' category %}" class="fc-back-link">← กลับไปเลือกหมวดย่อย</a>
+
+    {% if cards %}
+
+    <div class="fc-study-top">
+        <div class="fc-study-title">{{ category_label }} · {{ group_label }}</div>
+        <div class="fc-study-progress" id="fcProgress">1 / {{ cards|length }}</div>
+    </div>
+
+    <div class="fc-card-wrap">
+        <div class="fc-card" id="fcCard" onclick="flashcardFlip()">
+
+            <div class="fc-front">
+                <div class="fc-front-main" id="fcFrontMain">-</div>
+                <div class="fc-front-sub" id="fcFrontSub">-</div>
+                <div class="fc-hint">แตะการ์ดเพื่อดูคำเฉลย</div>
+            </div>
+
+            <div class="fc-back">
+                <div class="fc-back-main" id="fcBackMain">-</div>
+                <div class="fc-back-sub" id="fcBackSub">-</div>
+
+                <div class="fc-example" id="fcExampleBox">
+                    <div id="fcExampleSentence"></div>
+                    <div id="fcExampleReading" style="color:#8b5cf6;"></div>
+                    <div id="fcExampleTranslation" style="color:#ec4899;"></div>
+                </div>
+
+                <div class="fc-action-row">
+                    <button class="fc-sound-btn" onclick="event.stopPropagation(); flashcardSpeak()">🔊 ฟังเสียง</button>
+                    <button class="fc-ai-btn" disabled title="ฟีเจอร์นี้กำลังจะมาเร็วๆ นี้" onclick="event.stopPropagation();">
+                        🤖 ขอคำอธิบายเพิ่มจาก AI (เร็วๆ นี้)
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="fc-grade-row">
+            <button class="fc-grade-btn fc-grade-again" onclick="flashcardGrade('again')">Again<br><small>พรุ่งนี้</small></button>
+            <button class="fc-grade-btn fc-grade-hard" onclick="flashcardGrade('hard')">Hard</button>
+            <button class="fc-grade-btn fc-grade-good" onclick="flashcardGrade('good')">Good</button>
+            <button class="fc-grade-btn fc-grade-easy" onclick="flashcardGrade('easy')">Easy</button>
+        </div>
+    </div>
+
+    <div class="fc-done-state" id="fcDoneState" style="display:none;">
+        <h3>🎉 ทบทวนครบแล้ว!</h3>
+        <p style="color:#6b7280; margin-bottom:20px;">คุณทบทวนการ์ดครบทุกใบในรอบนี้แล้ว</p>
+        <a href="{% url 'flashcards:deck_list' category %}" class="fc-deck-btn" style="display:inline-block; background:linear-gradient(135deg,#ec4899,#8b5cf6); color:white; padding:12px 24px; border-radius:14px; font-weight:800; text-decoration:none;">กลับไปเลือกหมวดย่อย</a>
+    </div>
+
+    {{ cards|json_script:"flashcard-data" }}
+
+    <script>
+        window.FC_REVIEW_URL = "{% url 'flashcards:submit_review' %}";
+    </script>
+
+    {% else %}
+    <div class="fc-empty-state">
+        <h3>ยังไม่มีการ์ดในหมวดนี้</h3>
+        <p style="color:#6b7280;">กรุณาเพิ่มข้อมูลผ่านหน้า Admin ก่อน</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'js/pages/flashcards.js' %}"></script>
+
+{% endblock content %}

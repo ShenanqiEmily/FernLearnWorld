@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mode.label }} | Practice Hub{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-picker-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-picker-title {
+        font-size: 30px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 22px;
+    }
+
+    .fern-picker-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .fern-picker-col h3 {
+        font-weight: 900;
+        color: #ec4899;
+        margin-bottom: 14px;
+    }
+
+    .fern-picker-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .fern-picker-list li {
+        margin-bottom: 10px;
+    }
+
+    .fern-picker-list a {
+        display: block;
+        padding: 14px 18px;
+        border-radius: 16px;
+        background: white;
+        border: 1px solid #fbcfe8;
+        text-decoration: none;
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .fern-picker-list a:hover {
+        background: #fdf2f8;
+    }
+
+    @media(max-width: 800px) {
+        .fern-picker-columns {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="fern-picker-page">
+
+    <div class="fern-picker-title">{{ mode.icon }} {{ mode.label }} — เลือกระดับ</div>
+
+    <div class="fern-picker-columns">
+
+        <div class="fern-picker-col">
+            <h3>🇯🇵 ภาษาญี่ปุ่น</h3>
+            <ul class="fern-picker-list">
+                {% for level, label in japanese_levels %}
+                <li>
+                    <a href="{% url 'practice:play' mode=mode_key group=level %}">{{ label }}</a>
+                </li>
+                {% empty %}
+                <li>ยังไม่มีข้อมูล</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="fern-picker-col">
+            <h3>🇨🇳 ภาษาจีน</h3>
+            <ul class="fern-picker-list">
+                {% for level, label in chinese_levels %}
+                <li>
+                    <a href="{% url 'practice:play' mode=mode_key group=level %}">{{ label }}</a>
+                </li>
+                {% empty %}
+                <li>ยังไม่มีข้อมูล</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

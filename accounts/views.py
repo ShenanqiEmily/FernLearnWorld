@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.views.generic import CreateView, ListView
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import PasswordChangeForm
 from django_filters.views import FilterView
@@ -56,56 +56,64 @@ def register(request):
 
 @login_required
 def profile(request):
-    """Show profile of any user that fire out the request"""
-    current_session = Session.objects.filter(is_current_session=True).first()
-    current_semester = Semester.objects.filter(
-        is_current_semester=True, session=current_session
-    ).first()
+    """Show the current user's own FernLearnWorld learning profile."""
+    from vocabulary.models import UserLessonProgress, Vocabulary, UserAchievement
+    from practice.models import PracticeAttempt
+    from flashcards.views import _user_streak
 
-    if request.user.is_lecturer:
-        courses = Course.objects.filter(
-            allocated_course__lecturer__pk=request.user.id
-        ).filter(semester=current_semester)
-        return render(
-            request,
-            "accounts/profile.html",
-            {
-                "title": request.user.get_full_name,
-                "courses": courses,
-                "current_session": current_session,
-                "current_semester": current_semester,
-            },
+    user = request.user
+
+    completed_progress = UserLessonProgress.objects.filter(
+        user=user, completed=True
+    ).select_related("course")
+
+    completed_course_ids = list(completed_progress.values_list("course_id", flat=True))
+    words_learned = Vocabulary.objects.filter(course_id__in=completed_course_ids).count()
+
+    if completed_progress.exists():
+        average_score = int(
+            sum(p.score for p in completed_progress) / completed_progress.count()
         )
-    elif request.user.is_student:
-        level = Student.objects.get(student__pk=request.user.id)
-        try:
-            parent = Parent.objects.get(student=level)
-        except:
-            parent = "no parent set"
-        courses = TakenCourse.objects.filter(
-            student__student__id=request.user.id, course__level=level.level
-        )
-        context = {
-            "title": request.user.get_full_name,
-            "parent": parent,
-            "courses": courses,
-            "level": level,
-            "current_session": current_session,
-            "current_semester": current_semester,
-        }
-        return render(request, "accounts/profile.html", context)
     else:
-        staff = User.objects.filter(is_lecturer=True)
-        return render(
-            request,
-            "accounts/profile.html",
-            {
-                "title": request.user.get_full_name,
-                "staff": staff,
-                "current_session": current_session,
-                "current_semester": current_semester,
-            },
+        average_score = 0
+
+    streak = _user_streak(user)
+
+    def _language_progress(prefix):
+        total = (
+            Course.objects.filter(code__startswith=prefix, vocabularies__isnull=False)
+            .distinct()
+            .count()
         )
+        done = completed_progress.filter(course__code__startswith=prefix).count()
+        percent = int((done / total) * 100) if total else 0
+        return {"done": done, "total": total, "percent": percent}
+
+    japanese_progress = _language_progress("JP-")
+    chinese_progress = _language_progress("CN-")
+
+    practice_xp = (
+        PracticeAttempt.objects.filter(user=user)
+        .aggregate(total=Sum("xp_awarded"))["total"]
+        or 0
+    )
+
+    recent_achievements = (
+        UserAchievement.objects.filter(user=user)
+        .select_related("achievement")
+        .order_by("-earned_at")[:3]
+    )
+
+    context = {
+        "words_learned": words_learned,
+        "average_score": average_score,
+        "streak": streak,
+        "japanese_progress": japanese_progress,
+        "chinese_progress": chinese_progress,
+        "practice_xp": practice_xp,
+        "recent_achievements": recent_achievements,
+    }
+    return render(request, "accounts/profile.html", context)
 
 
 # function that generate pdf by taking Django template and its context,

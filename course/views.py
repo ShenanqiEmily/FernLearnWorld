@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Sum, Avg, Max, Min, Count
+from django.db.models import Sum, Avg, Max, Min, Count, Q
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
 from django.core.paginator import Paginator
@@ -23,10 +23,219 @@ from .forms import (
 )
 from .filters import ProgramFilter, CourseAllocationFilter
 from .models import Program, Course, CourseAllocation, Upload, UploadVideo
-from django.shortcuts import render, get_object_or_404
-from vocabulary.models import Vocabulary
 from vocabulary.models import Vocabulary, UserLessonProgress
 from django.conf import settings
+
+
+
+# ========================================================
+# FernLearnWorld lesson-level progress helpers
+# ========================================================
+
+def normalize_level_value(level):
+    """
+    Normalize level value from URL/course code.
+    Examples:
+    n5 -> N5
+    HSK 3 -> HSK3
+    3 -> HSK3 only when Chinese context calls it explicitly
+    """
+    return (level or "").upper().replace(" ", "").strip()
+
+
+def get_course_level_from_code(code):
+    """
+    Return level from a course code.
+
+    Supported examples:
+    JP-N5-001      -> N5
+    JP-N1-006      -> N1
+    CN-HSK3-001    -> HSK3
+    HSK3-001       -> HSK3
+    CN-3-001       -> HSK3
+    """
+    parts = (code or "").split("-")
+
+    if len(parts) >= 2 and parts[0] == "JP":
+        return parts[1]
+
+    if len(parts) >= 2 and parts[0] == "CN":
+        raw_level = normalize_level_value(parts[1])
+        if raw_level.startswith("HSK"):
+            return raw_level
+        if raw_level in ["1", "2", "3", "4", "5", "6"]:
+            return f"HSK{raw_level}"
+        return raw_level
+
+    if parts and normalize_level_value(parts[0]).startswith("HSK"):
+        return normalize_level_value(parts[0])
+
+    return ""
+
+
+def get_course_prefix_from_code(code):
+    """
+    Return prefix for all lessons in the same level.
+
+    Supported examples:
+    JP-N5-001      -> JP-N5-
+    JP-N1-006      -> JP-N1-
+    CN-HSK3-001    -> CN-HSK3-
+    HSK3-001       -> HSK3-
+    CN-3-001       -> CN-3-
+    """
+    parts = (code or "").split("-")
+
+    if len(parts) >= 2:
+        return f"{parts[0]}-{parts[1]}-"
+
+    return ""
+
+
+def get_level_label_from_level(level):
+    """
+    Make a user-facing label from a level value.
+    N5 -> JLPT N5
+    HSK3 -> HSK 3
+    """
+    level = normalize_level_value(level)
+
+    if level.startswith("HSK"):
+        return f"HSK {level.replace('HSK', '')}"
+
+    if level.startswith("N"):
+        return f"JLPT {level}"
+
+    return level or "Course"
+
+
+def get_course_filter_for_level(program, selected_level):
+    """
+    Return a queryset filter for the selected level.
+    This supports the code styles commonly used in FernLearnWorld:
+    Japanese: JP-N5-001
+    Chinese: CN-HSK3-001, HSK3-001, or CN-3-001
+    """
+    selected_level = normalize_level_value(selected_level)
+
+    if selected_level.startswith("N"):
+        return Q(code__startswith=f"JP-{selected_level}-")
+
+    if selected_level.startswith("HSK"):
+        hsk_number = selected_level.replace("HSK", "")
+        return (
+            Q(code__startswith=f"CN-{selected_level}-") |
+            Q(code__startswith=f"{selected_level}-") |
+            Q(code__startswith=f"CN-{hsk_number}-")
+        )
+
+    return Q()
+
+
+def calculate_level_progress(user, courses):
+    """
+    Calculate level progress from UserLessonProgress.completed=True only.
+
+    Formula:
+    completed lessons / total lessons * 100
+    """
+    total_lessons = courses.count()
+
+    completed_course_ids = set(
+        UserLessonProgress.objects.filter(
+            user=user,
+            course__in=courses,
+            completed=True,
+        ).values_list("course_id", flat=True)
+    )
+
+    completed_lessons = len(completed_course_ids)
+
+    progress_percent = (
+        int((completed_lessons / total_lessons) * 100)
+        if total_lessons
+        else 0
+    )
+
+    return {
+        "completed_course_ids": completed_course_ids,
+        "completed_lessons": completed_lessons,
+        "total_lessons": total_lessons,
+        "progress_percent": progress_percent,
+    }
+
+
+def get_program_level_config(program, requested_level):
+    """
+    Resolve the active level and queryset filter for a program detail page.
+    Supports Japanese JLPT N5-N1 and Chinese HSK1-HSK6.
+    """
+    program_title = (program.title or "").lower()
+    requested_level = normalize_level_value(requested_level)
+
+    is_japanese_program = (
+        program.id == 1
+        or "japanese" in program_title
+        or "jlpt" in program_title
+        or "ญี่ปุ่น" in program_title
+    )
+
+    is_chinese_program = (
+        program.id == 2
+        or "chinese" in program_title
+        or "hsk" in program_title
+        or "จีน" in program_title
+    )
+
+    if is_japanese_program:
+        level_options = ["N5", "N4", "N3", "N2", "N1"]
+
+        if requested_level not in level_options:
+            requested_level = "N5"
+
+        selected_level = requested_level
+        level_label = get_level_label_from_level(selected_level)
+        display_course_title = f"{level_label} Japanese Course"
+        course_filter = get_course_filter_for_level(program, selected_level)
+
+        return {
+            "selected_level": selected_level,
+            "level_options": level_options,
+            "level_label": level_label,
+            "display_course_title": display_course_title,
+            "course_filter": course_filter,
+        }
+
+    if is_chinese_program:
+        level_options = ["HSK1", "HSK2", "HSK3", "HSK4", "HSK5", "HSK6"]
+
+        if requested_level in ["1", "2", "3", "4", "5", "6"]:
+            requested_level = f"HSK{requested_level}"
+
+        if requested_level not in level_options:
+            requested_level = "HSK1"
+
+        selected_level = requested_level
+        hsk_number = selected_level.replace("HSK", "")
+        level_label = get_level_label_from_level(selected_level)
+        display_course_title = f"{level_label} Chinese Course"
+        course_filter = get_course_filter_for_level(program, selected_level)
+
+        return {
+            "selected_level": selected_level,
+            "level_options": level_options,
+            "level_label": level_label,
+            "display_course_title": display_course_title,
+            "course_filter": course_filter,
+        }
+
+    return {
+        "selected_level": "",
+        "level_options": [],
+        "level_label": program.title,
+        "display_course_title": program.title,
+        "course_filter": Q(),
+    }
 
 @method_decorator([login_required, lecturer_required], name="dispatch")
 class ProgramFilterView(FilterView):
@@ -67,19 +276,26 @@ def program_add(request):
 
 @login_required
 def program_detail(request, pk):
-    program = Program.objects.get(pk=pk)
-    courses = Course.objects.filter(program_id=pk).order_by("code")
-    credits = Course.objects.aggregate(Sum("credit"))
+    program = get_object_or_404(Program, pk=pk)
 
-    completed_course_ids = UserLessonProgress.objects.filter(
-        user=request.user,
-        completed=True
-    ).values_list("course_id", flat=True)
+    level_config = get_program_level_config(
+        program=program,
+        requested_level=request.GET.get("level"),
+    )
+
+    courses = (
+        Course.objects
+        .filter(program=program)
+        .filter(level_config["course_filter"])
+        .order_by("code")
+    )
+
+    credits = courses.aggregate(Sum("credit"))
+    progress = calculate_level_progress(request.user, courses)
+    completed_course_ids = progress["completed_course_ids"]
 
     lesson_list = []
-    
     dev_unlock_all = getattr(settings, "DEV_UNLOCK_ALL_LESSONS", False)
-
     previous_unlocked = True
 
     for course in courses:
@@ -98,15 +314,30 @@ def program_detail(request, pk):
 
         previous_unlocked = is_completed
 
+    next_lesson = (
+        courses
+        .exclude(id__in=completed_course_ids)
+        .order_by("code")
+        .first()
+    )
+
     return render(
         request,
         "course/program_single.html",
         {
-            "title": program.title,
+            "title": level_config["display_course_title"],
             "program": program,
             "courses": courses,
             "lesson_list": lesson_list,
             "credits": credits,
+            "selected_level": level_config["selected_level"],
+            "level_options": level_config["level_options"],
+            "level_label": level_config["level_label"],
+            "display_course_title": level_config["display_course_title"],
+            "completed_lessons": progress["completed_lessons"],
+            "total_lessons": progress["total_lessons"],
+            "level_progress_percent": progress["progress_percent"],
+            "next_lesson": next_lesson,
         },
     )
 
@@ -159,16 +390,50 @@ def course_single(request, slug):
     lecturers = CourseAllocation.objects.filter(courses__pk=course.id)
 
     vocabularies = Vocabulary.objects.filter(course=course)
-
     vocab_count = vocabularies.count()
-
-    sentence_count = vocabularies.exclude(
-        example_sentence__isnull=True
-    ).exclude(
-        example_sentence=""
-    ).count()
-
+    sentence_count = (
+        vocabularies
+        .exclude(example_sentence__isnull=True)
+        .exclude(example_sentence="")
+        .count()
+    )
     sample_vocab = vocabularies.first()
+
+    selected_level = get_course_level_from_code(course.code)
+    course_prefix = get_course_prefix_from_code(course.code)
+
+    level_label = get_level_label_from_level(selected_level)
+
+    level_courses = (
+        Course.objects
+        .filter(program=course.program, code__startswith=course_prefix)
+        .order_by("code")
+    )
+
+    progress = calculate_level_progress(request.user, level_courses)
+    course_ids = list(level_courses.values_list("id", flat=True))
+
+    try:
+        current_lesson_number = course_ids.index(course.id) + 1
+    except ValueError:
+        current_lesson_number = 1
+
+    is_completed = UserLessonProgress.objects.filter(
+        user=request.user,
+        course=course,
+        completed=True,
+    ).exists()
+
+    is_final_lesson = (
+        progress["total_lessons"] > 0
+        and current_lesson_number == progress["total_lessons"]
+    )
+
+    lesson_map_url = (
+        f"/th/programs/{course.program.id}/detail/?level={selected_level}"
+        if selected_level
+        else f"/th/programs/{course.program.id}/detail/"
+    )
 
     return render(
         request,
@@ -184,9 +449,18 @@ def course_single(request, slug):
             "vocab_count": vocab_count,
             "sentence_count": sentence_count,
             "sample_vocab": sample_vocab,
+
+            "selected_level": selected_level,
+            "level_label": level_label,
+            "completed_lessons": progress["completed_lessons"],
+            "total_lessons": progress["total_lessons"],
+            "level_progress_percent": progress["progress_percent"],
+            "current_lesson_number": current_lesson_number,
+            "is_completed": is_completed,
+            "is_final_lesson": is_final_lesson,
+            "lesson_map_url": lesson_map_url,
         },
     )
-
 
 @login_required
 @lecturer_required

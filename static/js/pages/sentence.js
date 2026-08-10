@@ -135,9 +135,28 @@ function updateSentence() {
 function speakSentence() {
     if (!currentSentenceText) return;
 
+    if (recognition) {
+        try {
+            recognition.abort();
+        } catch (error) {
+            console.warn("Cannot abort old recognition:", error);
+        }
+    }
+
+    const item = sentenceData[sentenceIndex] || {};
+    const speechConfig = fernGetSpeechConfig(item, window.SENTENCE_PAGE);
+    console.log('[sentence.js] speakSentence() item.language=', item.language, 'item.course_code=', item.course_code, 'item.level=', item.level, '-> detected config=', speechConfig);
+
     const utterance = new SpeechSynthesisUtterance(currentSentenceText);
-    utterance.lang = "ja-JP";
-    utterance.rate = 0.85;
+    utterance.lang = speechConfig.ttsLang;
+    console.log('[sentence.js] utterance.lang set to', utterance.lang);
+    utterance.rate = speechConfig.rate;
+    utterance.pitch = speechConfig.pitch;
+
+    const voice = fernGetPreferredVoice(speechConfig.ttsLang);
+    if (voice) {
+        utterance.voice = voice;
+    }
 
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
@@ -179,18 +198,35 @@ function startSentenceSpeaking() {
         return;
     }
 
+    // หยุดเสียงที่กำลังเล่นและยกเลิก recognition ค้างเก่า (ถ้ามี) ก่อนเริ่มใหม่
+    // ป้องกัน InvalidStateError เวลากดปุ่มซ้ำเร็วๆ หรือมี session ค้างจากรอบก่อน
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+
+    if (recognition) {
+        try {
+            recognition.abort();
+        } catch (error) {
+            console.warn("Cannot abort old recognition:", error);
+        }
+    }
+
+    const item = sentenceData[sentenceIndex] || {};
+    const speechConfig = fernGetSpeechConfig(item, window.SENTENCE_PAGE);
+    console.log('[sentence.js] startSentenceSpeaking() item.language=', item.language, 'item.course_code=', item.course_code, 'item.level=', item.level, '-> detected config=', speechConfig);
+
     recognition = new SpeechRecognition();
-    recognition.lang = "ja-JP";
+    recognition.lang = speechConfig.recognitionLang;
+    console.log('[sentence.js] recognition.lang set to', recognition.lang);
     recognition.interimResults = false;
     recognition.continuous = false;
 
     showSentenceResult(
-        "กำลังฟัง... พูดประโยคนี้ได้เลย",
+        "🎙️ กำลังเตรียมไมค์... รอครึ่งวินาทีแล้วค่อยพูด",
         "--",
         "listen"
     );
-
-    recognition.start();
 
     recognition.onresult = function (event) {
         const spoken = event.results[0][0].transcript;
@@ -260,13 +296,41 @@ function startSentenceSpeaking() {
         );
     };
 
-    recognition.onerror = function () {
-        showSentenceResult(
-            "ไมค์ไม่ทำงาน หรือยังไม่ได้กดอนุญาตไมค์",
-            "--",
-            "warn"
-        );
+    recognition.onerror = function (event) {
+        let message = "ไมค์ไม่ทำงาน หรือยังไม่ได้กดอนุญาตไมค์";
+
+        if (event.error === "no-speech") {
+            message = "ไม่ได้ยินเสียง ลองกดใหม่ แล้วเว้นจังหวะครึ่งวินาทีก่อนพูด";
+        } else if (event.error === "audio-capture") {
+            message = "ไม่พบไมโครโฟน กรุณาเช็กไมค์";
+        } else if (event.error === "not-allowed") {
+            message = "ยังไม่ได้อนุญาตไมค์ กรุณากด Allow";
+        } else if (event.error === "network") {
+            message = "ระบบฟังเสียงมีปัญหาเครือข่าย ลองใหม่อีกครั้ง";
+        } else if (event.error === "language-not-supported") {
+            message = "เบราว์เซอร์นี้ยังไม่รองรับการฟังเสียงภาษานี้ แนะนำใช้ Google Chrome เวอร์ชันล่าสุด";
+        }
+
+        showSentenceResult(message, "--", "warn");
     };
+
+    recognition.onend = function () {
+        console.log("Sentence recognition ended");
+    };
+
+    setTimeout(function () {
+        try {
+            recognition.start();
+            console.log("Recognition language:", speechConfig.recognitionLang);
+        } catch (error) {
+            console.warn("Recognition start error:", error);
+            showSentenceResult(
+                "เริ่มไมค์ไม่สำเร็จ กรุณาลองกดใหม่อีกครั้ง",
+                "--",
+                "warn"
+            );
+        }
+    }, 500);
 }
 
 function showSentenceResult(text, score, type) {

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ category_label }} | Flashcards
+{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-container {
+        padding: 30px;
+        background: #fff7fb;
+        min-height: 100vh;
+    }
+
+    .fern-page-title h2 {
+        margin: 0 0 8px;
+        font-size: clamp(26px, 3vw, 38px);
+        font-weight: 900;
+        color: #111827;
+    }
+
+    .fern-page-title p {
+        margin: 0 0 26px;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .fc-back-link {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: #8b5cf6;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .fc-deck-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 22px;
+    }
+
+    .fc-deck-card {
+        background: white;
+        border-radius: 26px;
+        padding: 26px;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        border: 1px solid #fbcfe8;
+    }
+
+    .fc-deck-title {
+        font-size: 20px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .fc-deck-meta {
+        color: #6b7280;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .fc-deck-due {
+        color: #db2777;
+        font-weight: 800;
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .fc-deck-btn {
+        display: inline-block;
+        border: none;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+        text-decoration: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-weight: 800;
+    }
+
+    .fc-language-section {
+        margin-bottom: 40px;
+    }
+
+    .fc-language-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 22px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #fbcfe8;
+    }
+
+    .fc-language-flag {
+        font-size: 26px;
+    }
+</style>
+
+<div class="fern-container">
+
+    <a href="{% url 'flashcards:home' %}" class="fc-back-link">← กลับหน้า Flashcards</a>
+
+    <div class="fern-page-title">
+        <h2>{{ category_label }}</h2>
+        <p>เลือกหมวดย่อยที่ต้องการทบทวน</p>
+    </div>
+
+    {% if language_groups %}
+        {% for group in language_groups %}
+        <div class="fc-language-section">
+            <div class="fc-language-title">
+                <span class="fc-language-flag">{% if group.language == 'japanese' %}🇯🇵{% else %}🇨🇳{% endif %}</span>
+                {{ group.label }}
+            </div>
+            <div class="fc-deck-grid">
+                {% for deck in group.decks %}
+                <div class="fc-deck-card">
+                    <div class="fc-deck-title">{{ deck.label }}</div>
+                    <div class="fc-deck-meta">{{ deck.total }} การ์ดทั้งหมด · ใหม่ {{ deck.new }} ใบ</div>
+                    {% if deck.due > 0 %}
+                    <div class="fc-deck-due">ต้องทบทวนวันนี้ {{ deck.due }} ใบ</div>
+                    {% endif %}
+                    <a href="{% url 'flashcards:study_session' category deck.value %}" class="fc-deck-btn">เริ่มทบทวน →</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <p style="color:#6b7280;">ยังไม่มีข้อมูลในหมวดนี้</p>
+        {% endfor %}
+    {% else %}
+    <div class="fc-deck-grid">
+        {% for deck in decks %}
+        <div class="fc-deck-card">
+            <div class="fc-deck-title">{{ deck.label }}</div>
+            <div class="fc-deck-meta">{{ deck.total }} การ์ดทั้งหมด · ใหม่ {{ deck.new }} ใบ</div>
+            {% if deck.due > 0 %}
+            <div class="fc-deck-due">ต้องทบทวนวันนี้ {{ deck.due }} ใบ</div>
+            {% endif %}
+            <a href="{% url 'flashcards:study_session' category deck.value %}" class="fc-deck-btn">เริ่มทบทวน →</a>
+        </div>
+        {% empty %}
+        <p style="color:#6b7280;">ยังไม่มีข้อมูลในหมวดนี้</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock content %}

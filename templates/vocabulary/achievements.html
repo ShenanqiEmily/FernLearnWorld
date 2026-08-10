@@ -83,6 +83,38 @@
     color: #64748b;
 }
 
+.ach-earned-date {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 700;
+}
+
+.ach-progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 800;
+    color: #374151;
+}
+
+.ach-progress-bar {
+    height: 14px;
+    background: #f3f4f6;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.ach-progress-bar span {
+    display: block;
+    height: 100%;
+    width: {{ progress_percent }}%;
+    background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+    border-radius: 999px;
+}
+
 @media(max-width:1000px) {
     .ach-grid {
         grid-template-columns: 1fr;
@@ -95,15 +127,23 @@
     <div class="ach-hero">
         <h1 class="ach-title">🏆 My Achievements</h1>
         <p class="ach-sub">
-            เหรียญรางวัลที่คุณได้รับจากการเรียน Quiz และการจบหลักสูตร JLPT N5
+            เหรียญรางวัลที่คุณได้รับจากการเรียนคำศัพท์ ประโยค Quiz, Practice Hub และ Flashcards
         </p>
+
+        <div style="margin-top: 22px;">
+            <div class="ach-progress-row">
+                <span>ปลดล็อกแล้ว {{ earned_count }} / {{ total_count }} เหรียญ</span>
+                <span>{{ progress_percent }}%</span>
+            </div>
+            <div class="ach-progress-bar"><span></span></div>
+        </div>
     </div>
 
     <div class="ach-grid">
 
         {% for achievement in all_achievements %}
 
-            <div class="ach-card {% if achievement.id not in earned_ids %}locked{% endif %}">
+            <div class="ach-card {% if not achievement.is_earned %}locked{% endif %}">
 
                 <div class="ach-icon">
                     {{ achievement.icon }}
@@ -117,9 +157,10 @@
                     {{ achievement.description }}
                 </div>
 
-                {% if achievement.id in earned_ids %}
+                {% if achievement.is_earned %}
                     <div class="ach-status">
                         ได้รับแล้ว
+                        <span class="ach-earned-date">{{ achievement.earned_at|date:"d M Y" }}</span>
                     </div>
                 {% else %}
                     <div class="ach-status locked">

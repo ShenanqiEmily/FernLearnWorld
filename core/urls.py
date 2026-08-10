@@ -33,4 +33,5 @@ urlpatterns = [
     path("semester/<int:pk>/delete/", semester_delete_view, name="delete_semester"),
     path("dashboard/", dashboard_view, name="dashboard"),
     path("ai-tutor/", views.ai_tutor, name="ai_tutor"),
+    path("ai-tutor/chat/", views.ai_tutor_chat, name="ai_tutor_chat"),
 ]

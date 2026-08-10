@@ -1,25 +1,33 @@
+import json
+
+import anthropic
+from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 from accounts.decorators import admin_required, lecturer_required
 from accounts.models import User, Student
+from .ai_tutor_prompts import AI_TUTOR_MODES
 from .forms import SessionForm, SemesterForm, NewsAndEventsForm
 from .models import NewsAndEvents, ActivityLog, Session, Semester
 
+from django.db.models import Sum
+from django.utils import timezone
+
 from course.models import Course
 from vocabulary.models import UserLessonProgress
+from flashcards.models import FlashcardReview
+from practice.models import PracticeAttempt
 # ########################################################
 # News & Events
 # ########################################################
-@login_required
 def home_view(request):
-    items = NewsAndEvents.objects.all().order_by("-updated_date")
-    context = {
-        "title": "News & Events",
-        "items": items,
-    }
-    return render(request, "core/index.html", context)
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    return render(request, "core/index.html")
 
 
 @login_required
@@ -27,16 +35,18 @@ def dashboard_view(request):
     logs = ActivityLog.objects.all().order_by("-created_at")[:10]
     gender_count = Student.get_gender_count()
 
-    n5_courses = Course.objects.filter(code__startswith="JP-N5").order_by("code")
+    # All courses that actually have vocabulary content — spans every
+    # language/level (JP N5-N1, CN HSK1-6), not just JLPT N5.
+    all_courses = Course.objects.filter(vocabularies__isnull=False).distinct().order_by("code")
 
     progresses = UserLessonProgress.objects.filter(
         user=request.user,
-        course__in=n5_courses
+        course__in=all_courses
     ).select_related("course")
 
     completed_progresses = progresses.filter(completed=True)
     completed_lessons = completed_progresses.count()
-    total_lessons = n5_courses.count()
+    total_lessons = all_courses.count()
 
     overall_percent = (
         int((completed_lessons / total_lessons) * 100)
@@ -44,7 +54,16 @@ def dashboard_view(request):
         else 0
     )
 
-    total_xp = completed_lessons * 120
+    total_xp = (
+        PracticeAttempt.objects.filter(user=request.user)
+        .aggregate(total=Sum("xp_awarded"))["total"]
+        or 0
+    )
+
+    flashcards_due_today = FlashcardReview.objects.filter(
+        user=request.user, due_date__lte=timezone.localdate()
+    ).count()
+
     latest_progress = progresses.order_by("-id")[:5]
 
     if completed_progresses.exists():
@@ -60,7 +79,7 @@ def dashboard_view(request):
     completed_course_ids = completed_progresses.values_list("course_id", flat=True)
 
     next_lesson = (
-        n5_courses.exclude(id__in=completed_course_ids)
+        all_courses.exclude(id__in=completed_course_ids)
         .order_by("code")
         .first()
     )
@@ -76,6 +95,7 @@ def dashboard_view(request):
         "total_lessons": total_lessons,
         "overall_percent": overall_percent,
         "total_xp": total_xp,
+        "flashcards_due_today": flashcards_due_today,
         "latest_progress": latest_progress,
         "average_score": average_score,
         "best_progress": best_progress,
@@ -357,9 +377,63 @@ def semester_delete_view(request, pk):
     return redirect("semester_list")
 
 # ai tutor
+@login_required
 def ai_tutor(request):
-    vocabularies = Vocabulary.objects.all()
+    modes = {
+        key: {
+            "label": mode["label"],
+            "icon": mode["icon"],
+            "description": mode["description"],
+            "suggested_prompts": mode["suggested_prompts"],
+        }
+        for key, mode in AI_TUTOR_MODES.items()
+    }
 
     return render(request, "ai/ai_tutor.html", {
-        "vocabularies": vocabularies,
+        "ai_tutor_modes": modes,
+        "ai_tutor_mode_order": list(AI_TUTOR_MODES.keys()),
     })
+
+
+@login_required
+@require_POST
+def ai_tutor_chat(request):
+    mode = request.POST.get("mode")
+    message = (request.POST.get("message") or "").strip()
+
+    mode_config = AI_TUTOR_MODES.get(mode)
+    if not mode_config or not message:
+        return JsonResponse({"ok": False, "error": "invalid request"}, status=400)
+
+    if not settings.ANTHROPIC_API_KEY:
+        return JsonResponse({
+            "ok": False,
+            "error": "ยังไม่ได้ตั้งค่า ANTHROPIC_API_KEY กรุณาเพิ่มคีย์ใน .env ก่อนใช้งาน AI Tutor",
+        }, status=400)
+
+    try:
+        history = json.loads(request.POST.get("history") or "[]")
+    except ValueError:
+        history = []
+
+    client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+
+    try:
+        response = client.messages.create(
+            model=settings.AI_TUTOR_MODEL,
+            max_tokens=1024,
+            system=mode_config["system_prompt"],
+            messages=history + [{"role": "user", "content": message}],
+        )
+    except anthropic.AuthenticationError:
+        return JsonResponse({"ok": False, "error": "ANTHROPIC_API_KEY ไม่ถูกต้อง"}, status=502)
+    except anthropic.RateLimitError:
+        return JsonResponse({"ok": False, "error": "AI ถูกใช้งานถี่เกินไป กรุณารอสักครู่แล้วลองใหม่"}, status=502)
+    except anthropic.APIStatusError as e:
+        return JsonResponse({"ok": False, "error": f"AI service error: {e.message}"}, status=502)
+    except anthropic.APIConnectionError:
+        return JsonResponse({"ok": False, "error": "เชื่อมต่อ AI ไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ต"}, status=502)
+
+    reply = next((block.text for block in response.content if block.type == "text"), "")
+
+    return JsonResponse({"ok": True, "reply": reply})

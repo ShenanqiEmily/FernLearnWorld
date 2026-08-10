@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Practice Hub | FernLearnWorld{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-practice-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .fern-hero h1 {
+        font-size: 34px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 6px;
+    }
+
+    .fern-hero p {
+        margin: 0;
+        color: #64748b;
+    }
+
+    .fern-xp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 22px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white;
+        font-weight: 900;
+        font-size: 18px;
+        box-shadow: 0 10px 22px rgba(139, 92, 246, 0.25);
+    }
+
+    #practiceHubGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .fern-practice-card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 10px 26px rgba(236, 72, 153, 0.08);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+        transition: transform 0.15s ease;
+    }
+
+    .fern-practice-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .fern-practice-card.disabled {
+        opacity: 0.55;
+        pointer-events: none;
+    }
+
+    .fern-card-icon {
+        font-size: 36px;
+        margin-bottom: 12px;
+    }
+
+    .fern-card-label {
+        font-size: 18px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 6px;
+    }
+
+    .fern-card-desc {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 16px;
+        min-height: 40px;
+    }
+
+    .fern-card-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .fern-chip {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .fern-chip-difficulty {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .fern-chip-xp {
+        background: #fdf2f8;
+        color: #ec4899;
+    }
+
+    .fern-card-progress-bar {
+        height: 8px;
+        background: #f3f4f6;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 6px;
+    }
+
+    .fern-card-progress-bar span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+    }
+
+    .fern-card-progress-label {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .fern-soon-ribbon {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: #f3f4f6;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 900;
+        padding: 4px 10px;
+        border-radius: 999px;
+    }
+</style>
+
+<div class="fern-practice-page">
+
+    <div class="fern-hero">
+        <div>
+            <h1>Practice Hub</h1>
+            <p>เลือกโหมดฝึกฝนที่ต้องการ แล้วสะสม XP ไปพร้อมกัน</p>
+        </div>
+
+        <div class="fern-xp-badge">
+            ⭐ {{ total_xp }} XP
+        </div>
+    </div>
+
+    <div id="practiceHubGrid"></div>
+
+</div>
+
+{{ practice_modes|json_script:"practice-modes" }}
+{{ mode_order|json_script:"practice-mode-order" }}
+{{ mode_percents|json_script:"practice-mode-percents" }}
+{{ mode_urls|json_script:"practice-mode-urls" }}
+
+<script src="{% static 'js/pages/practice_hub.js' %}"></script>
+
+{% endblock content %}

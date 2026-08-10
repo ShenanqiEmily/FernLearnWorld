@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mode.label }} | Practice Hub{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-picker-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-picker-title {
+        font-size: 30px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 22px;
+    }
+
+    .fern-picker-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .fern-picker-col h3 {
+        font-weight: 900;
+        color: #ec4899;
+        margin-bottom: 14px;
+    }
+
+    .fern-picker-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .fern-picker-list li {
+        margin-bottom: 10px;
+    }
+
+    .fern-picker-list a {
+        display: block;
+        padding: 14px 18px;
+        border-radius: 16px;
+        background: white;
+        border: 1px solid #fbcfe8;
+        text-decoration: none;
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .fern-picker-list a:hover {
+        background: #fdf2f8;
+    }
+
+    @media(max-width: 800px) {
+        .fern-picker-columns {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="fern-picker-page">
+
+    <div class="fern-picker-title">{{ mode.icon }} {{ mode.label }} — เลือกบทเรียน</div>
+
+    <div class="fern-picker-columns">
+
+        <div class="fern-picker-col">
+            <h3>ภาษาญี่ปุ่น</h3>
+            <ul class="fern-picker-list">
+                {% for course in japanese_courses %}
+                <li>
+                    <a href="{% if mode_key == 'speaking' %}{% url 'practice:speaking' course_code=course.code %}{% elif mode_key == 'vocab_mc' %}{% url 'practice:vocab_mc' course_code=course.code %}{% else %}{% url 'practice:play' mode=mode_key group=course.code %}{% endif %}">
+                        {{ course.code }} — {{ course.title }}
+                    </a>
+                </li>
+                {% empty %}
+                <li>ยังไม่มีบทเรียน</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="fern-picker-col">
+            <h3>ภาษาจีน</h3>
+            <ul class="fern-picker-list">
+                {% for course in chinese_courses %}
+                <li>
+                    <a href="{% if mode_key == 'speaking' %}{% url 'practice:speaking' course_code=course.code %}{% elif mode_key == 'vocab_mc' %}{% url 'practice:vocab_mc' course_code=course.code %}{% else %}{% url 'practice:play' mode=mode_key group=course.code %}{% endif %}">
+                        {{ course.code }} — {{ course.title }}
+                    </a>
+                </li>
+                {% empty %}
+                <li>ยังไม่มีบทเรียน</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

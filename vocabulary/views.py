@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from django.shortcuts import render
 from .models import Vocabulary
 from course.models import Course
@@ -9,6 +10,7 @@ from .models import Vocabulary
 from .models import Achievement, UserAchievement
 from django.contrib.auth.decorators import login_required
 from .models import Achievement, UserAchievement
+from practice.models import PracticeAttempt
 
 
 def get_lesson_data(course_code=None):
@@ -43,28 +45,13 @@ def sentence_practice(request, course_code=None):
 
 
 def speaking_practice(request, course_code=None):
-    if not course_code:
-        course_code = "JP-N5-001"
-
-    vocabularies, course = get_lesson_data(course_code)
-
-    try:
-        start_index = int(request.GET.get("start", 0))
-    except:
-        start_index = 0
-
-    if start_index < 0:
-        start_index = 0
-
-    if vocabularies and start_index >= len(vocabularies):
-        start_index = 0
-
-    return render(request, "vocabulary/speaking_practice.html", {
-        "vocabularies": vocabularies,
-        "course_code": course_code,
-        "course": course,
-        "start_index": start_index,
-    })
+    # Speaking practice now lives in Practice Hub (templates/practice/speaking.html);
+    # this legacy route has no template of its own, so send visitors there instead
+    # of letting it 500. Kept (rather than removed) in case anything external
+    # still links to it.
+    if course_code:
+        return redirect("practice:speaking", course_code=course_code)
+    return redirect("practice:speaking_picker")
 
 def quiz_practice(request, course_code=None):
     if not course_code:
@@ -122,6 +109,17 @@ def lesson_complete(request, course_code=None):
         if passed:
             award_badge(request.user, "FIRST_LESSON")
 
+            completed_course_ids = UserLessonProgress.objects.filter(
+                user=request.user, completed=True
+            ).values_list("course_id", flat=True)
+
+            words_learned = Vocabulary.objects.filter(
+                course_id__in=completed_course_ids
+            ).count()
+
+            if words_learned >= 100:
+                award_badge(request.user, "VOCAB_100")
+
         if score >= 90:
             award_badge(request.user, "QUIZ_90")
 
@@ -151,9 +149,11 @@ def lesson_complete(request, course_code=None):
 def profile_progress(request):
     progresses = UserLessonProgress.objects.filter(
         user=request.user
-    ).select_related("course")
+    ).select_related("course").order_by("-updated_at")
 
-    total_lessons = Course.objects.filter(code__startswith="JP-N5").count()
+    # All courses that actually have vocabulary content — spans every
+    # language/level (JP N5-N1, CN HSK1-6), not just JLPT N5.
+    total_lessons = Course.objects.filter(vocabularies__isnull=False).distinct().count()
     completed_lessons = progresses.filter(completed=True).count()
 
     if total_lessons > 0:
@@ -161,7 +161,11 @@ def profile_progress(request):
     else:
         overall_percent = 0
 
-    total_xp = completed_lessons * 120
+    total_xp = (
+        PracticeAttempt.objects.filter(user=request.user)
+        .aggregate(total=Sum("xp_awarded"))["total"]
+        or 0
+    )
 
     return render(request, "vocabulary/profile_progress.html", {
         "progresses": progresses,
@@ -177,16 +181,29 @@ def achievements_page(request):
         user=request.user
     ).select_related("achievement")
 
-    earned_ids = earned_achievements.values_list("achievement_id", flat=True)
+    earned_at_by_achievement = {
+        ua.achievement_id: ua.earned_at for ua in earned_achievements
+    }
+    earned_ids = set(earned_at_by_achievement.keys())
 
-    all_achievements = Achievement.objects.all().order_by("id")
+    all_achievements = list(Achievement.objects.all().order_by("id"))
+    for achievement in all_achievements:
+        achievement.is_earned = achievement.id in earned_ids
+        achievement.earned_at = earned_at_by_achievement.get(achievement.id)
+
+    total_count = len(all_achievements)
+    earned_count = len(earned_ids)
+    progress_percent = (
+        int((earned_count / total_count) * 100) if total_count else 0
+    )
 
     return render(
         request,
         "vocabulary/achievements.html",
         {
-            "earned_achievements": earned_achievements,
-            "earned_ids": earned_ids,
             "all_achievements": all_achievements,
+            "earned_count": earned_count,
+            "total_count": total_count,
+            "progress_percent": progress_percent,
         },
     )

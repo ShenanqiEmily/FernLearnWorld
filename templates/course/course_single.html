@@ -41,6 +41,7 @@
         font-weight: 900;
         margin-bottom: 10px;
         color: #0f172a;
+        line-height: 1.25;
     }
 
     .fern-summary {
@@ -50,7 +51,18 @@
 
     .fern-progress-title {
         margin-top: 30px;
-        font-weight: 800;
+        font-weight: 900;
+        color: #334155;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .fern-progress-percent {
+        color: #ec4899;
+        font-size: 22px;
+        font-weight: 900;
     }
 
     .fern-progress {
@@ -62,9 +74,16 @@
     }
 
     .fern-progress-fill {
-        width: 20%;
         height: 100%;
+        width: 0%;
         background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        transition: width .25s ease;
+    }
+
+    .fern-progress-note {
+        margin-top: 10px;
+        color: #64748b;
+        font-weight: 700;
     }
 
     .fern-grid {
@@ -128,6 +147,16 @@
         line-height: 1.8;
     }
 
+    .fern-status-box {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: #ecfdf5;
+        border: 1px solid #86efac;
+        color: #166534;
+        font-weight: 900;
+    }
+
     .fern-btn-row {
         display: flex;
         gap: 15px;
@@ -162,12 +191,15 @@
         font-size: 60px;
         font-weight: 900;
         color: #0f172a;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
     }
 
     .fern-reading {
         font-size: 22px;
         color: #8b5cf6;
         margin-top: 8px;
+        overflow-wrap: anywhere;
     }
 
     .fern-meaning {
@@ -175,6 +207,7 @@
         color: #ec4899;
         font-weight: 800;
         margin-top: 8px;
+        overflow-wrap: anywhere;
     }
 
     .fern-mock-icon {
@@ -217,7 +250,7 @@
     <div class="fern-hero">
 
         <div class="fern-badge">
-            {{ course.code }}
+            {{ course.code }}{% if level_label %} • {{ level_label }}{% endif %}
         </div>
 
         <h1 class="fern-title">
@@ -229,15 +262,23 @@
         </p>
 
         <div class="fern-progress-title">
-            {% if course.code == "JP-N5-025" %}
-                Final Review Progress
-            {% else %}
-                Progress 20%
-            {% endif %}
+            <span>
+                Progress {{ level_label|default:"Course" }}
+            </span>
+            <span class="fern-progress-percent">
+                {{ level_progress_percent|default:0 }}%
+            </span>
         </div>
 
         <div class="fern-progress">
-            <div class="fern-progress-fill"></div>
+            <div class="fern-progress-fill" style="width:{{ level_progress_percent|default:0 }}%;"></div>
+        </div>
+
+        <div class="fern-progress-note">
+            ผ่านแล้ว {{ completed_lessons|default:0 }} / {{ total_lessons|default:0 }} บท
+            {% if current_lesson_number %}
+                • ตอนนี้อยู่บทที่ {{ current_lesson_number }}
+            {% endif %}
         </div>
 
     </div>
@@ -246,53 +287,62 @@
 
         <div class="fern-card">
 
-            {% if course.code == "JP-N5-025" %}
+            {% if is_final_lesson %}
 
                 <div class="fern-card-title">
                     🏆 Final Review & Mock Test
                 </div>
 
                 <p class="fern-desc">
-                    บทนี้เป็นแบบทดสอบสรุป JLPT N5 ทั้งหมด ระบบจะสุ่มข้อสอบจากคำศัพท์และประโยคบทที่ 1-24
-                    เพื่อวัดความพร้อมก่อนจบหลักสูตร N5
+                    บทนี้เป็นบททบทวนท้ายระดับ {{ level_label }} ใช้สำหรับตรวจความพร้อมหลังเรียนครบทุกบทในระดับนี้
                 </p>
 
                 <div class="fern-stats">
 
                     <div class="fern-stat">
-                        <div class="fern-stat-number">50</div>
-                        <div class="fern-stat-label">Mock Test</div>
+                        <div class="fern-stat-number">
+                            {{ vocab_count }}
+                        </div>
+                        <div class="fern-stat-label">คำศัพท์</div>
                     </div>
 
                     <div class="fern-stat">
-                        <div class="fern-stat-number">1-24</div>
-                        <div class="fern-stat-label">Review Lessons</div>
+                        <div class="fern-stat-number">
+                            {{ sentence_count }}
+                        </div>
+                        <div class="fern-stat-label">ประโยค</div>
                     </div>
 
                     <div class="fern-stat">
                         <div class="fern-stat-number">70%</div>
-                        <div class="fern-stat-label">Pass Score</div>
+                        <div class="fern-stat-label">ผ่าน Quiz</div>
                     </div>
 
                 </div>
 
                 <div class="fern-info-box">
-                    เป้าหมาย: ทบทวนคำศัพท์ ประโยค การอ่าน และความเข้าใจทั้งหมดของ JLPT N5
-                    ถ้าทำคะแนนได้ 70% ขึ้นไป ถือว่าผ่าน Final Review
+                    เป้าหมาย: ทบทวนคำศัพท์ คำอ่าน คำแปล และประโยคตัวอย่างของระดับ {{ level_label }}
+                    เมื่อทำ Quiz ผ่าน 70% ระบบจะบันทึกว่าเรียนจบบทนี้
                 </div>
 
+                {% if is_completed %}
+                    <div class="fern-status-box">
+                        ✅ คุณเรียนจบบทนี้แล้ว
+                    </div>
+                {% endif %}
+
                 <ul class="fern-check-list">
-                    <li>สุ่มคำศัพท์จาก JP-N5-001 ถึง JP-N5-024</li>
-                    <li>ทบทวนคำแปล คำอ่าน และประโยคตัวอย่าง</li>
-                    <li>เหมาะสำหรับเช็กความพร้อมก่อนขึ้น N4</li>
+                    <li>ทบทวนคำศัพท์จากฐานข้อมูลจริง</li>
+                    <li>ฝึกอ่านและแปลประโยคตัวอย่าง</li>
+                    <li>ทำ Quiz เพื่อเก็บ progress</li>
                 </ul>
 
                 <div class="fern-btn-row">
-                    <a href="/th/vocabulary/quiz/JP-N5-025/" class="fern-btn fern-btn-primary">
+                    <a href="/th/vocabulary/quiz/{{ course.code }}/" class="fern-btn fern-btn-primary">
                         🏆 เริ่ม Mock Test
                     </a>
 
-                    <a href="/th/programs/1/detail/" class="fern-btn fern-btn-secondary">
+                    <a href="{{ lesson_map_url }}" class="fern-btn fern-btn-secondary">
                         ← กลับ Lesson Map
                     </a>
                 </div>
@@ -325,10 +375,10 @@
 
                     <div class="fern-stat">
                         <div class="fern-stat-number">
-                            10
+                            70%
                         </div>
                         <div class="fern-stat-label">
-                            Quiz
+                            ผ่าน Quiz
                         </div>
                     </div>
 
@@ -336,15 +386,21 @@
 
                 <div class="fern-info-box">
                     เรียนตามลำดับ: คำศัพท์ → ประโยค → ฝึกพูด → Quiz
-                    เมื่อทำคะแนน Quiz ผ่าน 70% ระบบจะปลดล็อกบทถัดไป
+                    เมื่อทำคะแนน Quiz ผ่าน 70% ระบบจะบันทึกความคืบหน้าของบทเรียนนี้
                 </div>
+
+                {% if is_completed %}
+                    <div class="fern-status-box">
+                        ✅ คุณเรียนจบบทนี้แล้ว
+                    </div>
+                {% endif %}
 
                 <div class="fern-btn-row">
                     <a href="/th/vocabulary/{{ course.code }}/" class="fern-btn fern-btn-primary">
                         🚀 เริ่มเรียน
                     </a>
 
-                    <a href="/th/programs/1/detail/" class="fern-btn fern-btn-secondary">
+                    <a href="{{ lesson_map_url }}" class="fern-btn fern-btn-secondary">
                         ← กลับ Lesson Map
                     </a>
                 </div>
@@ -355,61 +411,39 @@
 
         <div class="fern-card">
 
-            {% if course.code == "JP-N5-025" %}
+            <div class="fern-card-title">
+                ตัวอย่างคำศัพท์
+            </div>
 
-                <div class="fern-preview">
-                    <div class="fern-mock-icon">🏆</div>
+            <div class="fern-preview">
 
-                    <div class="fern-card-title">
-                        N5 Final Test
-                    </div>
+                {% if sample_vocab %}
 
-                    <p class="fern-desc">
-                        ข้อสอบสุ่ม 50 ข้อจากทุกบทที่เรียนมา
-                    </p>
-
-                    <div class="fern-info-box">
-                        แนะนำ: ทบทวนบท 1-24 ก่อนเริ่มทำ Mock Test
-                    </div>
+                <div class="fern-word">
+                    {{ sample_vocab.word }}
                 </div>
 
-            {% else %}
-
-                <div class="fern-card-title">
-                    ตัวอย่างคำศัพท์
+                <div class="fern-reading">
+                    {{ sample_vocab.reading }}
                 </div>
 
-                <div class="fern-preview">
-
-                    {% if sample_vocab %}
-
-                    <div class="fern-word">
-                        {{ sample_vocab.word }}
-                    </div>
-
-                    <div class="fern-reading">
-                        {{ sample_vocab.reading }}
-                    </div>
-
-                    <div class="fern-meaning">
-                        {{ sample_vocab.meaning_th }}
-                    </div>
-
-                    {% else %}
-
-                    <div class="fern-word">
-                        —
-                    </div>
-
-                    <p>
-                        ยังไม่มีข้อมูลคำศัพท์
-                    </p>
-
-                    {% endif %}
-
+                <div class="fern-meaning">
+                    {{ sample_vocab.meaning_th }}
                 </div>
 
-            {% endif %}
+                {% else %}
+
+                <div class="fern-word">
+                    —
+                </div>
+
+                <p>
+                    ยังไม่มีข้อมูลคำศัพท์
+                </p>
+
+                {% endif %}
+
+            </div>
 
         </div>
 

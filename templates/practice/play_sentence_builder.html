@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mode.label }} | Practice Hub{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-sb-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .fern-title {
+        font-size: 30px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .fern-sub {
+        color: #64748b;
+    }
+
+    .fern-progress-wrap {
+        width: 260px;
+    }
+
+    .fern-progress {
+        width: 100%;
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .fern-progress span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        transition: .3s;
+    }
+
+    .fern-sb-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 30px;
+        padding: 34px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, .08);
+        text-align: center;
+    }
+
+    .fern-sb-hint {
+        color: #8b5cf6;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .fern-sb-meaning {
+        color: #64748b;
+        margin-bottom: 22px;
+    }
+
+    .fern-sb-answer {
+        min-height: 70px;
+        border: 2px dashed #fbcfe8;
+        border-radius: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        margin-bottom: 22px;
+    }
+
+    .fern-sb-pool {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 22px;
+    }
+
+    .fern-sb-tile {
+        border: 2px solid #fbcfe8;
+        background: #fff7fb;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 22px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .15s;
+    }
+
+    .fern-sb-tile:hover {
+        border-color: #c4b5fd;
+        background: #faf5ff;
+    }
+
+    .fern-sb-tile.used {
+        opacity: .3;
+        pointer-events: none;
+    }
+
+    .fern-result {
+        margin-top: 12px;
+        border-radius: 18px;
+        padding: 16px;
+        display: none;
+        font-weight: 800;
+    }
+
+    .fern-result.good { background: #ecfdf5; color: #047857; }
+    .fern-result.warn { background: #fef2f2; color: #b91c1c; }
+
+    .fern-score-box {
+        margin-top: 14px;
+        font-weight: 800;
+        color: #64748b;
+    }
+
+    .fern-btn-row {
+        margin-top: 22px;
+    }
+
+    .fern-btn, .fern-btn-light {
+        padding: 14px 24px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 900;
+        border: none;
+        display: inline-block;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+</style>
+
+<div class="fern-sb-page">
+
+    <div class="fern-top">
+        <div>
+            <div class="fern-title">{{ mode.icon }} {{ mode.label }}</div>
+            <div class="fern-sub">{{ title }}</div>
+        </div>
+
+        <div class="fern-progress-wrap">
+            <div id="sbCounter">1 / {{ items|length }}</div>
+            <div class="fern-progress"><span id="sbProgress"></span></div>
+        </div>
+    </div>
+
+    <div class="fern-sb-card">
+
+        <div class="fern-sb-hint" id="sbTerm"></div>
+        <div class="fern-sb-meaning" id="sbMeaning"></div>
+
+        <div class="fern-sb-answer" id="sbAnswer"></div>
+        <div class="fern-sb-pool" id="sbPool"></div>
+
+        <div>
+            <button class="fern-btn-light" onclick="sbUndo()">↩ ย้อนกลับ</button>
+            <button class="fern-btn" onclick="sbSubmit()">ตรวจคำตอบ</button>
+        </div>
+
+        <div class="fern-result" id="sbResult"></div>
+        <div class="fern-score-box" id="sbScoreBox">คะแนน: -</div>
+
+        <div class="fern-btn-row">
+            <a href="{% url 'practice:mode_picker' mode=mode_key %}" class="fern-btn-light">← กลับ</a>
+            <a id="sbFinishBtn" href="#"
+                data-complete-url="{% url 'practice:complete' mode=mode_key course_code=group %}"
+                class="fern-btn" style="display:none;">ส่งคะแนน →</a>
+        </div>
+
+    </div>
+
+</div>
+
+{{ items|json_script:"sb-items" }}
+<script src="{% static 'js/pages/practice_sentence_builder.js' %}"></script>
+
+{% endblock content %}

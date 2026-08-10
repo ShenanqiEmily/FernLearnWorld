@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mode.label }} | Practice Hub{% endblock title %}
+
+{% block content %}
+
+<style>
+    .fern-match-page {
+        padding: 24px 34px;
+        background: #fff7fb;
+    }
+
+    .fern-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .fern-title {
+        font-size: 30px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .fern-sub {
+        color: #64748b;
+    }
+
+    .fern-match-card {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 30px;
+        padding: 34px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, .08);
+    }
+
+    .fern-match-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .fern-match-col {
+        display: grid;
+        gap: 12px;
+    }
+
+    .fern-match-tile {
+        border: 2px solid #fbcfe8;
+        background: #fff7fb;
+        border-radius: 16px;
+        padding: 16px;
+        font-weight: 800;
+        font-size: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: .15s;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .fern-match-tile:hover {
+        border-color: #c4b5fd;
+    }
+
+    .fern-match-tile.selected {
+        border-color: #8b5cf6;
+        background: #faf5ff;
+    }
+
+    .fern-match-tile.matched {
+        background: #ecfdf5;
+        border-color: #10b981;
+        color: #047857;
+        cursor: default;
+        opacity: .7;
+    }
+
+    .fern-match-tile.wrong {
+        background: #fef2f2;
+        border-color: #ef4444;
+    }
+
+    .fern-match-status {
+        text-align: center;
+        margin-top: 22px;
+        font-weight: 800;
+        color: #64748b;
+    }
+
+    .fern-btn-row {
+        text-align: center;
+        margin-top: 22px;
+    }
+
+    .fern-btn, .fern-btn-light {
+        padding: 14px 24px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 900;
+        border: none;
+        display: inline-block;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+</style>
+
+<div class="fern-match-page">
+
+    <div class="fern-top">
+        <div>
+            <div class="fern-title">{{ mode.icon }} {{ mode.label }}</div>
+            <div class="fern-sub">{{ title }}</div>
+        </div>
+    </div>
+
+    <div class="fern-match-card">
+
+        <div class="fern-match-grid">
+            <div class="fern-match-col" id="matchFrontCol"></div>
+            <div class="fern-match-col" id="matchBackCol"></div>
+        </div>
+
+        <div class="fern-match-status" id="matchStatus">จับคู่แล้ว 0 / {{ items|length }}</div>
+
+        <div class="fern-btn-row">
+            <a href="{% url 'practice:mode_picker' mode=mode_key %}" class="fern-btn-light">← กลับ</a>
+            <a id="matchFinishBtn" href="#"
+                data-complete-url="{% url 'practice:complete' mode=mode_key course_code=group %}"
+                class="fern-btn" style="display:none;">ส่งคะแนน →</a>
+        </div>
+
+    </div>
+
+</div>
+
+{{ items|json_script:"matching-items" }}
+<script src="{% static 'js/pages/practice_matching.js' %}"></script>
+
+{% endblock content %}

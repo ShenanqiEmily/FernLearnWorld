@@ -6,23 +6,246 @@
 
 {% block content %}
 
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/">{% trans 'Home' %}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{% trans 'Account setting' %}</li>
-    </ol>
-</nav>
+<style>
+    .fern-settings-page {
+        padding: 34px;
+        background: #fff7fb;
+        min-height: 100vh;
+    }
 
-<p class="title-1"><i class="fas fa-user-edit"></i>{% trans 'Account Settings' %}</p>
+    .fern-settings-page .fc-back-link {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: #8b5cf6;
+        font-weight: 800;
+        text-decoration: none;
+    }
 
-{% include 'snippets/messages.html' %}
+    .fern-settings-hero {
+        background: white;
+        border-radius: 30px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+        padding: 34px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
 
-<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="form-title">{% trans 'Email' %} &amp; {% trans 'Personal Info' %}</div>
-                <div class="card-body">
+    .fern-settings-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #fce7f3;
+        box-shadow: 0 10px 24px rgba(139, 92, 246, 0.2);
+        flex-shrink: 0;
+    }
+
+    .fern-settings-name {
+        font-size: 28px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .fern-settings-username {
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .fern-role-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: #fce7f3;
+        color: #db2777;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .fern-settings-layout {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .fern-settings-card {
+        background: white;
+        border-radius: 28px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.08);
+        padding: 30px;
+        margin-bottom: 24px;
+    }
+
+    .fern-settings-card-title {
+        font-size: 20px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .fern-settings-side .fern-settings-card {
+        text-align: center;
+    }
+
+    .fern-side-actions {
+        display: grid;
+        gap: 12px;
+    }
+
+    .fern-btn,
+    .fern-btn-light {
+        padding: 14px 22px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 900;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .fern-btn {
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white !important;
+    }
+
+    .fern-btn:hover {
+        opacity: 0.92;
+        color: white !important;
+    }
+
+    .fern-btn-light {
+        background: #eff6ff;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe;
+    }
+
+    .fern-btn-light:hover {
+        background: #dbeafe;
+        color: #2563eb !important;
+    }
+
+    /* --- Form field styling (overrides Bootstrap/crispy defaults) --- */
+    .fern-settings-page .form-label {
+        font-weight: 800;
+        color: #374151;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    .fern-settings-page .form-control,
+    .fern-settings-page .form-select,
+    .fern-settings-page select.form-control {
+        border: 1px solid #fbcfe8;
+        border-radius: 14px;
+        padding: 12px 16px;
+        font-size: 15px;
+        background-color: #fff7fb;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .fern-settings-page .form-control:focus,
+    .fern-settings-page .form-select:focus {
+        border-color: #ec4899;
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+        background-color: white;
+        outline: none;
+    }
+
+    .fern-settings-page input[type="file"].form-control {
+        background-color: white;
+        padding: 10px 14px;
+    }
+
+    .fern-settings-page .form-text {
+        color: #9ca3af;
+        font-size: 12.5px;
+    }
+
+    .fern-settings-page .invalid-feedback {
+        color: #ef4444;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .fern-settings-page .is-invalid {
+        border-color: #ef4444 !important;
+    }
+
+    .fern-settings-page .mb-3 {
+        margin-bottom: 18px !important;
+    }
+
+    /* --- Alerts --- */
+    .fern-settings-page .alert {
+        border-radius: 16px;
+        border: none;
+        font-weight: 700;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+    }
+
+    .fern-settings-page .alert-success {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .fern-settings-page .alert-danger {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .fern-settings-page .alert-warning {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    @media(max-width: 900px) {
+        .fern-settings-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .fern-settings-hero {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="fern-settings-page">
+
+    <a href="{% url 'profile' %}" class="fc-back-link">← กลับหน้าโปรไฟล์</a>
+
+    <div class="fern-settings-hero">
+        <img src="{{ user.get_picture }}" alt="avatar" class="fern-settings-avatar">
+        <div>
+            <div class="fern-settings-name">{{ user.get_full_name }}</div>
+            <div class="fern-settings-username">@{{ user.username }} · {{ user.email|default:"ยังไม่ได้ตั้งอีเมล" }}</div>
+            <span class="fern-role-badge">{{ user.get_user_role }}</span>
+        </div>
+    </div>
+
+    {% include 'snippets/messages.html' %}
+
+    <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <div class="fern-settings-layout">
+
+            <div>
+                <div class="fern-settings-card">
+                    <div class="fern-settings-card-title">🧑‍🎓 ข้อมูลส่วนตัว</div>
                     {{ form.email|as_crispy_field }}
                     {{ form.first_name|as_crispy_field }}
                     {{ form.last_name|as_crispy_field }}
@@ -31,16 +254,25 @@
                     {{ form.address|as_crispy_field }}
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <p class="form-title">{% trans 'Others' %}</p>
-                <div class="card-body">
+
+            <div class="fern-settings-side">
+                <div class="fern-settings-card">
+                    <div class="fern-settings-card-title" style="justify-content:center;">🖼️ รูปโปรไฟล์</div>
                     {{ form.picture|as_crispy_field }}
                 </div>
+
+                <div class="fern-settings-card">
+                    <div class="fern-settings-card-title" style="justify-content:center;">⚙️ การตั้งค่าอื่นๆ</div>
+                    <div class="fern-side-actions">
+                        <button class="fern-btn" type="submit">💾 บันทึกการเปลี่ยนแปลง</button>
+                        <a href="{% url 'change_password' %}" class="fern-btn-light">🔒 เปลี่ยนรหัสผ่าน</a>
+                    </div>
+                </div>
             </div>
+
         </div>
-    </div>
-    <button class="btn btn-primary" type="submit">{% trans 'Update Profile' %}</button>
-</form>
+    </form>
+
+</div>
+
 {% endblock content %}

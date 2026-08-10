@@ -1,0 +1,55 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploy: push this repo to GitHub, then on Render use "New +" -> "Blueprint"
+# and point it at the repo. Render reads this file and provisions everything
+# below automatically. Values marked `sync: false` are NOT stored here (and
+# therefore never committed to git) — Render will prompt you to fill them in
+# once in the dashboard after the first deploy.
+
+databases:
+  - name: fernlearnworld-db
+    plan: free
+    databaseName: fernlearnworld
+    user: fernlearnworld
+
+services:
+  - type: web
+    name: fernlearnworld
+    runtime: python
+    plan: free
+    buildCommand: "bash build.sh"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+
+      # --- Core (auto-filled) ---
+      - key: SECRET_KEY
+        generateValue: true          # Render generates a random secret for you
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "localhost,127.0.0.1" # RENDER_EXTERNAL_HOSTNAME is auto-added
+                                      # by settings.py on top of this — add a
+                                      # custom domain here too if you attach one
+
+      # --- Database (auto-wired to the block above) ---
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fernlearnworld-db
+          property: connectionString
+
+      # --- Secrets you must fill in yourself in the Render dashboard ---
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_FROM_ADDRESS
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false

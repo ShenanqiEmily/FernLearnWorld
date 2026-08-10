@@ -1,5 +1,3 @@
-
-
 let currentIndex = 0;
 let score = 0;
 let answeredTotal = 0;
@@ -7,6 +5,52 @@ let answered = false;
 
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
+}
+
+function isLastQuestion() {
+    return currentIndex === quizData.length - 1;
+}
+
+function updateQuizButtons() {
+    const nextBtn = document.getElementById("nextQuizBtn");
+    const completeBtn = document.getElementById("completeLessonBtn");
+
+    if (nextBtn) {
+        nextBtn.style.display = isLastQuestion() ? "none" : "inline-flex";
+    }
+
+    if (completeBtn) {
+        completeBtn.style.display = "none";
+    }
+}
+
+function showCompleteButton() {
+    const nextBtn = document.getElementById("nextQuizBtn");
+    const completeBtn = document.getElementById("completeLessonBtn");
+
+    if (nextBtn) {
+        nextBtn.style.display = "none";
+    }
+
+    if (completeBtn) {
+        completeBtn.style.display = "inline-flex";
+        completeBtn.innerText = "ส่งคะแนน →";
+    }
+}
+
+function setCompleteButtonScore(percent) {
+    const completeBtn = document.getElementById("completeLessonBtn");
+    if (!completeBtn) return;
+
+    const completeUrl = completeBtn.dataset.completeUrl;
+
+    if (!completeUrl) {
+        console.warn("Missing data-complete-url on #completeLessonBtn");
+        completeBtn.href = "#";
+        return;
+    }
+
+    completeBtn.href = completeUrl + "?score=" + percent;
 }
 
 function updateQuiz() {
@@ -51,6 +95,8 @@ function updateQuiz() {
 
     document.getElementById("quizOptions").innerHTML = html;
     document.getElementById("quizResult").style.display = "none";
+
+    updateQuizButtons();
 }
 
 function checkAnswer(button, answer) {
@@ -87,21 +133,23 @@ function checkAnswer(button, answer) {
     document.getElementById("correctCount").innerText = score;
     document.getElementById("answeredCount").innerText = answeredTotal;
 
-    let completeUrl = "";
+    setCompleteButtonScore(percent);
 
-    // {% if course_code %}
-    // completeUrl = "/th/vocabulary/complete/{{ course_code }}/";
-    // {% else %}
-    // completeUrl = "/th/vocabulary/complete/";
-    // {% endif %}
-
-    document.getElementById("completeLessonBtn").href =
-        completeUrl + "?score=" + percent;
+    if (isLastQuestion()) {
+        showCompleteButton();
+    }
 }
 
 function nextQuiz() {
-    currentIndex = currentIndex < quizData.length - 1 ? currentIndex + 1 : 0;
-    updateQuiz();
+    if (!answered) {
+        alert("กรุณาเลือกคำตอบก่อนกดข้อถัดไป");
+        return;
+    }
+
+    if (!isLastQuestion()) {
+        currentIndex++;
+        updateQuiz();
+    }
 }
 
 function prevQuiz() {

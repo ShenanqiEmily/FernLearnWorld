@@ -2,6 +2,7 @@ from django.db import models
 from course.models import Course
 from django.conf import settings
 
+
 class Vocabulary(models.Model):
     LANGUAGE_CHOICES = (
         ("japanese", "Japanese"),
@@ -14,6 +15,9 @@ class Vocabulary(models.Model):
         ("N3", "JLPT N3"),
         ("N2", "JLPT N2"),
         ("N1", "JLPT N1"),
+        
+        ("HSK1", "HSK 1"),
+        ("HSK2", "HSK 2"),
         ("HSK3", "HSK 3"),
         ("HSK4", "HSK 4"),
         ("HSK5", "HSK 5"),
@@ -25,7 +29,7 @@ class Vocabulary(models.Model):
         on_delete=models.CASCADE,
         related_name="vocabularies",
         null=True,
-        blank=True
+        blank=True,
     )
 
     word = models.CharField(max_length=100)
@@ -41,6 +45,12 @@ class Vocabulary(models.Model):
     example_translation_th = models.TextField(blank=True)
     example_translation_en = models.TextField(blank=True)
 
+    speech_aliases = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Alternative accepted speech forms, separated by commas. Example: お腹,おなか,onaka",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -48,7 +58,8 @@ class Vocabulary(models.Model):
 
     def __str__(self):
         return f"{self.word} ({self.level})"
-    
+
+
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -56,52 +67,30 @@ User = get_user_model()
 
 class UserLessonProgress(models.Model):
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    course = models.ForeignKey(
-        Course,
-        on_delete=models.CASCADE
-    )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
-    score = models.IntegerField(
-        default=0
-    )
+    score = models.IntegerField(default=0)
 
-    completed = models.BooleanField(
-        default=False
-    )
+    completed = models.BooleanField(default=False)
 
-    vocab_completed = models.BooleanField(
-        default=False
-    )
+    vocab_completed = models.BooleanField(default=False)
 
-    sentence_completed = models.BooleanField(
-        default=False
-    )
+    sentence_completed = models.BooleanField(default=False)
 
-    speaking_completed = models.BooleanField(
-        default=False
-    )
+    speaking_completed = models.BooleanField(default=False)
 
-    quiz_completed = models.BooleanField(
-        default=False
-    )
+    quiz_completed = models.BooleanField(default=False)
 
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (
-            "user",
-            "course"
-        )
+        unique_together = ("user", "course")
 
     def __str__(self):
         return f"{self.user.username} - {self.course.code}"
+
 
 class Achievement(models.Model):
     code = models.CharField(max_length=50, unique=True)
@@ -114,15 +103,9 @@ class Achievement(models.Model):
 
 
 class UserAchievement(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    achievement = models.ForeignKey(
-        Achievement,
-        on_delete=models.CASCADE
-    )
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
 
     earned_at = models.DateTimeField(auto_now_add=True)
 
@@ -131,6 +114,3 @@ class UserAchievement(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.achievement.title}"
-    
-    
-        
