@@ -7,8 +7,21 @@
 {% block topbar %}{% endblock %}
 
 {% block content %}
-
 <style>
+/* This page renders with no sidebar/topbar (those blocks are emptied
+   above), but base.html's #main still reserves layout space for them
+   (padding-left:300px / padding-top:65px from style.min.css) — reclaim
+   it here so the landing page fills the whole viewport instead of
+   sitting shifted into a leftover gutter. */
+#main {
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+}
+
+body {
+    overflow-x: hidden;
+}
+
 .fern-public-nav {
     display: flex;
     justify-content: space-between;
@@ -29,7 +42,7 @@
 }
 
 .fern-public-logo img {
-    height: 36px;
+    height: 120px;
 }
 
 .fern-public-nav-actions {
@@ -223,7 +236,7 @@
         <div class="fern-feature">
             <div class="fern-feature-icon">📚</div>
             <h3>เรียนเป็นบท</h3>
-            <p>เลือก JLPT N5-N2 หรือ HSK 3-6 แล้วเรียนทีละ Lesson</p>
+            <p>เลือก JLPT N5-N1 หรือ HSK 1-6 แล้วเรียนทีละ Lesson</p>
         </div>
 
         <div class="fern-feature">

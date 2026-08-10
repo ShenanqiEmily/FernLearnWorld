@@ -20,6 +20,19 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.min.css' %}">
 
+    <!-- Everything on this site was designed/laid out assuming a browser
+         zoom of ~75%. Scaling the whole page down here (instead of
+         re-tuning every px value across every template) keeps the same
+         proportions at normal 100% browser zoom without touching any
+         layout code. -->
+    <style>
+        @media (min-width: 992px) {
+            html {
+                zoom: 0.75;
+            }
+        }
+    </style>
+
     <!-- <script src="https://js.stripe.com/v3/"></script> -->
     {% block header %}{% endblock %}
 </head>

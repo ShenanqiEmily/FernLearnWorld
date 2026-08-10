@@ -1,4 +1,85 @@
 {% load i18n%}
+<style>
+	#top-navbar .avatar {
+		border-color: #fbcfe8 !important;
+	}
+
+	#top-navbar .dropdown-menu {
+		min-width: 15rem !important;
+		border: 1px solid #fbcfe8;
+		border-radius: 22px;
+		box-shadow: 0 18px 40px rgba(236, 72, 153, 0.16);
+		padding: 18px 12px;
+		margin-top: 12px !important;
+	}
+
+	#top-navbar .dropdown-menu .avatar {
+		box-shadow: 0 8px 20px rgba(236, 72, 153, 0.16);
+	}
+
+	#top-navbar .dropdown-menu .fern-last-login {
+		margin-top: 10px;
+		color: #94a3b8;
+		font-size: 12px;
+		font-weight: 700;
+	}
+
+	#top-navbar .dropdown-menu hr {
+		border-top: 1px solid #fbcfe8;
+		opacity: 1;
+		margin: 14px 0;
+	}
+
+	#top-navbar .dropdown-item {
+		border-radius: 14px;
+		padding: 10px 14px;
+		font-weight: 700;
+		color: #334155;
+		transition: .15s;
+	}
+
+	#top-navbar .dropdown-item:hover,
+	#top-navbar .dropdown-item:focus {
+		background: linear-gradient(135deg, #fce7f3, #ede9fe);
+		color: #be185d;
+	}
+
+	#top-navbar .dropdown-item i {
+		color: #ec4899;
+		width: 18px;
+		height: 18px;
+		background: none;
+		font-size: 14px;
+		text-align: center;
+	}
+
+	#top-navbar .fern-logout-btn {
+		width: 100%;
+		text-align: left;
+		background: none;
+		border: none;
+		color: #e11d48;
+		font: inherit;
+		font-weight: 800;
+		cursor: pointer;
+		padding: 10px 14px;
+		border-radius: 14px;
+		transition: .15s;
+	}
+
+	#top-navbar .fern-logout-btn:hover {
+		background: #fff1f2;
+	}
+
+	#top-navbar .fern-logout-btn i {
+		width: 18px;
+		height: 18px;
+		background: none;
+		font-size: 14px;
+		text-align: center;
+		margin-right: 6px;
+	}
+</style>
 <div id="top-navbar" class="py-1">
 	<div class="container">
 		<div class="nav-wrapper">
@@ -20,13 +101,13 @@
 				<div class="avatar border border-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 					<img src="{{ request.user.picture.url }}">
 				</div>
-				<div class="dropdown-menu" style="min-width: 14rem !important;">
+				<div class="dropdown-menu">
 					<div class="d-flex flex-column align-items-center">
 						<div class="avatar avatar-md border">
 							<img src="{{ request.user.picture.url }}">
 						</div>
 
-						<p class="small text-muted text-center mb-0">
+						<p class="fern-last-login mb-0">
 							{% trans 'Last login:' %} {{ request.user.last_login|date }}</p>
 					</div>
 					<hr>
@@ -47,22 +128,13 @@
 						{% trans 'Setting' %}</a>
 					<hr>
 
-					<div style="display: flex; justify-content: center; align-items: center;">
+					<div style="display: flex; justify-content: center; align-items: center; width: 100%;">
 			
-							<form method="post" action="{% url 'logout' %}" style="margin:0;">
+							<form method="post" action="{% url 'logout' %}" style="margin:0; width:100%;">
 								{% csrf_token %}
-								<button type="submit" style="
-									width:100%;
-									text-align:left;
-									background:none;
-									border:none;
-									color:inherit;
-									font:inherit;
-									cursor:pointer;
-									padding:12px 20px;
-								">
+								<button type="submit" class="fern-logout-btn">
 									<i class="fas fa-sign-out-alt"></i>
-									Logout
+									{% trans 'Logout' %}
 								</button>
 							</form>
 

@@ -136,8 +136,10 @@ class StudentAddForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"class": "form-control"}), label="First name")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"class": "form-control"}), label="Last name")
     gender = forms.ChoiceField(choices=GENDERS, widget=forms.Select(attrs={"class": "browser-default custom-select form-control"}))
-    level = forms.ChoiceField(choices=LEVEL, widget=forms.Select(attrs={"class": "browser-default custom-select form-control"}))
-    program = forms.ModelChoiceField(queryset=Program.objects.all(), widget=forms.Select(attrs={"class": "browser-default custom-select form-control"}), label="Program")
+    # Optional: the public registration page no longer shows these (not needed to sign up),
+    # but the admin "Add Student" form still does, so they stay on the shared form as optional.
+    level = forms.ChoiceField(choices=LEVEL, widget=forms.Select(attrs={"class": "browser-default custom-select form-control"}), required=False)
+    program = forms.ModelChoiceField(queryset=Program.objects.all(), widget=forms.Select(attrs={"class": "browser-default custom-select form-control"}), label="Program", required=False)
     email = forms.EmailField(widget=forms.EmailInput(attrs={"class": "form-control"}), label="Email Address")
     phone = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"class": "form-control"}), label="Mobile No.")
     address = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"class": "form-control"}), label="Address")
@@ -202,8 +204,8 @@ class StudentAddForm(UserCreationForm):
             user.save()
             Student.objects.create(
                 student=user,
-                level=self.cleaned_data["level"],
-                program=self.cleaned_data["program"],
+                level=self.cleaned_data.get("level") or None,
+                program=self.cleaned_data.get("program"),
             )
 
         return user
