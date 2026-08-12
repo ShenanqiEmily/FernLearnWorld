@@ -1,0 +1,206 @@
+[
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 1,
+  "fields": {
+    "title": "Quick links",
+    "module": "jet.dashboard.modules.LinkList",
+    "app_label": null,
+    "user": [
+      "admin"
+    ],
+    "column": 0,
+    "order": 0,
+    "settings": "{\"draggable\": false, \"deletable\": false, \"collapsible\": false, \"layout\": \"inline\"}",
+    "children": "[{\"title\": \"Return to site\", \"url\": \"/\"}, {\"title\": \"\\u0e40\\u0e1b\\u0e25\\u0e35\\u0e48\\u0e22\\u0e19\\u0e23\\u0e2b\\u0e31\\u0e2a\\u0e1c\\u0e48\\u0e32\\u0e19\", \"url\": \"/admin/password_change/\"}, {\"title\": \"\\u0e2d\\u0e2d\\u0e01\\u0e08\\u0e32\\u0e01\\u0e23\\u0e30\\u0e1a\\u0e1a\", \"url\": \"/admin/logout/\"}]",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 2,
+  "fields": {
+    "title": "Applications",
+    "module": "jet.dashboard.modules.AppList",
+    "app_label": null,
+    "user": [
+      "admin"
+    ],
+    "column": 1,
+    "order": 0,
+    "settings": "{\"models\": null, \"exclude\": [\"auth.*\"]}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 3,
+  "fields": {
+    "title": "การจัดการ",
+    "module": "jet.dashboard.modules.AppList",
+    "app_label": null,
+    "user": [
+      "admin"
+    ],
+    "column": 2,
+    "order": 0,
+    "settings": "{\"models\": [\"auth.*\"], \"exclude\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 4,
+  "fields": {
+    "title": "Recent Actions",
+    "module": "jet.dashboard.modules.RecentActions",
+    "app_label": null,
+    "user": [
+      "admin"
+    ],
+    "column": 0,
+    "order": 1,
+    "settings": "{\"limit\": 10, \"include_list\": null, \"exclude_list\": null, \"user\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 5,
+  "fields": {
+    "title": "Latest Django News",
+    "module": "jet.dashboard.modules.Feed",
+    "app_label": null,
+    "user": [
+      "admin"
+    ],
+    "column": 1,
+    "order": 1,
+    "settings": "{\"feed_url\": \"http://www.djangoproject.com/rss/weblog/\", \"limit\": 5}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 6,
+  "fields": {
+    "title": "Support",
+    "module": "jet.dashboard.modules.LinkList",
+    "app_label": null,
+    "user": [
+      "admin"
+    ],
+    "column": 2,
+    "order": 1,
+    "settings": "{\"draggable\": true, \"deletable\": true, \"collapsible\": true, \"layout\": \"stacked\"}",
+    "children": "[{\"title\": \"Django documentation\", \"url\": \"http://docs.djangoproject.com/\", \"external\": true}, {\"title\": \"Django \\\"django-users\\\" mailing list\", \"url\": \"http://groups.google.com/group/django-users\", \"external\": true}, {\"title\": \"Django irc channel\", \"url\": \"irc://irc.freenode.net/django\", \"external\": true}]",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 7,
+  "fields": {
+    "title": "Application models",
+    "module": "jet.dashboard.modules.ModelList",
+    "app_label": "accounts",
+    "user": [
+      "admin"
+    ],
+    "column": 0,
+    "order": 0,
+    "settings": "{\"models\": [\"accounts.*\"], \"exclude\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 8,
+  "fields": {
+    "title": "Recent Actions",
+    "module": "jet.dashboard.modules.RecentActions",
+    "app_label": "accounts",
+    "user": [
+      "admin"
+    ],
+    "column": 1,
+    "order": 0,
+    "settings": "{\"limit\": 10, \"include_list\": [\"accounts.*\"], \"exclude_list\": null, \"user\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 9,
+  "fields": {
+    "title": "Application models",
+    "module": "jet.dashboard.modules.ModelList",
+    "app_label": "course",
+    "user": [
+      "admin"
+    ],
+    "column": 0,
+    "order": 0,
+    "settings": "{\"models\": [\"course.*\"], \"exclude\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 10,
+  "fields": {
+    "title": "Recent Actions",
+    "module": "jet.dashboard.modules.RecentActions",
+    "app_label": "course",
+    "user": [
+      "admin"
+    ],
+    "column": 1,
+    "order": 0,
+    "settings": "{\"limit\": 10, \"include_list\": [\"course.*\"], \"exclude_list\": null, \"user\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 11,
+  "fields": {
+    "title": "Application models",
+    "module": "jet.dashboard.modules.ModelList",
+    "app_label": "vocabulary",
+    "user": [
+      "admin"
+    ],
+    "column": 0,
+    "order": 0,
+    "settings": "{\"models\": [\"vocabulary.*\"], \"exclude\": null}",
+    "children": "",
+    "collapsed": false
+  }
+},
+{
+  "model": "dashboard.userdashboardmodule",
+  "pk": 12,
+  "fields": {
+    "title": "Recent Actions",
+    "module": "jet.dashboard.modules.RecentActions",
+    "app_label": "vocabulary",
+    "user": [
+      "admin"
+    ],
+    "column": 1,
+    "order": 0,
+    "settings": "{\"limit\": 10, \"include_list\": [\"vocabulary.*\"], \"exclude_list\": null, \"user\": null}",
+    "children": "",
+    "collapsed": false
+  }
+}
+]

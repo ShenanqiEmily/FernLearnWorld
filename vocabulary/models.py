@@ -32,9 +32,9 @@ class Vocabulary(models.Model):
         blank=True,
     )
 
-    word = models.CharField(max_length=100)
-    reading = models.CharField(max_length=100, blank=True)
-    pinyin = models.CharField(max_length=100, blank=True)
+    word = models.CharField(max_length=255)
+    reading = models.CharField(max_length=255, blank=True)
+    pinyin = models.CharField(max_length=255, blank=True)
     meaning_th = models.TextField()
     meaning_en = models.TextField(blank=True)
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES)

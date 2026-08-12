@@ -1,0 +1,52 @@
+[
+{
+  "model": "vocabulary.achievement",
+  "pk": 1,
+  "fields": {
+    "code": "PRACTICE_FIRST",
+    "title": "Practice Starter",
+    "description": "ผ่านโหมดฝึกใน Practice Hub เป็นครั้งแรก",
+    "icon": "🎯"
+  }
+},
+{
+  "model": "vocabulary.achievement",
+  "pk": 2,
+  "fields": {
+    "code": "PRACTICE_XP_500",
+    "title": "XP Hunter",
+    "description": "สะสม XP จาก Practice Hub ครบ 500",
+    "icon": "⚡"
+  }
+},
+{
+  "model": "vocabulary.achievement",
+  "pk": 3,
+  "fields": {
+    "code": "PRACTICE_XP_1000",
+    "title": "XP Master",
+    "description": "สะสม XP จาก Practice Hub ครบ 1000",
+    "icon": "🌟"
+  }
+},
+{
+  "model": "vocabulary.achievement",
+  "pk": 4,
+  "fields": {
+    "code": "FLASHCARD_100",
+    "title": "Flashcard Explorer",
+    "description": "ทบทวนการ์ด Flashcard ครบ 100 ใบ",
+    "icon": "🗂️"
+  }
+},
+{
+  "model": "vocabulary.achievement",
+  "pk": 5,
+  "fields": {
+    "code": "FLASHCARD_STREAK_7",
+    "title": "7-Day Streak",
+    "description": "ทบทวน Flashcard ติดต่อกันครบ 7 วัน",
+    "icon": "🔥"
+  }
+}
+]
