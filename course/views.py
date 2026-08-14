@@ -237,7 +237,7 @@ def get_program_level_config(program, requested_level):
         "course_filter": Q(),
     }
 
-@method_decorator([login_required, lecturer_required], name="dispatch")
+@method_decorator([login_required], name="dispatch")
 class ProgramFilterView(FilterView):
     filterset_class = ProgramFilter
     template_name = "course/program_list.html"
@@ -862,9 +862,12 @@ def user_course_list(request):
         taken_courses = TakenCourse.objects.filter(
             student__student__id=student.student.id
         )
-        courses = Course.objects.filter(level=student.level).filter(
-            program__pk=student.program.id
-        )
+        if student.level and student.program:
+            courses = Course.objects.filter(level=student.level).filter(
+                program__pk=student.program.id
+            )
+        else:
+            courses = Course.objects.filter(vocabularies__isnull=False).distinct()
 
         return render(
             request,
