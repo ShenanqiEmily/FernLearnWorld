@@ -227,13 +227,14 @@
 
 <div class="fern-settings-page">
 
-    <a href="{% url 'profile' %}" class="fc-back-link">← กลับหน้าโปรไฟล์</a>
+    <a href="{% url 'profile' %}" class="fc-back-link">← {% trans "กลับหน้าโปรไฟล์" %}</a>
 
+    {% trans "ยังไม่ได้ตั้งอีเมล" as no_email_text %}
     <div class="fern-settings-hero">
         <img src="{{ user.get_picture }}" alt="avatar" class="fern-settings-avatar">
         <div>
             <div class="fern-settings-name">{{ user.get_full_name }}</div>
-            <div class="fern-settings-username">@{{ user.username }} · {{ user.email|default:"ยังไม่ได้ตั้งอีเมล" }}</div>
+            <div class="fern-settings-username">@{{ user.username }} · {{ user.email|default:no_email_text }}</div>
             <span class="fern-role-badge">{{ user.get_user_role }}</span>
         </div>
     </div>
@@ -245,7 +246,7 @@
 
             <div>
                 <div class="fern-settings-card">
-                    <div class="fern-settings-card-title">🧑‍🎓 ข้อมูลส่วนตัว</div>
+                    <div class="fern-settings-card-title">🧑‍🎓 {% trans "ข้อมูลส่วนตัว" %}</div>
                     {{ form.email|as_crispy_field }}
                     {{ form.first_name|as_crispy_field }}
                     {{ form.last_name|as_crispy_field }}
@@ -257,15 +258,15 @@
 
             <div class="fern-settings-side">
                 <div class="fern-settings-card">
-                    <div class="fern-settings-card-title" style="justify-content:center;">🖼️ รูปโปรไฟล์</div>
+                    <div class="fern-settings-card-title" style="justify-content:center;">🖼️ {% trans "รูปโปรไฟล์" %}</div>
                     {{ form.picture|as_crispy_field }}
                 </div>
 
                 <div class="fern-settings-card">
-                    <div class="fern-settings-card-title" style="justify-content:center;">⚙️ การตั้งค่าอื่นๆ</div>
+                    <div class="fern-settings-card-title" style="justify-content:center;">⚙️ {% trans "การตั้งค่าอื่นๆ" %}</div>
                     <div class="fern-side-actions">
-                        <button class="fern-btn" type="submit">💾 บันทึกการเปลี่ยนแปลง</button>
-                        <a href="{% url 'change_password' %}" class="fern-btn-light">🔒 เปลี่ยนรหัสผ่าน</a>
+                        <button class="fern-btn" type="submit">💾 {% trans "บันทึกการเปลี่ยนแปลง" %}</button>
+                        <a href="{% url 'change_password' %}" class="fern-btn-light">🔒 {% trans "เปลี่ยนรหัสผ่าน" %}</a>
                     </div>
                 </div>
             </div>

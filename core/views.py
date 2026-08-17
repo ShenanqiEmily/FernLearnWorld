@@ -18,8 +18,8 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from course.models import Course
-from vocabulary.models import UserLessonProgress
-from flashcards.models import FlashcardReview
+from vocabulary.models import UserLessonProgress, Vocabulary
+from flashcards.models import FlashcardReview, GrammarPoint, KanjiCharacter
 from practice.models import PracticeAttempt
 # ########################################################
 # News & Events
@@ -27,7 +27,18 @@ from practice.models import PracticeAttempt
 def home_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
-    return render(request, "core/index.html")
+
+    stats = {
+        "vocab_count": Vocabulary.objects.count(),
+        "lesson_count": Course.objects.filter(vocabularies__isnull=False).distinct().count(),
+        "grammar_count": GrammarPoint.objects.count(),
+        "kanji_count": KanjiCharacter.objects.count(),
+    }
+    return render(request, "core/index.html", {"stats": stats})
+
+
+def about_view(request):
+    return render(request, "core/about.html")
 
 
 @login_required

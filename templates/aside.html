@@ -106,6 +106,7 @@
 {% url 'dashboard' as dash %}
 {% url 'profile' as prof %}
 {% url 'programs' as pro %}
+{% url 'about' as abt %}
 {% url 'quiz_progress' as qpr %}
 {% url 'edit_profile' as ep %}
 
@@ -149,6 +150,7 @@
                     Courses
                 </a>
             </li>
+
 
             <!-- <li>
                 <a href="#">
@@ -204,6 +206,13 @@
                     Achievements
                 </a>
             </li>
+            
+            <li class="{% if request.path == abt %}active{% endif %}">
+                <a href="{% url 'about' %}">
+                    <i class="fas fa-info-circle"></i>
+                    About Us
+                </a>
+            </li>
 
             <li class="{% if request.path == ep %}active{% endif %}">
                 <a href="{% url 'edit_profile' %}">
@@ -229,6 +238,7 @@
 
         <form action="{% url 'set_language' %}" method="post" id="lang-form">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
 
             <select name="language" id="lang-select">
 

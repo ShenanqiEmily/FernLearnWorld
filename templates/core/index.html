@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblock title %}
+{% block title %}{% blocktrans %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblocktrans %}{% endblock title %}
 
 {% block sidebar %}{% endblock %}
 {% block topbar %}{% endblock %}
@@ -20,52 +21,6 @@
 
 body {
     overflow-x: hidden;
-}
-
-.fern-public-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 34px;
-    background: white;
-    border-bottom: 1px solid #fbcfe8;
-}
-
-.fern-public-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 900;
-    font-size: 20px;
-    color: #0f172a;
-    text-decoration: none;
-}
-
-.fern-public-logo img {
-    height: 120px;
-}
-
-.fern-public-nav-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.fern-nav-btn,
-.fern-nav-btn-light {
-    padding: 10px 20px;
-    border-radius: 14px;
-    font-weight: 800;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.fern-nav-btn {
-    background: linear-gradient(135deg, #ec4899, #8b5cf6);
-    color: white !important;
-}
-
-.fern-nav-btn-light {
-    color: #334155 !important;
 }
 
 .fern-home {
@@ -183,24 +138,126 @@ body {
     color: #64748b;
 }
 
+.fern-stats-bar {
+    margin-top: 40px;
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 26px;
+    padding: 30px;
+    box-shadow: 0 10px 24px rgba(236,72,153,0.08);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    text-align: center;
+}
+
+.fern-stat-number {
+    font-size: 32px;
+    font-weight: 900;
+    color: #ec4899;
+}
+
+.fern-stat-label {
+    color: #64748b;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.fern-why-section {
+    margin-top: 56px;
+}
+
+.fern-why-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #0f172a;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.fern-why-subtitle {
+    color: #64748b;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.fern-why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.fern-why-card {
+    background: white;
+    border-radius: 24px;
+    padding: 26px;
+    border: 1px solid #fbcfe8;
+    box-shadow: 0 10px 24px rgba(236,72,153,0.08);
+}
+
+.fern-why-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+    background: linear-gradient(135deg, #ffe4f1, #dbeafe);
+    margin-bottom: 14px;
+}
+
+.fern-why-card h3 {
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.fern-why-card p {
+    color: #64748b;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.fern-cta-banner {
+    margin-top: 56px;
+    text-align: center;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    border-radius: 30px;
+    padding: 46px;
+    color: white;
+}
+
+.fern-cta-banner h2 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.fern-cta-banner p {
+    opacity: 0.9;
+    margin-bottom: 24px;
+}
+
+.fern-cta-banner .fern-btn {
+    background: white;
+    color: #ec4899 !important;
+}
+
 @media(max-width: 900px) {
     .fern-home-hero,
-    .fern-feature-grid {
+    .fern-feature-grid,
+    .fern-why-grid {
         grid-template-columns: 1fr;
+    }
+
+    .fern-stats-bar {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 </style>
 
-<div class="fern-public-nav">
-    <a href="{% url 'home' %}" class="fern-public-logo">
-        <img src="{% static 'img/fernLogo.png' %}" alt="FernLearnWorld">
-    </a>
-
-    <div class="fern-public-nav-actions">
-        <a href="{% url 'login' %}" class="fern-nav-btn-light">เข้าสู่ระบบ</a>
-        <a href="{% url 'register' %}" class="fern-nav-btn">สมัครสมาชิกฟรี</a>
-    </div>
-</div>
+{% include 'core/_public_navbar.html' %}
 
 <div class="fern-home">
 
@@ -208,18 +265,18 @@ body {
 
         <div class="fern-home-card">
             <h1 class="fern-home-title">
-                เรียนภาษาญี่ปุ่นและจีน<br>
-                ด้วย <span>AI Tutor</span> ส่วนตัว
+                {% trans "เรียนภาษาญี่ปุ่นและจีน" %}<br>
+                {% blocktrans %}ด้วย <span>AI Tutor</span> ส่วนตัว{% endblocktrans %}
             </h1>
 
             <p class="fern-home-text">
-                FernLearnWorld ช่วยให้คุณเรียนคำศัพท์ ประโยค ฝึกพูดตาม
-                และสนทนากับ AI เพื่อเตรียมสอบ JLPT และ HSK แบบเป็นขั้นตอน
+                {% blocktrans %}FernLearnWorld ช่วยให้คุณเรียนคำศัพท์ ประโยค ฝึกพูดตาม
+                และสนทนากับ AI เพื่อเตรียมสอบ JLPT และ HSK แบบเป็นขั้นตอน{% endblocktrans %}
             </p>
 
             <div class="fern-home-actions">
-                <a href="{% url 'register' %}" class="fern-btn">เริ่มเรียนฟรี</a>
-                <a href="{% url 'programs' %}" class="fern-btn-light">ดูคอร์สเรียนทั้งหมด</a>
+                <a href="{% url 'register' %}" class="fern-btn">{% trans "เริ่มเรียนฟรี" %}</a>
+                <a href="{% url 'programs' %}" class="fern-btn-light">{% trans "ดูคอร์สเรียนทั้งหมด" %}</a>
             </div>
         </div>
 
@@ -235,22 +292,92 @@ body {
 
         <div class="fern-feature">
             <div class="fern-feature-icon">📚</div>
-            <h3>เรียนเป็นบท</h3>
-            <p>เลือก JLPT N5-N1 หรือ HSK 1-6 แล้วเรียนทีละ Lesson</p>
+            <h3>{% trans "เรียนเป็นบท" %}</h3>
+            <p>{% trans "เลือก JLPT N5-N1 หรือ HSK 1-6 แล้วเรียนทีละ Lesson" %}</p>
         </div>
 
         <div class="fern-feature">
             <div class="fern-feature-icon">🎙️</div>
-            <h3>ฝึกพูดตาม</h3>
-            <p>ฟังเสียง พูดตาม และให้ AI ช่วยประเมินการออกเสียง</p>
+            <h3>{% trans "ฝึกพูดตาม" %}</h3>
+            <p>{% trans "ฟังเสียง พูดตาม และให้ AI ช่วยประเมินการออกเสียง" %}</p>
         </div>
 
         <div class="fern-feature">
             <div class="fern-feature-icon">🤖</div>
             <h3>AI Tutor</h3>
-            <p>ฝึกสนทนา แปลประโยค และให้ AI แนะนำการใช้ภาษา</p>
+            <p>{% trans "ฝึกสนทนา แปลประโยค และให้ AI แนะนำการใช้ภาษา" %}</p>
         </div>
 
+    </div>
+
+    <div class="fern-stats-bar">
+        <div>
+            <div class="fern-stat-number">{{ stats.vocab_count }}+</div>
+            <div class="fern-stat-label">{% trans "คำศัพท์ในระบบ" %}</div>
+        </div>
+        <div>
+            <div class="fern-stat-number">{{ stats.lesson_count }}+</div>
+            <div class="fern-stat-label">{% trans "บทเรียน" %}</div>
+        </div>
+        <div>
+            <div class="fern-stat-number">{{ stats.grammar_count }}+</div>
+            <div class="fern-stat-label">{% trans "จุดไวยากรณ์" %}</div>
+        </div>
+        <div>
+            <div class="fern-stat-number">{{ stats.kanji_count }}+</div>
+            <div class="fern-stat-label">{% trans "ตัวอักษรคันจิ" %}</div>
+        </div>
+    </div>
+
+    <div class="fern-why-section">
+        <h2 class="fern-why-title">{% trans "ทำไมต้องเรียนกับ FernLearnWorld" %}</h2>
+        <p class="fern-why-subtitle">{% trans "ทุกฟีเจอร์ออกแบบมาเพื่อให้คุณฝึกภาษาได้จริง ไม่ใช่แค่ท่องจำ" %}</p>
+
+        <div class="fern-why-grid">
+
+            <div class="fern-why-card">
+                <div class="fern-why-icon">🤖</div>
+                <h3>{% trans "AI Tutor ส่วนตัว" %}</h3>
+                <p>{% trans "ฝึกพูดคุยและสนทนาโต้ตอบกับ AI ได้จริง ไม่ใช่แค่ท่องจำคำศัพท์เฉยๆ" %}</p>
+            </div>
+
+            <div class="fern-why-card">
+                <div class="fern-why-icon">🎮</div>
+                <h3>{% trans "Practice Hub หลากหลายโหมด" %}</h3>
+                <p>{% trans "ฝึกได้หลายรูปแบบ ทั้งจับคู่คำศัพท์ ตัวเลือก เติมคำ ฟัง-เขียนตาม และฝึกพูด" %}</p>
+            </div>
+
+            <div class="fern-why-card">
+                <div class="fern-why-icon">🔁</div>
+                <h3>{% trans "ระบบทวนคำศัพท์ Spaced Repetition" %}</h3>
+                <p>{% blocktrans %}Flashcards ใช้อัลกอริทึมแบบ SM-2 (สไตล์ Anki) คำนวณรอบทวนให้เหมาะกับความเข้าใจของคุณ ช่วยให้จำคำศัพท์ได้นานขึ้น{% endblocktrans %}</p>
+            </div>
+
+            <div class="fern-why-card">
+                <div class="fern-why-icon">📖</div>
+                <h3>{% trans "เนื้อหาครบ JLPT และ HSK" %}</h3>
+                <p>{% blocktrans %}คำศัพท์ ไวยากรณ์ และคันจิ ครอบคลุมตั้งแต่ JLPT N5-N1 และ HSK 1-6 พร้อมแบบฝึกหัดจริง{% endblocktrans %}</p>
+            </div>
+
+            <div class="fern-why-card">
+                <div class="fern-why-icon">📊</div>
+                <h3>{% trans "ติดตามความคืบหน้าแบบเรียลไทม์" %}</h3>
+                <p>{% blocktrans %}เห็น XP, Achievement และสถิติการเรียนของคุณอัปเดตทุกครั้งที่ฝึก{% endblocktrans %}</p>
+            </div>
+
+            <div class="fern-why-card">
+                <div class="fern-why-icon">⏰</div>
+                <h3>{% trans "เรียนได้ทุกที่ทุกเวลา" %}</h3>
+                <p>{% trans "ฝึกตามจังหวะของตัวเอง ไม่มีตารางตายตัว เข้าเรียนเมื่อไหร่ก็ได้" %}</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="fern-cta-banner">
+        <h2>{% trans "พร้อมเริ่มเรียนภาษาญี่ปุ่นและจีนแล้วหรือยัง?" %}</h2>
+        <p>{% blocktrans %}สมัครฟรีวันนี้ แล้วเริ่มฝึกคำศัพท์ ประโยค และพูดกับ AI Tutor ได้ทันที{% endblocktrans %}</p>
+        <a href="{% url 'register' %}" class="fern-btn">{% trans "เริ่มเรียนฟรีวันนี้" %}</a>
     </div>
 
 </div>

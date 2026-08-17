@@ -11,6 +11,24 @@ admin.site.site_header = "Dj-LMS Admin"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
+    # Social login (Google, Facebook, LINE) — deliberately mounted here,
+    # outside i18n_patterns() below, not under accounts/. Two reasons:
+    # 1) allauth's own URL names (account_login, account_logout, ...)
+    #    must never collide with this project's existing custom
+    #    login/register/logout at accounts/.
+    # 2) OAuth providers require an exact, pre-registered redirect_uri —
+    #    if this lived inside i18n_patterns() the callback URL would carry
+    #    a locale prefix that changes with the active language (/th/...,
+    #    /en/..., ...), breaking the redirect_uri match for every locale
+    #    except whichever one was registered in each provider's console.
+    path("social-auth/", include("allauth.urls")),
+    # Same reasoning as social-auth above: payment gateways call these
+    # endpoints server-to-server with one exact, pre-registered URL — a
+    # locale prefix that changes with the active language would break
+    # them. The REST API is likewise called by API clients that don't
+    # care about (and shouldn't have to know) the UI's current language.
+    path("payments/", include("payments.urls")),
+    path("accounts/api/", include("accounts.api.urls", namespace="accounts-api")),
 ]
 
 urlpatterns += i18n_patterns(
@@ -25,8 +43,6 @@ urlpatterns += i18n_patterns(
     path("result/", include("result.urls")),
     path("search/", include("search.urls")),
     path("quiz/", include("quiz.urls")),
-    path("payments/", include("payments.urls")),
-    path("accounts/api/", include("accounts.api.urls", namespace="accounts-api")),
     path("classroom/", include("virtual_classroom.urls", namespace="virtual_classroom")),
     path("vocabulary/", include("vocabulary.urls")),
     path("flashcards/", include("flashcards.urls")),

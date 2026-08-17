@@ -89,10 +89,12 @@ class User(AbstractUser):
 
     @property
     def get_full_name(self):
-        full_name = self.username
-        if self.first_name and self.last_name:
-            full_name = self.first_name + " " + self.last_name
-        return full_name
+        # Only require the fields that exist — social-login providers like
+        # LINE only ever give a single display name (no separate first/last),
+        # so requiring both was silently falling back to username (e.g. a
+        # raw LINE user ID) any time last_name was blank.
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        return full_name or self.username
 
     def __str__(self):
         return "{} ({})".format(self.username, self.get_full_name)

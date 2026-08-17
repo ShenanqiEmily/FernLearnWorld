@@ -67,6 +67,10 @@ if not DEBUG:
 # change the default user models to our custom model
 AUTH_USER_MODEL = "accounts.User"
 
+# Required by django-allauth (it looks up the current Site to build
+# provider callback URLs). Single-site project, so this never changes.
+SITE_ID = 1
+
 # Application definition
 
 DJANGO_APPS = [
@@ -79,6 +83,7 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 # Third party apps
@@ -87,6 +92,14 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "rest_framework",
     "django_filters",
+    # Social login (Google, Facebook, LINE) — mounted at /social-auth/ in
+    # config/urls.py, separate from the project's own accounts/ login flow.
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.line",
 ]
 
 # Custom apps
@@ -111,13 +124,18 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # Must come after SessionMiddleware (reads session data) and before
+    # CommonMiddleware (which needs the active language already resolved
+    # to build correct i18n_patterns() URLs) — this was previously placed
+    # after CommonMiddleware, which is the wrong order per Django's docs.
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # whitenoise to serve static files
+    "allauth.account.middleware.AccountMiddleware",  # required by django-allauth
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -188,70 +206,28 @@ AUTH_PASSWORD_VALIDATORS = [
 
 gettext = lambda s: s
 
+# FernLearnWorld officially supports exactly these 4 UI languages. (This
+# used to list ~55 languages inherited from the original LMS boilerplate,
+# with no matching .po files or MODELTRANSLATION_LANGUAGES setting for any
+# of them — that also silently made every modeltranslation-registered model
+# field generate one DB column per language, ~58 columns per field. Trimmed
+# down here on purpose; see MODELTRANSLATION_LANGUAGES below.)
 LANGUAGES = (
+    ("th", gettext("Thai")),
     ("en", gettext("English")),
-    ("fr", gettext("French")),
-    ("es", gettext("Spanish")),
-    ("sw", gettext("Swahili")),
-    ("ar", gettext("Arabic")),
-    ("de", gettext("German")),
-    ("zh-hans", gettext("Simplified Chinese")),
     ("ja", gettext("Japanese")),
-    ("pt-br", gettext("Brazilian Portuguese")),
-    ("ru", gettext("Russian")),
-    ("it", gettext("Italian")),
-    ("hi", gettext("Hindi")),
-    ("tr", gettext("Turkish")),
-    ("ko", gettext("Korean")),
-    ("nl", gettext("Dutch")),
-    ("pl", gettext("Polish")),
-    ("da", gettext("Danish")),
-    ("fi", gettext("Finnish")),
-    ("nb", gettext("Norwegian")),
-    ("sv", gettext("Swedish")),
-    ("cs", gettext("Czech")),
-    ("hu", gettext("Hungarian")),
-    ("ro", gettext("Romanian")),
-    ("sk", gettext("Slovak")),
-    ("th", gettext("Thai")),  
-    ("vi", gettext("Vietnamese")),
-    ("el", gettext("Greek")),
-    ("bg", gettext("Bulgarian")),
-    ("hr", gettext("Croatian")),
-    ("sl", gettext("Slovenian")),
-    ("lt", gettext("Lithuanian")),
-    ("lv", gettext("Latvian")),
-    ("et", gettext("Estonian")),
-    ("is", gettext("Icelandic")),
-    ("ga", gettext("Irish")),
-    ("cy", gettext("Welsh")),
-    ("eu", gettext("Basque")),
-    ("ca", gettext("Catalan")),
-    ("gl", gettext("Galician")),
-    ("sq", gettext("Albanian")),
-    ("mk", gettext("Macedonian")),
-    ("sr", gettext("Serbian")),
-    ("bs", gettext("Bosnian")),
-    ("uk", gettext("Ukrainian")),
-    ("hy", gettext("Armenian")),
-    ("az", gettext("Azerbaijani")),
-    ("ka", gettext("Georgian")),
-    ("he", gettext("Hebrew")),
-    ("fa", gettext("Persian")),
-    ("ur", gettext("Urdu")),
-    ("bn", gettext("Bengali")),
-    ("ta", gettext("Tamil")),
-    ("te", gettext("Telugu")),
-    ("ml", gettext("Malayalam")),
-    ("km", gettext("Khmer")),
-    ("my", gettext("Burmese")),
-    ("id", gettext("Indonesian")),
+    ("zh-hans", gettext("Simplified Chinese")),
 )
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
+# Without this, django-modeltranslation defaults to using every language in
+# LANGUAGES above — keep it in lockstep with LANGUAGES so translated model
+# fields (Course.title, Quiz.title, ...) only ever get columns for the 4
+# languages the site actually supports.
+MODELTRANSLATION_LANGUAGES = ("th", "en", "ja", "zh-hans")
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "th"
 
 TIME_ZONE = "UTC"
 
@@ -336,6 +312,55 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/th/accounts/login/"
+
+# django-allauth — social login (Google, Facebook, LINE)
+# Kept alongside the project's own ModelBackend (not replacing it) so the
+# existing username/password login continues to work unchanged.
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Skip allauth's own branded intermediate signup form — go straight from
+# "log in with Google/Facebook/LINE" to a created, logged-in account using
+# whatever the provider gives us (matches the site's own frictionless
+# self-registration flow).
+SOCIALACCOUNT_AUTO_SIGNUP = True
+# Skip the "are you sure?" confirmation page — one click straight to the
+# provider, consistent with a single "Sign in with X" button.
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": config("GOOGLE_OAUTH_CLIENT_ID", default=""),
+            "secret": config("GOOGLE_OAUTH_CLIENT_SECRET", default=""),
+            "key": "",
+        },
+        "SCOPE": ["profile", "email"],
+    },
+    "facebook": {
+        "APP": {
+            "client_id": config("FACEBOOK_APP_ID", default=""),
+            "secret": config("FACEBOOK_APP_SECRET", default=""),
+            "key": "",
+        },
+        "SCOPE": ["email", "public_profile"],
+    },
+    "line": {
+        "APP": {
+            "client_id": config("LINE_CHANNEL_ID", default=""),
+            "secret": config("LINE_CHANNEL_SECRET", default=""),
+            "key": "",
+        },
+        # LineProvider.get_default_scope() returns [] when this is unset,
+        # which drops the `scope` query param from the authorize request
+        # entirely — LINE Login requires it. "email" is deliberately left
+        # out: it needs separate approval on the LINE channel's console,
+        # otherwise requesting it errors instead of just being ignored.
+        "SCOPE": ["profile", "openid"],
+    },
+}
 
 # DRF setup
 REST_FRAMEWORK = {

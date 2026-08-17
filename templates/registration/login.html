@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load socialaccount %}
 
 {% block title %}
 FernLearnWorld - Login
@@ -165,6 +166,67 @@ FernLearnWorld - Login
     text-decoration: none;
   }
 
+  .fern-social-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 22px 0;
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .fern-social-divider::before,
+  .fern-social-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #fbcfe8;
+  }
+
+  .fern-social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .fern-social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 50px;
+    border-radius: 16px;
+    border: 1px solid #fbcfe8;
+    background: white;
+    color: #334155 !important;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.15s;
+  }
+
+  .fern-social-btn:hover {
+    background: #fdf2f8;
+    border-color: #ec4899;
+  }
+
+  .fern-social-btn i {
+    font-size: 18px;
+  }
+
+  .fern-social-btn.fern-social-google i {
+    color: #ea4335;
+  }
+
+  .fern-social-btn.fern-social-facebook i {
+    color: #1877f2;
+  }
+
+  .fern-social-btn.fern-social-line i {
+    color: #06c755;
+  }
+
   @media (max-width: 850px) {
     .fern-login-wrap {
       grid-template-columns: 1fr;
@@ -192,13 +254,13 @@ FernLearnWorld - Login
       </div>
 
       <h1 class="fern-login-title">
-        Welcome to <span>FernLearnWorld</span>
+        {% blocktrans %}Welcome to <span>FernLearnWorld</span>{% endblocktrans %}
       </h1>
 
       <p class="fern-login-sub">
-         แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนด้วย AI
+        {% blocktrans %}แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนด้วย AI
     ฝึกคำศัพท์ ประโยค การออกเสียง Quiz และติดตามความก้าวหน้า
-    เหมาะสำหรับ JLPT N5-N1 และ HSK 3-6
+    เหมาะสำหรับ JLPT N5-N1 และ HSK 3-6{% endblocktrans %}
       </p>
 
       <div class="fern-mini-card">
@@ -212,7 +274,7 @@ FernLearnWorld - Login
       </div>
 
       <div class="fern-form-sub">
-        เข้าสู่ระบบเพื่อเรียนต่อและบันทึกความคืบหน้าของคุณ
+        {% trans "เข้าสู่ระบบเพื่อเรียนต่อและบันทึกความคืบหน้าของคุณ" %}
       </div>
 
       <form action="" method="POST" id="login-form">
@@ -248,6 +310,23 @@ FernLearnWorld - Login
         </button>
       </form>
 
+      <div class="fern-social-divider">{% trans "or sign in with" %}</div>
+
+      <div class="fern-social-buttons">
+        <a href="{% provider_login_url 'google' %}" class="fern-social-btn fern-social-google">
+          <i class="fab fa-google"></i>
+          {% trans "Sign in with Google" %}
+        </a>
+        <a href="{% provider_login_url 'facebook' %}" class="fern-social-btn fern-social-facebook">
+          <i class="fab fa-facebook"></i>
+          {% trans "Sign in with Facebook" %}
+        </a>
+        <a href="{% provider_login_url 'line' %}" class="fern-social-btn fern-social-line">
+          <i class="fab fa-line"></i>
+          {% trans "Sign in with LINE" %}
+        </a>
+      </div>
+
       <div class="fern-links">
         <a href="{% url 'password_reset' %}">
           {% trans "Forgot password?" %}
@@ -255,9 +334,9 @@ FernLearnWorld - Login
       </div>
 
       <div class="fern-register-box">
-        ยังไม่มีบัญชี?
-        <a href="/th/accounts/register/">
-          สมัครเป็นนักเรียน
+        {% trans "ยังไม่มีบัญชี?" %}
+        <a href="{% url 'register' %}">
+          {% trans "สมัครเป็นนักเรียน" %}
         </a>
       </div>
     </div>

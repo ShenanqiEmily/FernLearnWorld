@@ -31,3 +31,10 @@ gopay>=2.0.1
 
 # AI Tutor
 anthropic>=0.40.0  # https://github.com/anthropics/anthropic-sdk-python
+
+# Social login (Google, Facebook, LINE)
+# Pinned to 65.1.0: newer releases (65.3.0+) require Django>=4.2.16, and this
+# project is pinned to django==4.2.7 above — do not bump this without also
+# reviewing the Django pin.
+django-allauth==65.1.0  # https://github.com/pennersr/django-allauth
+PyJWT[crypto]>=2.0  # required by allauth's Google provider (id_token verification)

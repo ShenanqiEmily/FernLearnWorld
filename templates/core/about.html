@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}FernLearnWorld — เกี่ยวกับเรา{% endblocktrans %}{% endblock title %}
+
+{% block sidebar %}
+{% if request.user.is_authenticated %}
+{% include 'aside.html' %}
+{% endif %}
+{% endblock %}
+
+{% block topbar %}
+{% if request.user.is_authenticated %}
+{% include 'navbar.html' %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<style>
+{% if not request.user.is_authenticated %}
+body {
+    background: #fff7fb;
+}
+
+#main {
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+}
+{% endif %}
+
+.fern-about-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+}
+
+.fern-about-hero {
+    max-width: 780px;
+    margin: 0 auto 40px;
+    text-align: center;
+}
+
+.fern-about-title {
+    font-size: 38px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 16px;
+}
+
+.fern-about-title span {
+    color: #ec4899;
+}
+
+.fern-about-lead {
+    font-size: 18px;
+    color: #64748b;
+    line-height: 1.9;
+}
+
+.fern-section {
+    max-width: 980px;
+    margin: 0 auto 44px;
+}
+
+.fern-founder-card {
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 36px;
+    align-items: center;
+}
+
+.fern-founder-photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid #fbcfe8;
+    color: #ec4899;
+    font-size: 76px;
+    overflow: hidden;
+}
+
+.fern-founder-photo img {
+    width: 85%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.fern-founder-name {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.fern-founder-role {
+    color: #ec4899;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.fern-founder-story {
+    color: #475569;
+    line-height: 1.9;
+}
+
+.fern-section-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #0f172a;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.fern-mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.fern-mission-card {
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 26px;
+    padding: 30px;
+    box-shadow: 0 10px 24px rgba(236, 72, 153, 0.08);
+}
+
+.fern-mission-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    background: linear-gradient(135deg, #ffe4f1, #dbeafe);
+    margin-bottom: 16px;
+}
+
+.fern-mission-card h3 {
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.fern-mission-card p {
+    color: #64748b;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.fern-about-cta {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+}
+
+.fern-about-cta h2 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.fern-about-cta p {
+    color: #64748b;
+    margin-bottom: 22px;
+}
+
+.fern-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    color: white !important;
+    padding: 14px 28px;
+    border-radius: 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+@media (max-width: 800px) {
+    .fern-founder-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .fern-mission-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fern-about-title {
+        font-size: 30px;
+    }
+}
+</style>
+
+{% if not request.user.is_authenticated %}
+{% include 'core/_public_navbar.html' %}
+{% endif %}
+
+<div class="fern-about-page">
+
+    <div class="fern-about-hero">
+        <h1 class="fern-about-title">
+            {% blocktrans %}เกี่ยวกับ <span>FernLearnWorld</span>{% endblocktrans %}
+        </h1>
+        <p class="fern-about-lead">
+            {% blocktrans %}FernLearnWorld คือแพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนออนไลน์
+            ที่รวมคำศัพท์ ประโยค แบบฝึกหัด และ AI Tutor ไว้ในที่เดียว
+            ออกแบบมาเพื่อให้ผู้เรียนฝึกฝนได้จริง ไม่ใช่แค่ท่องจำ
+            ตั้งแต่ระดับเริ่มต้นจนถึงระดับสอบ JLPT และ HSK{% endblocktrans %}
+        </p>
+    </div>
+
+    <div class="fern-section">
+        <h2 class="fern-section-title">{% trans "ผู้ก่อตั้ง" %}</h2>
+
+        <div class="fern-founder-card">
+            <div class="fern-founder-photo">
+                <img src="{% static 'img_founder/baifern.jpg' %}" alt="Baifern - Founder">
+            </div>
+
+
+            <div>
+                <div class="fern-founder-name">Patcharin Boonyarit</div>
+                <div class="fern-founder-role">{% trans "ผู้ก่อตั้ง FernLearnWorld" %}</div>
+                <p class="fern-founder-story">
+                    {% blocktrans %}จุดเริ่มต้นของ FernLearnWorld มาจากประสบการณ์ตรงในการเรียนภาษาญี่ปุ่นและจีนด้วยตัวเอง
+                    ที่รู้สึกว่าเครื่องมือเรียนภาษาที่มีอยู่ยังขาดการฝึกพูดและฝึกสนทนาแบบโต้ตอบจริง
+                    จึงอยากสร้างแพลตฟอร์มที่ผสาน AI เข้ากับระบบฝึกฝนคำศัพท์และไวยากรณ์แบบเป็นขั้นเป็นตอน
+                    เพื่อให้ผู้เรียนทุกคนเข้าถึงการฝึกภาษาที่ใกล้เคียงกับการมีติวเตอร์ส่วนตัวได้ในราคาที่เอื้อมถึง{% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fern-section">
+        <h2 class="fern-section-title">{% trans "พันธกิจและวิสัยทัศน์" %}</h2>
+
+        <div class="fern-mission-grid">
+            <div class="fern-mission-card">
+                <div class="fern-mission-icon">🎯</div>
+                <h3>{% trans "พันธกิจ (Mission)" %}</h3>
+                <p>
+                    {% blocktrans %}ทำให้การเรียนภาษาญี่ปุ่นและจีนเข้าถึงง่าย ฝึกได้จริง
+                    ด้วยการผสาน AI Tutor เข้ากับระบบฝึกคำศัพท์ ประโยค และการออกเสียง
+                    ที่ติดตามความก้าวหน้าของผู้เรียนได้อย่างเป็นรูปธรรม{% endblocktrans %}
+                </p>
+            </div>
+
+            <div class="fern-mission-card">
+                <div class="fern-mission-icon">🌏</div>
+                <h3>{% trans "วิสัยทัศน์ (Vision)" %}</h3>
+                <p>
+                    {% blocktrans %}เป็นแพลตฟอร์มที่ผู้เรียนภาษาเลือกใช้เป็นอันดับแรก
+                    เมื่อต้องการฝึกภาษาญี่ปุ่นและจีนอย่างจริงจัง
+                    ตั้งแต่ระดับเริ่มต้นจนถึงระดับที่ใช้งานในชีวิตจริงและสอบวัดระดับได้{% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fern-about-cta">
+        <h2>{% trans "พร้อมเริ่มเรียนกับเราหรือยัง?" %}</h2>
+        <p>{% trans "สมัครฟรี แล้วเริ่มฝึกคำศัพท์ ประโยค และพูดกับ AI Tutor ได้ทันที" %}</p>
+        <a href="{% url 'register' %}" class="fern-btn">{% trans "เริ่มเรียนฟรี" %}</a>
+    </div>
+
+</div>
+
+{% endblock content %}

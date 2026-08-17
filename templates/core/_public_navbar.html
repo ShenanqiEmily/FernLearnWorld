@@ -1,0 +1,67 @@
+{% load static %}
+{% load i18n %}
+
+<style>
+.fern-public-nav {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 34px;
+    background: white;
+    border-bottom: 1px solid #fbcfe8;
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.08);
+    transition: box-shadow 0.2s ease;
+}
+
+.fern-public-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.fern-public-logo img {
+    height: 120px;
+}
+
+.fern-public-nav-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.fern-nav-btn,
+.fern-nav-btn-light {
+    padding: 10px 20px;
+    border-radius: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.fern-nav-btn {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white !important;
+}
+
+.fern-nav-btn-light {
+    color: #334155 !important;
+}
+</style>
+
+<div class="fern-public-nav">
+    <a href="{% url 'home' %}" class="fern-public-logo">
+        <img src="{% static 'img/fernLogo.png' %}" alt="FernLearnWorld">
+    </a>
+
+    <div class="fern-public-nav-actions">
+        <a href="{% url 'about' %}" class="fern-nav-btn-light">{% trans "เกี่ยวกับเรา" %}</a>
+        <a href="{% url 'login' %}" class="fern-nav-btn-light">{% trans "เข้าสู่ระบบ" %}</a>
+        <a href="{% url 'register' %}" class="fern-nav-btn">{% trans "สมัครสมาชิกฟรี" %}</a>
+    </div>
+</div>

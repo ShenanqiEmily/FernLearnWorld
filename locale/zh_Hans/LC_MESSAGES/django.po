@@ -1,0 +1,269 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FernLearnWorld\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-17 00:00+0700\n"
+"PO-Revision-Date: 2026-08-17 00:00+0700\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "เรียนภาษาญี่ปุ่นและจีน"
+msgstr "学习日语和中文"
+
+msgid "เริ่มเรียนฟรี"
+msgstr "免费开始学习"
+
+msgid "ดูคอร์สเรียนทั้งหมด"
+msgstr "查看所有课程"
+
+msgid "เรียนเป็นบท"
+msgstr "按课程学习"
+
+msgid "เลือก JLPT N5-N1 หรือ HSK 1-6 แล้วเรียนทีละ Lesson"
+msgstr "选择 JLPT N5-N1 或 HSK 1-6，逐课学习"
+
+msgid "ฝึกพูดตาม"
+msgstr "跟读练习"
+
+msgid "ฟังเสียง พูดตาม และให้ AI ช่วยประเมินการออกเสียง"
+msgstr "听音跟读，由 AI 评估发音"
+
+msgid "ฝึกสนทนา แปลประโยค และให้ AI แนะนำการใช้ภาษา"
+msgstr "练习对话、翻译句子，获得 AI 语言指导"
+
+msgid "คำศัพท์ในระบบ"
+msgstr "系统词汇量"
+
+msgid "บทเรียน"
+msgstr "课程"
+
+msgid "จุดไวยากรณ์"
+msgstr "语法点"
+
+msgid "ตัวอักษรคันจิ"
+msgstr "汉字数"
+
+msgid "ทำไมต้องเรียนกับ FernLearnWorld"
+msgstr "为什么选择 FernLearnWorld"
+
+msgid "ทุกฟีเจอร์ออกแบบมาเพื่อให้คุณฝึกภาษาได้จริง ไม่ใช่แค่ท่องจำ"
+msgstr "每个功能都专为真正的语言练习而设计，而不仅仅是死记硬背"
+
+msgid "AI Tutor ส่วนตัว"
+msgstr "专属 AI 导师"
+
+msgid "ฝึกพูดคุยและสนทนาโต้ตอบกับ AI ได้จริง ไม่ใช่แค่ท่องจำคำศัพท์เฉยๆ"
+msgstr "真正与 AI 对话练习，而不只是死记单词"
+
+msgid "Practice Hub หลากหลายโหมด"
+msgstr "多模式练习中心"
+
+msgid ""
+"ฝึกได้หลายรูปแบบ ทั้งจับคู่คำศัพท์ ตัวเลือก เติมคำ ฟัง-เขียนตาม และฝึกพูด"
+msgstr "多种练习形式：词汇配对、选择题、填空、听写和口语练习"
+
+msgid "ระบบทวนคำศัพท์ Spaced Repetition"
+msgstr "间隔重复复习系统"
+
+msgid "เนื้อหาครบ JLPT และ HSK"
+msgstr "完整的 JLPT 和 HSK 内容"
+
+msgid "ติดตามความคืบหน้าแบบเรียลไทม์"
+msgstr "实时学习进度追踪"
+
+msgid "เรียนได้ทุกที่ทุกเวลา"
+msgstr "随时随地学习"
+
+msgid "ฝึกตามจังหวะของตัวเอง ไม่มีตารางตายตัว เข้าเรียนเมื่อไหร่ก็ได้"
+msgstr "按自己的节奏学习，没有固定时间表，随时可以学习"
+
+msgid "พร้อมเริ่มเรียนภาษาญี่ปุ่นและจีนแล้วหรือยัง?"
+msgstr "准备好开始学习日语和中文了吗？"
+
+msgid "เริ่มเรียนฟรีวันนี้"
+msgstr "今天就免费开始学习"
+
+msgid "FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor"
+msgstr "FernLearnWorld — 与 AI 导师一起学习日语和中文"
+
+msgid "ด้วย <span>AI Tutor</span> ส่วนตัว"
+msgstr "配备专属<span>AI 导师</span>"
+
+msgid ""
+"FernLearnWorld ช่วยให้คุณเรียนคำศัพท์ ประโยค ฝึกพูดตาม\n"
+"                และสนทนากับ AI เพื่อเตรียมสอบ JLPT และ HSK แบบเป็นขั้นตอน"
+msgstr "FernLearnWorld 帮助你学习词汇、句子、跟读练习，并与 AI 对话，循序渐进备考 JLPT 和 HSK"
+
+msgid ""
+"Flashcards ใช้อัลกอริทึมแบบ SM-2 (สไตล์ Anki) "
+"คำนวณรอบทวนให้เหมาะกับความเข้าใจของคุณ ช่วยให้จำคำศัพท์ได้นานขึ้น"
+msgstr "抽认卡采用 SM-2 算法（类似 Anki），根据你的掌握程度计算复习间隔，帮助你更长久地记住词汇"
+
+msgid ""
+"คำศัพท์ ไวยากรณ์ และคันจิ ครอบคลุมตั้งแต่ JLPT N5-N1 และ HSK 1-6 "
+"พร้อมแบบฝึกหัดจริง"
+msgstr "词汇、语法和汉字覆盖 JLPT N5-N1 和 HSK 1-6，并配有真实练习题"
+
+msgid "เห็น XP, Achievement และสถิติการเรียนของคุณอัปเดตทุกครั้งที่ฝึก"
+msgstr "每次练习后，XP、成就和学习统计都会实时更新"
+
+msgid "สมัครฟรีวันนี้ แล้วเริ่มฝึกคำศัพท์ ประโยค และพูดกับ AI Tutor ได้ทันที"
+msgstr "立即免费注册，马上开始学习词汇、句子并与 AI 导师对话"
+
+msgid "ผู้ก่อตั้ง"
+msgstr "创始人"
+
+msgid "ผู้ก่อตั้ง FernLearnWorld"
+msgstr "FernLearnWorld 创始人"
+
+msgid "พันธกิจและวิสัยทัศน์"
+msgstr "使命与愿景"
+
+msgid "พันธกิจ (Mission)"
+msgstr "使命 (Mission)"
+
+msgid "วิสัยทัศน์ (Vision)"
+msgstr "愿景 (Vision)"
+
+msgid "พร้อมเริ่มเรียนกับเราหรือยัง?"
+msgstr "准备好和我们一起学习了吗？"
+
+msgid "สมัครฟรี แล้วเริ่มฝึกคำศัพท์ ประโยค และพูดกับ AI Tutor ได้ทันที"
+msgstr "免费注册，马上开始学习词汇、句子并与 AI 导师对话"
+
+msgid "FernLearnWorld — เกี่ยวกับเรา"
+msgstr "FernLearnWorld — 关于我们"
+
+msgid "เกี่ยวกับ <span>FernLearnWorld</span>"
+msgstr "关于 <span>FernLearnWorld</span>"
+
+msgid ""
+"FernLearnWorld คือแพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนออนไลน์\n"
+"            ที่รวมคำศัพท์ ประโยค แบบฝึกหัด และ AI Tutor ไว้ในที่เดียว\n"
+"            ออกแบบมาเพื่อให้ผู้เรียนฝึกฝนได้จริง ไม่ใช่แค่ท่องจำ\n"
+"            ตั้งแต่ระดับเริ่มต้นจนถึงระดับสอบ JLPT และ HSK"
+msgstr ""
+"FernLearnWorld 是一个在线日语和中文学习平台，将词汇、句子、练习和 AI "
+"导师集于一体，专为让学习者真正练习（而非死记硬背）而设计，从入门到 JLPT 和 HSK 考试备考全覆盖。"
+
+msgid ""
+"จุดเริ่มต้นของ FernLearnWorld มาจากประสบการณ์ตรงในการเรียนภาษาญี่ปุ่นและจีนด้วยตัวเอง\n"
+"                    ที่รู้สึกว่าเครื่องมือเรียนภาษาที่มีอยู่ยังขาดการฝึกพูดและฝึกสนทนาแบบโต้ตอบจริง\n"
+"                    จึงอยากสร้างแพลตฟอร์มที่ผสาน AI เข้ากับระบบฝึกฝนคำศัพท์และไวยากรณ์แบบเป็นขั้นเป็นตอน\n"
+"                    เพื่อให้ผู้เรียนทุกคนเข้าถึงการฝึกภาษาที่ใกล้เคียงกับการมีติวเตอร์ส่วนตัวได้ในราคาที่เอื้อมถึง"
+msgstr ""
+"FernLearnWorld 源于我自己学习日语和中文的亲身经历——我发现现有的语言学习工具仍然缺乏真正的互动口语和对话练习。因此，我希望打造一个将 "
+"AI 与循序渐进的词汇和语法练习系统相结合的平台，让每一位学习者都能以负担得起的价格获得接近私人导师的语言练习体验。"
+
+msgid ""
+"ทำให้การเรียนภาษาญี่ปุ่นและจีนเข้าถึงง่าย ฝึกได้จริง\n"
+"                    ด้วยการผสาน AI Tutor เข้ากับระบบฝึกคำศัพท์ ประโยค และการออกเสียง\n"
+"                    ที่ติดตามความก้าวหน้าของผู้เรียนได้อย่างเป็นรูปธรรม"
+msgstr "通过将 AI 导师与词汇、句子及发音练习系统相结合，让日语和中文学习变得简单易学、真正可练习，并具体追踪学习者的学习进度。"
+
+msgid ""
+"เป็นแพลตฟอร์มที่ผู้เรียนภาษาเลือกใช้เป็นอันดับแรก\n"
+"                    เมื่อต้องการฝึกภาษาญี่ปุ่นและจีนอย่างจริงจัง\n"
+"                    ตั้งแต่ระดับเริ่มต้นจนถึงระดับที่ใช้งานในชีวิตจริงและสอบวัดระดับได้"
+msgstr "成为学习者认真学习日语和中文时的首选平台——从入门水平到能在真实生活中使用并通过等级考试。"
+
+msgid "เกี่ยวกับเรา"
+msgstr "关于我们"
+
+msgid "เข้าสู่ระบบ"
+msgstr "登录"
+
+msgid "สมัครสมาชิกฟรี"
+msgstr "免费注册"
+
+msgid "Sign in"
+msgstr "登录"
+
+msgid "เข้าสู่ระบบเพื่อเรียนต่อและบันทึกความคืบหน้าของคุณ"
+msgstr "登录以继续学习并保存你的进度"
+
+msgid "Invalid ID & Password."
+msgstr "账号或密码不正确。"
+
+msgid "Username / ID Number"
+msgstr "用户名 / 学号"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "SIGN IN"
+msgstr "登录"
+
+msgid "or sign in with"
+msgstr "或使用以下方式登录"
+
+msgid "Sign in with Google"
+msgstr "使用 Google 登录"
+
+msgid "Sign in with Facebook"
+msgstr "使用 Facebook 登录"
+
+msgid "Sign in with LINE"
+msgstr "使用 LINE 登录"
+
+msgid "Forgot password?"
+msgstr "忘记密码？"
+
+msgid "ยังไม่มีบัญชี?"
+msgstr "还没有账号？"
+
+msgid "สมัครเป็นนักเรียน"
+msgstr "注册为学生"
+
+msgid "Welcome to <span>FernLearnWorld</span>"
+msgstr "欢迎来到 <span>FernLearnWorld</span>"
+
+msgid ""
+"แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนด้วย AI\n"
+"    ฝึกคำศัพท์ ประโยค การออกเสียง Quiz และติดตามความก้าวหน้า\n"
+"    เหมาะสำหรับ JLPT N5-N1 และ HSK 3-6"
+msgstr "AI 驱动的日语和中文学习平台。练习词汇、句子、发音和测验，同时追踪学习进度。适合 JLPT N5-N1 和 HSK 3-6。"
+
+msgid "Create Account"
+msgstr "创建账号"
+
+msgid "Already registered?"
+msgstr "已经注册过？"
+
+msgid "Login"
+msgstr "登录"
+
+msgid "Create your <span>FernLearnWorld</span> account"
+msgstr "创建你的 <span>FernLearnWorld</span> 账号"
+
+msgid ""
+"สมัครเพื่อเรียนภาษาญี่ปุ่น 🇯🇵 ภาษาจีน 🇨🇳 และฝึกกับ AI Tutor 🤖\n"
+"        พร้อมบันทึก Progress, Quiz Score และ Achievement ของคุณ"
+msgstr "注册学习日语 🇯🇵 和中文 🇨🇳，并与 AI 导师 🤖 一起练习——你的进度、测验分数和成就都会被保存。"
+
+msgid "กลับหน้าโปรไฟล์"
+msgstr "返回个人资料"
+
+msgid "ยังไม่ได้ตั้งอีเมล"
+msgstr "尚未设置邮箱"
+
+msgid "ข้อมูลส่วนตัว"
+msgstr "个人信息"
+
+msgid "รูปโปรไฟล์"
+msgstr "头像"
+
+msgid "การตั้งค่าอื่นๆ"
+msgstr "其他设置"
+
+msgid "บันทึกการเปลี่ยนแปลง"
+msgstr "保存更改"
+
+msgid "เปลี่ยนรหัสผ่าน"
+msgstr "修改密码"
