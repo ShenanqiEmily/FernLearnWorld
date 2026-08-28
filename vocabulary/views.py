@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import render
 from .models import Vocabulary
@@ -11,6 +12,7 @@ from .models import Achievement, UserAchievement
 from django.contrib.auth.decorators import login_required
 from .models import Achievement, UserAchievement
 from practice.models import PracticeAttempt
+from subscriptions.access import user_can_access_course
 
 
 def get_lesson_data(course_code=None):
@@ -24,8 +26,25 @@ def get_lesson_data(course_code=None):
     return list(vocabularies), course
 
 
+def _paywall_redirect(request, course):
+    """None if the user may view this lesson, otherwise a redirect to the
+    subscribe page with a (non-scary, inviting) explanatory message."""
+    if user_can_access_course(request.user, course):
+        return None
+    messages.info(
+        request,
+        "บทเรียนนี้อยู่ในแพ็กเกจสมาชิก สมัครเลยเพื่อปลดล็อกบทเรียนเต็มรูปแบบ 🎉",
+    )
+    return redirect("subscriptions:tier_picker")
+
+
+@login_required
 def vocab_card(request, course_code=None):
     vocabularies, course = get_lesson_data(course_code)
+
+    blocked = _paywall_redirect(request, course)
+    if blocked:
+        return blocked
 
     return render(request, "vocabulary/vocab_card.html", {
         "vocabularies": vocabularies,
@@ -34,8 +53,13 @@ def vocab_card(request, course_code=None):
     })
 
 
+@login_required
 def sentence_practice(request, course_code=None):
     vocabularies, course = get_lesson_data(course_code)
+
+    blocked = _paywall_redirect(request, course)
+    if blocked:
+        return blocked
 
     return render(request, "vocabulary/sentence_practice.html", {
         "vocabularies": vocabularies,
@@ -53,6 +77,7 @@ def speaking_practice(request, course_code=None):
         return redirect("practice:speaking", course_code=course_code)
     return redirect("practice:speaking_picker")
 
+@login_required
 def quiz_practice(request, course_code=None):
     if not course_code:
         course_code = "JP-N5-001"
@@ -71,11 +96,15 @@ def quiz_practice(request, course_code=None):
     else:
         vocabularies, course = get_lesson_data(course_code)
 
+    blocked = _paywall_redirect(request, course)
+    if blocked:
+        return blocked
+
     return render(request, "vocabulary/quiz_practice.html", {
         "vocabularies": vocabularies,
         "course_code": course_code,
         "course": course,
-    })  
+    })
 
 
 def award_badge(user, badge_code):

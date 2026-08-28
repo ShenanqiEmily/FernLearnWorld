@@ -294,11 +294,15 @@ def program_detail(request, pk):
     progress = calculate_level_progress(request.user, courses)
     completed_course_ids = progress["completed_course_ids"]
 
+    from subscriptions.access import FREE_LESSON_LIMIT, user_has_paid_access
+
+    has_paid_access = user_has_paid_access(request.user)
+
     lesson_list = []
     dev_unlock_all = getattr(settings, "DEV_UNLOCK_ALL_LESSONS", False)
     previous_unlocked = True
 
-    for course in courses:
+    for position, course in enumerate(courses, start=1):
         is_completed = course.id in completed_course_ids
 
         if dev_unlock_all:
@@ -310,6 +314,14 @@ def program_detail(request, pk):
             "course": course,
             "is_completed": is_completed,
             "is_unlocked": is_unlocked,
+            # Separate from is_unlocked (sequential-progress lock, above) —
+            # this is the subscription paywall (course/views.py loop order
+            # matches subscriptions/access.py::lesson_position exactly, so
+            # `position` here is the same number the paywall itself uses).
+            # Still clickable when True: the existing redirect-to-subscribe
+            # in vocabulary/views.py is unchanged, this only adds the visual
+            # cue so it's not a surprise after clicking.
+            "is_paywalled": position > FREE_LESSON_LIMIT and not has_paid_access,
         })
 
         previous_unlocked = is_completed

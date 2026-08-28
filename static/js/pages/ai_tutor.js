@@ -87,21 +87,33 @@ function atRenderMessages() {
     box.innerHTML = "";
 
     (atHistories[atCurrentMode] || []).forEach(function (item) {
-        box.appendChild(atBuildBubble(item.role, item.content, item.isError));
+        box.appendChild(atBuildBubble(item.role, item.content, item.isError, item.isUpsell));
     });
 
     box.scrollTop = box.scrollHeight;
 }
 
-function atBuildBubble(role, text, isError) {
+function atBuildBubble(role, text, isError, isUpsell) {
     const wrap = document.createElement("div");
     wrap.className = "fern-message " + (role === "user" ? "user" : "ai");
 
     const bubble = document.createElement("div");
-    bubble.className = "fern-bubble" + (isError ? " at-error-bubble" : "");
+    // isUpsell (daily free-tier limit reached) is deliberately styled apart
+    // from isError (something actually broke) — it's an invitation, not a
+    // failure, so it shouldn't look alarming like a red error bubble.
+    bubble.className = "fern-bubble" + (isError ? " at-error-bubble" : "") + (isUpsell ? " at-upsell-bubble" : "");
     bubble.innerText = text;
 
-    if (role !== "user" && !isError) {
+    if (isUpsell) {
+        const upgradeBtn = document.createElement("a");
+        upgradeBtn.className = "at-upsell-btn";
+        upgradeBtn.href = window.SUBSCRIBE_URL || "/subscribe/";
+        upgradeBtn.innerText = "อัพเกรดเลย →";
+        bubble.appendChild(document.createElement("br"));
+        bubble.appendChild(upgradeBtn);
+    }
+
+    if (role !== "user" && !isError && !isUpsell) {
         const soundBtn = document.createElement("button");
         soundBtn.className = "at-sound-btn";
         soundBtn.innerText = "🔊 ฟังเสียงคำตอบ";
@@ -180,6 +192,12 @@ function atSendMessage(text) {
 
             if (result.data.ok) {
                 history.push({ role: "assistant", content: result.data.reply });
+            } else if (result.data.limit_reached) {
+                history.push({
+                    role: "assistant",
+                    content: result.data.error,
+                    isUpsell: true,
+                });
             } else {
                 history.push({
                     role: "assistant",

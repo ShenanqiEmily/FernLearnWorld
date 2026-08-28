@@ -1,14 +1,28 @@
 {% load static %}
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>{% block title %}Japanese-Chinese Courses{% endblock title %}</title>
+    <title>{% block title %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblock title %}</title>
+
+    <meta name="description" content="{% block meta_description %}FernLearnWorld แพลตฟอร์มเรียนภาษาญี่ปุ่น (JLPT N5-N1) และภาษาจีน (HSK 1-6) ออนไลน์ ฝึกคำศัพท์ ประโยค ออกเสียง และสนทนากับ AI Tutor{% endblock meta_description %}">
+    <meta name="keywords" content="{% block meta_keywords %}เรียนภาษาญี่ปุ่น, เรียนภาษาจีน, JLPT, HSK, AI Tutor, ฝึกภาษาญี่ปุ่นออนไลน์, เรียนภาษาจีนออนไลน์{% endblock meta_keywords %}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="FernLearnWorld">
+    <meta property="og:title" content="{% block og_title %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblock og_title %}">
+    <meta property="og:description" content="{% block og_description %}เรียนคำศัพท์ ประโยค ฝึกออกเสียง และสนทนากับ AI Tutor เพื่อเตรียมสอบ JLPT และ HSK{% endblock og_description %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/fernLogo.png' %}{% endblock og_image %}">
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock og_url %}">
+    <meta name="twitter:card" content="summary_large_image">
+
+    {% block structured_data %}{% endblock structured_data %}
 
     <link rel="shortcut icon" href="{% static 'img/fernIcon.png' %}" type="image/x-icon">
 

@@ -208,6 +208,10 @@ class StudentAddForm(UserCreationForm):
                 program=self.cleaned_data.get("program"),
             )
 
+            from subscriptions.models import Subscription
+
+            Subscription.objects.create(user=user, tier="free", status="active")
+
         return user
 class ProfileUpdateForm(UserChangeForm):
     email = forms.EmailField(

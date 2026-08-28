@@ -65,3 +65,7 @@ services:
         sync: false
       - key: LINE_CHANNEL_SECRET
         sync: false
+      - key: OMISE_PUBLIC_KEY
+        sync: false
+      - key: OMISE_SECRET_KEY
+        sync: false

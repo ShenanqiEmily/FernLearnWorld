@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}FernLearnWorld — สมัครสมาชิก แพ็กเกจและราคา{% endblock title %}
+
+{% block meta_description %}เลือกแพ็กเกจสมาชิก FernLearnWorld ปลดล็อกบทเรียนภาษาญี่ปุ่นและจีนเต็มรูปแบบ AI Tutor ไม่จำกัด และคำศัพท์ครบทุกระดับ JLPT และ HSK{% endblock meta_description %}
+{% block meta_keywords %}สมัครสมาชิก FernLearnWorld, แพ็กเกจเรียนภาษาญี่ปุ่น, แพ็กเกจเรียนภาษาจีน, ราคาคอร์สเรียนภาษา{% endblock meta_keywords %}
+{% block og_title %}FernLearnWorld — สมัครสมาชิก แพ็กเกจและราคา{% endblock og_title %}
+{% block og_description %}ปลดล็อกบทเรียนเต็มรูปแบบ, AI Tutor ไม่จำกัด และคำศัพท์ครบทุกระดับ เริ่มต้นเพียง ฿199/เดือน{% endblock og_description %}
+
+{% block sidebar %}
+{% if request.user.is_authenticated %}
+{% include 'aside.html' %}
+{% endif %}
+{% endblock %}
+
+{% block topbar %}
+{% if request.user.is_authenticated %}
+{% include 'navbar.html' %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if not request.user.is_authenticated %}
+{% include 'core/_public_navbar.html' %}
+{% endif %}
+
+<style>
+{% if not request.user.is_authenticated %}
+#main {
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+}
+{% endif %}
+
+.fern-tiers-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+}
+
+.fern-tiers-hero {
+    margin: 0 0 40px;
+    text-align: center;
+}
+
+.fern-tiers-title {
+    font-size: 34px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.fern-tiers-title span {
+    color: #ec4899;
+}
+
+.fern-tiers-sub {
+    color: #64748b;
+    font-size: 17px;
+}
+
+.fern-tiers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.fern-tiers-message {
+    margin: 0 0 24px;
+    background: linear-gradient(135deg, #fce7f3, #ede9fe);
+    border: 1px solid #fbcfe8;
+    color: #831843;
+    padding: 14px 20px;
+    border-radius: 16px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.fern-tier-card {
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 28px;
+    padding: 34px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+.fern-tier-card.fern-tier-featured {
+    border: 2px solid #ec4899;
+}
+
+.fern-tier-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.fern-tier-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #334155;
+    margin-bottom: 10px;
+}
+
+.fern-tier-price {
+    font-size: 40px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.fern-tier-price span {
+    font-size: 16px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.fern-tier-note {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.fern-tier-btn {
+    display: inline-block;
+    width: 100%;
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    color: white !important;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+@media (max-width: 700px) {
+    .fern-tiers-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="fern-tiers-page">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="fern-tiers-message">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="fern-tiers-hero">
+        <h1 class="fern-tiers-title">เลือกแผน <span>FernLearnWorld</span></h1>
+        <p class="fern-tiers-sub">ปลดล็อกบทเรียนเต็มรูปแบบ, AI Tutor ไม่จำกัด และคำศัพท์ครบทุกระดับ</p>
+    </div>
+
+    <div class="fern-tiers-grid">
+
+        <div class="fern-tier-card">
+            <div class="fern-tier-name">รายเดือน</div>
+            <div class="fern-tier-price">฿{{ pricing.monthly }}<span>/เดือน</span></div>
+            <div class="fern-tier-note">ยกเลิกเมื่อไหร่ก็ได้</div>
+            <a href="{% url 'subscriptions:checkout' tier='monthly' %}" class="fern-tier-btn">เลือกแผนนี้</a>
+        </div>
+
+        <div class="fern-tier-card fern-tier-featured">
+            <div class="fern-tier-badge">คุ้มกว่า</div>
+            <div class="fern-tier-name">รายปี</div>
+            <div class="fern-tier-price">฿{{ pricing.yearly }}<span>/ปี</span></div>
+            <div class="fern-tier-note">เฉลี่ยเดือนละ ฿{{ yearly_monthly_equivalent }} ถูกกว่ารายเดือน</div>
+            <a href="{% url 'subscriptions:checkout' tier='yearly' %}" class="fern-tier-btn">เลือกแผนนี้</a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

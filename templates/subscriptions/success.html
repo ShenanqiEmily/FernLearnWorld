@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}FernLearnWorld — สมัครสมาชิกสำเร็จ{% endblock title %}
+
+{% block content %}
+
+<style>
+.fern-success-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fern-success-card {
+    width: 100%;
+    max-width: 460px;
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+    text-align: center;
+}
+
+.fern-success-icon {
+    font-size: 56px;
+    margin-bottom: 14px;
+}
+
+.fern-success-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.fern-success-detail {
+    color: #64748b;
+    margin-bottom: 26px;
+}
+
+.fern-success-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    color: white !important;
+    padding: 14px 28px;
+    border-radius: 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+</style>
+
+<div class="fern-success-page">
+    <div class="fern-success-card">
+        <div class="fern-success-icon">🎉</div>
+        <div class="fern-success-title">สมัครสมาชิกสำเร็จ!</div>
+        {% if subscription %}
+        <p class="fern-success-detail">
+            แผน {{ subscription.get_tier_display }} ใช้งานได้ถึงวันที่ {{ subscription.end_date }}
+        </p>
+        {% endif %}
+        <a href="{% url 'dashboard' %}" class="fern-success-btn">ไปที่ Dashboard</a>
+    </div>
+</div>
+
+{% endblock content %}

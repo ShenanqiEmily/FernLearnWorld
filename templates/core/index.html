@@ -4,6 +4,24 @@
 
 {% block title %}{% blocktrans %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblocktrans %}{% endblock title %}
 
+{% block meta_description %}{% blocktrans %}เรียนภาษาญี่ปุ่น (JLPT N5-N1) และภาษาจีน (HSK 1-6) ออนไลน์กับ FernLearnWorld ฝึกคำศัพท์ ประโยค ฝึกออกเสียง และสนทนากับ AI Tutor ส่วนตัว สมัครฟรีวันนี้{% endblocktrans %}{% endblock meta_description %}
+{% block meta_keywords %}{% blocktrans %}เรียนภาษาญี่ปุ่น, เรียนภาษาจีน, JLPT, HSK, AI Tutor, เรียนภาษาญี่ปุ่นออนไลน์, เรียนภาษาจีนออนไลน์, สอบ JLPT, สอบ HSK{% endblocktrans %}{% endblock meta_keywords %}
+{% block og_title %}{% blocktrans %}FernLearnWorld — เรียนภาษาญี่ปุ่นและจีนกับ AI Tutor{% endblocktrans %}{% endblock og_title %}
+{% block og_description %}{% blocktrans %}ฝึกคำศัพท์ ประโยค ออกเสียง และสนทนากับ AI Tutor เพื่อเตรียมสอบ JLPT และ HSK สมัครฟรีวันนี้{% endblocktrans %}{% endblock og_description %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FernLearnWorld",
+    "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}",
+    "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/fernLogo.png' %}",
+    "description": "แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนออนไลน์ ฝึกคำศัพท์ ประโยค ออกเสียง และสนทนากับ AI Tutor เพื่อเตรียมสอบ JLPT และ HSK"
+}
+</script>
+{% endblock structured_data %}
+
 {% block sidebar %}{% endblock %}
 {% block topbar %}{% endblock %}
 

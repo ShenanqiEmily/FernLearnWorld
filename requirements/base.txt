@@ -28,6 +28,7 @@ python-decouple>=3.8
 # Payments
 stripe>=5.5.0
 gopay>=2.0.1
+omise>=0.16.0  # https://github.com/omise/omise-python
 
 # AI Tutor
 anthropic>=0.40.0  # https://github.com/anthropics/anthropic-sdk-python

@@ -2,7 +2,7 @@ import json
 
 import anthropic
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -39,6 +39,35 @@ def home_view(request):
 
 def about_view(request):
     return render(request, "core/about.html")
+
+
+def robots_txt(request):
+    # Wildcard patterns (`/*/...`) cover the same path under every
+    # i18n_patterns() locale prefix (/th/, /en/, /ja/, /zh-hans/) without
+    # repeating each rule 4 times — Googlebot supports `*` in robots.txt.
+    lines = [
+        "User-agent: *",
+        "Allow: /",
+        "",
+        "Disallow: /admin/",
+        "Disallow: /accounts/",
+        "Disallow: /social-auth/",
+        "Disallow: /payments/",
+        "Disallow: /*/accounts/",
+        "Disallow: /*/dashboard/",
+        "Disallow: /*/vocabulary/",
+        "Disallow: /*/flashcards/",
+        "Disallow: /*/practice/",
+        "Disallow: /*/ai-tutor/",
+        "Disallow: /*/programs/",
+        "Disallow: /*/subscribe/checkout/",
+        "Disallow: /*/subscribe/promptpay/",
+        "Disallow: /*/subscribe/success/",
+        "Disallow: /*/subscribe/check-coupon/",
+        "",
+        f"Sitemap: {request.scheme}://{request.get_host()}/sitemap.xml",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
 @login_required
@@ -416,6 +445,15 @@ def ai_tutor_chat(request):
     if not mode_config or not message:
         return JsonResponse({"ok": False, "error": "invalid request"}, status=400)
 
+    from subscriptions.access import has_ai_tutor_quota_remaining, record_ai_tutor_usage
+
+    if not has_ai_tutor_quota_remaining(request.user):
+        return JsonResponse({
+            "ok": False,
+            "limit_reached": True,
+            "error": "วันนี้คุณใช้ AI Tutor ครบ 5 ครั้งแล้ว สมัครสมาชิกเพื่อคุยกับ AI Tutor ได้ไม่จำกัด 🎉",
+        }, status=403)
+
     if not settings.ANTHROPIC_API_KEY:
         return JsonResponse({
             "ok": False,
@@ -446,5 +484,7 @@ def ai_tutor_chat(request):
         return JsonResponse({"ok": False, "error": "เชื่อมต่อ AI ไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ต"}, status=502)
 
     reply = next((block.text for block in response.content if block.type == "text"), "")
+
+    record_ai_tutor_usage(request.user)
 
     return JsonResponse({"ok": True, "reply": reply})

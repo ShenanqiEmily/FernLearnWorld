@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}FernLearnWorld — สแกนจ่ายด้วย PromptPay{% endblock title %}
+
+{% block content %}
+
+<style>
+.fern-qr-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.fern-qr-card {
+    width: 100%;
+    max-width: 440px;
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 30px;
+    padding: 36px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+    text-align: center;
+}
+
+.fern-qr-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.fern-qr-amount {
+    color: #ec4899;
+    font-weight: 900;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.fern-qr-image {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto 20px;
+    border: 1px solid #fbcfe8;
+    border-radius: 20px;
+    padding: 16px;
+}
+
+.fern-qr-status {
+    color: #64748b;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.fern-qr-spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid #fbcfe8;
+    border-top-color: #ec4899;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    animation: fern-spin 0.8s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes fern-spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<div class="fern-qr-page">
+    <div class="fern-qr-card">
+        <div class="fern-qr-title">สแกนจ่ายด้วย PromptPay</div>
+        <div class="fern-qr-amount">แผน{{ tier_label }} — ฿{{ amount }}</div>
+
+        <img class="fern-qr-image" src="{{ charge.source.scannable_code.image.download_uri }}" alt="PromptPay QR">
+
+        <div class="fern-qr-status" id="qr-status">
+            <span class="fern-qr-spinner"></span> กำลังรอการชำระเงิน...
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script>
+(function () {
+    var chargeId = "{{ charge.id }}";
+    var statusUrl = "{% url 'subscriptions:promptpay_status' charge_id=charge.id %}";
+    var successUrl = "{% url 'subscriptions:checkout_success' %}";
+    var statusEl = document.getElementById("qr-status");
+
+    var poll = setInterval(function () {
+        fetch(statusUrl)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.status === "successful") {
+                    clearInterval(poll);
+                    statusEl.innerHTML = "✅ ชำระเงินสำเร็จ กำลังพาไปหน้ายืนยัน...";
+                    window.location.href = successUrl;
+                } else if (data.status === "failed" || data.status === "expired") {
+                    clearInterval(poll);
+                    statusEl.innerHTML = "❌ การชำระเงินไม่สำเร็จ กรุณาลองใหม่";
+                }
+            });
+    }, 3000);
+})();
+</script>
+{% endblock %}

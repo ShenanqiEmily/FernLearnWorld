@@ -33,6 +33,47 @@
     font-weight: 700;
 }
 
+.fern-upgrade-cta {
+    padding: 16px 14px 4px;
+}
+
+.fern-upgrade-cta a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(236, 72, 153, 0.25);
+    transition: 0.2s;
+}
+
+.fern-upgrade-cta a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(236, 72, 153, 0.32);
+    color: white;
+}
+
+.fern-upgrade-cta i {
+    font-size: 20px;
+    width: 28px;
+    text-align: center;
+}
+
+.fern-upgrade-cta strong {
+    display: block;
+    font-size: 14px;
+}
+
+.fern-upgrade-cta small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.85;
+    font-weight: 500;
+}
+
 .fern-menu {
     padding: 18px 14px;
 }
@@ -124,6 +165,16 @@
             </mark>
         </div>
 
+    </div>
+
+    <div class="fern-upgrade-cta">
+        <a href="{% url 'subscriptions:tier_picker' %}">
+            <i class="fas fa-crown"></i>
+            <span>
+                <strong>อัพเกรดแพ็กเกจ</strong>
+                <small>ปลดล็อกบทเรียนเต็มรูปแบบ</small>
+            </span>
+        </a>
     </div>
 
     <div class="fern-menu">

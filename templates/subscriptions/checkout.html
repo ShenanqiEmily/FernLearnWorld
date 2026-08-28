@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}FernLearnWorld — ชำระเงิน{% endblock title %}
+
+{% block content %}
+
+<style>
+.fern-checkout-page {
+    padding: 34px;
+    background: #fff7fb;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.fern-checkout-card {
+    width: 100%;
+    max-width: 560px;
+    background: white;
+    border: 1px solid #fbcfe8;
+    border-radius: 30px;
+    padding: 36px;
+    box-shadow: 0 14px 36px rgba(236, 72, 153, 0.1);
+}
+
+.fern-checkout-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.fern-checkout-sub {
+    color: #64748b;
+    margin-bottom: 22px;
+}
+
+.fern-price-box {
+    background: #fff7fb;
+    border: 1px solid #fce7f3;
+    border-radius: 18px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.fern-price-box .fern-price-label {
+    color: #475569;
+    font-weight: 700;
+}
+
+.fern-price-box .fern-price-amount {
+    font-size: 26px;
+    font-weight: 900;
+    color: #ec4899;
+}
+
+.fern-price-box .fern-price-original {
+    text-decoration: line-through;
+    color: #94a3b8;
+    font-size: 15px;
+    margin-right: 8px;
+}
+
+.fern-field {
+    margin-bottom: 18px;
+}
+
+.fern-field label {
+    font-weight: 800;
+    color: #334155;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 14px;
+}
+
+.fern-field input,
+.fern-field select {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid #fbcfe8;
+    padding: 10px 14px;
+}
+
+.fern-field input:focus,
+.fern-field select:focus {
+    outline: none;
+    border-color: #ec4899;
+    box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12);
+}
+
+.fern-coupon-row {
+    display: flex;
+    gap: 10px;
+}
+
+.fern-coupon-row input {
+    flex: 1;
+}
+
+.fern-coupon-btn {
+    border: none;
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 800;
+    border-radius: 14px;
+    padding: 0 20px;
+    cursor: pointer;
+}
+
+.fern-coupon-message {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.fern-coupon-message.ok {
+    color: #15803d;
+}
+
+.fern-coupon-message.error {
+    color: #e11d48;
+}
+
+.fern-method-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.fern-method-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #fbcfe8;
+    font-weight: 800;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.fern-method-tab.active {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    border-color: transparent;
+}
+
+.fern-card-fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.fern-checkout-btn {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    padding: 15px 24px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ec4899, #3b82f6);
+    color: white;
+    margin-top: 6px;
+}
+
+.fern-checkout-btn:disabled {
+    opacity: 0.6;
+}
+
+.fern-error-box {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+    font-weight: 700;
+}
+
+.fern-founding-note {
+    margin-top: 10px;
+    background: #fef9c3;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+</style>
+
+<div class="fern-checkout-page">
+    <div class="fern-checkout-card">
+
+        <div class="fern-checkout-title">แผน{{ tier_label }}</div>
+        <div class="fern-checkout-sub">ชำระเงินอย่างปลอดภัยผ่าน Omise</div>
+
+        {% if error %}
+        <div class="fern-error-box">{{ error }}</div>
+        {% endif %}
+
+        <div class="fern-price-box">
+            <span class="fern-price-label">ยอดชำระ</span>
+            <span>
+                <span class="fern-price-original" id="original-amount-display" style="{% if amount == original_amount %}display:none;{% endif %}">฿{{ original_amount }}</span>
+                <span class="fern-price-amount" id="amount-display">฿{{ amount }}</span>
+            </span>
+        </div>
+
+        <form method="POST" id="checkout-form">
+            {% csrf_token %}
+            <input type="hidden" name="payment_method" id="payment_method" value="card">
+            <input type="hidden" name="omise_token" id="omise_token">
+
+            <div class="fern-field">
+                <label>โค้ดส่วนลด (ถ้ามี)</label>
+                <div class="fern-coupon-row">
+                    <input type="text" name="coupon_code" id="coupon_code" placeholder="เช่น FOUNDER2026">
+                    <button type="button" class="fern-coupon-btn" id="apply-coupon-btn">ใช้โค้ด</button>
+                </div>
+                <div class="fern-coupon-message" id="coupon-message"></div>
+                <div class="fern-founding-note" id="founding-note" style="display:none;">
+                    🎉 โค้ดนี้เป็นราคา Founding Member — ราคานี้จะถูกล็อกไว้ให้คุณตลอดไป
+                </div>
+            </div>
+
+            <div class="fern-method-tabs">
+                <div class="fern-method-tab active" data-method="card" id="tab-card">บัตรเครดิต/เดบิต</div>
+                <div class="fern-method-tab" data-method="promptpay" id="tab-promptpay">PromptPay QR</div>
+            </div>
+
+            <div id="card-fields">
+                <div class="fern-field">
+                    <label>ชื่อบนบัตร</label>
+                    <input type="text" id="card_name" placeholder="SOMCHAI PRASERT" required>
+                </div>
+                <div class="fern-field">
+                    <label>หมายเลขบัตร</label>
+                    <input type="text" id="card_number" placeholder="4242 4242 4242 4242" required>
+                </div>
+                <div class="fern-card-fields-grid">
+                    <div class="fern-field">
+                        <label>เดือนหมดอายุ</label>
+                        <input type="text" id="card_exp_month" placeholder="MM" required>
+                    </div>
+                    <div class="fern-field">
+                        <label>ปีหมดอายุ</label>
+                        <input type="text" id="card_exp_year" placeholder="YYYY" required>
+                    </div>
+                </div>
+                <div class="fern-field">
+                    <label>CVV</label>
+                    <input type="text" id="card_cvv" placeholder="123" required>
+                </div>
+            </div>
+
+            <button type="submit" class="fern-checkout-btn" id="submit-btn">ชำระเงิน ฿<span id="submit-amount">{{ amount }}</span></button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="https://cdn.omise.co/omise.js"></script>
+<script>
+(function () {
+    var originalAmount = "{{ original_amount }}";
+    var currentAmount = "{{ amount }}";
+    var tier = "{{ tier }}";
+    var method = "card";
+
+    Omise.setPublicKey("{{ omise_public_key }}");
+
+    function getCsrfToken() {
+        var match = document.cookie.match(/csrftoken=([^;]+)/);
+        return match ? match[1] : "";
+    }
+
+    function updatePriceDisplay(original, amount, discounted) {
+        var originalEl = document.getElementById("original-amount-display");
+        var amountEl = document.getElementById("amount-display");
+        var submitAmountEl = document.getElementById("submit-amount");
+        amountEl.textContent = "฿" + amount;
+        submitAmountEl.textContent = amount;
+        if (discounted) {
+            originalEl.style.display = "inline";
+            originalEl.textContent = "฿" + original;
+        } else {
+            originalEl.style.display = "none";
+        }
+        currentAmount = amount;
+    }
+
+    document.getElementById("apply-coupon-btn").addEventListener("click", function () {
+        var code = document.getElementById("coupon_code").value;
+        var messageEl = document.getElementById("coupon-message");
+        var foundingNote = document.getElementById("founding-note");
+
+        fetch("{% url 'subscriptions:check_coupon' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCsrfToken(),
+            },
+            body: "tier=" + encodeURIComponent(tier) + "&code=" + encodeURIComponent(code),
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.valid) {
+                    messageEl.textContent = "ใช้โค้ดสำเร็จ ลดราคาแล้ว";
+                    messageEl.className = "fern-coupon-message ok";
+                    updatePriceDisplay(data.original_amount, data.amount, true);
+                    foundingNote.style.display = data.is_founding_member ? "block" : "none";
+                } else {
+                    messageEl.textContent = "โค้ดไม่ถูกต้องหรือหมดอายุแล้ว";
+                    messageEl.className = "fern-coupon-message error";
+                    updatePriceDisplay(data.original_amount, data.original_amount, false);
+                    foundingNote.style.display = "none";
+                }
+            });
+    });
+
+    // Card fields live inside #checkout-form (so the same submit button
+    // works for both tabs) but the HTML5 `required` attribute still applies
+    // to a field even without a `name`, and the browser refuses to submit
+    // *any* form containing a required-but-hidden field (it can't show the
+    // validation bubble on something with display:none) — that was silently
+    // blocking the PromptPay tab's submit with only a console warning, no
+    // visible error. Disabling the fields (not just dropping `required`)
+    // also excludes them from constraint validation *and* guarantees their
+    // values can never end up in a submitted request, on either tab.
+    var CARD_FIELD_IDS = ["card_name", "card_number", "card_exp_month", "card_exp_year", "card_cvv"];
+
+    function setCardFieldsActive(isActive) {
+        CARD_FIELD_IDS.forEach(function (id) {
+            var el = document.getElementById(id);
+            el.disabled = !isActive;
+            if (isActive) {
+                el.setAttribute("required", "required");
+            } else {
+                el.removeAttribute("required");
+            }
+        });
+    }
+
+    document.getElementById("tab-card").addEventListener("click", function () {
+        method = "card";
+        document.getElementById("tab-card").classList.add("active");
+        document.getElementById("tab-promptpay").classList.remove("active");
+        document.getElementById("card-fields").style.display = "block";
+        document.getElementById("payment_method").value = "card";
+        setCardFieldsActive(true);
+    });
+
+    document.getElementById("tab-promptpay").addEventListener("click", function () {
+        method = "promptpay";
+        document.getElementById("tab-promptpay").classList.add("active");
+        document.getElementById("tab-card").classList.remove("active");
+        document.getElementById("card-fields").style.display = "none";
+        document.getElementById("payment_method").value = "promptpay";
+        setCardFieldsActive(false);
+    });
+
+    document.getElementById("checkout-form").addEventListener("submit", function (e) {
+        if (method === "promptpay") {
+            return; // plain form submit — server creates the source/charge
+        }
+
+        e.preventDefault();
+        var form = this;
+        var submitBtn = document.getElementById("submit-btn");
+        submitBtn.disabled = true;
+
+        Omise.createToken("card", {
+            name: document.getElementById("card_name").value,
+            number: document.getElementById("card_number").value,
+            expiration_month: document.getElementById("card_exp_month").value,
+            expiration_year: document.getElementById("card_exp_year").value,
+            security_code: document.getElementById("card_cvv").value,
+        }, function (statusCode, response) {
+            if (statusCode === 200) {
+                document.getElementById("omise_token").value = response.id;
+                // Card fields intentionally have no `name` attribute (see
+                // setCardFieldsActive above) — Omise.createToken() already
+                // has everything it needs from their .value; the raw
+                // numbers themselves never need to be part of this form's
+                // submitted data at all, tokenized or not.
+                form.submit();
+            } else {
+                alert("ข้อมูลบัตรไม่ถูกต้อง: " + (response.message || "กรุณาตรวจสอบอีกครั้ง"));
+                submitBtn.disabled = false;
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

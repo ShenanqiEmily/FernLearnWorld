@@ -4,6 +4,11 @@
 
 {% block title %}{% blocktrans %}FernLearnWorld — เกี่ยวกับเรา{% endblocktrans %}{% endblock title %}
 
+{% block meta_description %}{% blocktrans %}รู้จัก FernLearnWorld แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนออนไลน์ ที่ผสาน AI Tutor เข้ากับระบบฝึกคำศัพท์ ประโยค และไวยากรณ์ เพื่อการเรียนภาษาที่ใช้ได้จริง{% endblocktrans %}{% endblock meta_description %}
+{% block meta_keywords %}{% blocktrans %}เกี่ยวกับ FernLearnWorld, แพลตฟอร์มเรียนภาษาญี่ปุ่น, แพลตฟอร์มเรียนภาษาจีน, AI Tutor{% endblocktrans %}{% endblock meta_keywords %}
+{% block og_title %}{% blocktrans %}FernLearnWorld — เกี่ยวกับเรา{% endblocktrans %}{% endblock og_title %}
+{% block og_description %}{% blocktrans %}รู้จักพันธกิจและวิสัยทัศน์ของ FernLearnWorld แพลตฟอร์มเรียนภาษาญี่ปุ่นและจีนด้วย AI{% endblocktrans %}{% endblock og_description %}
+
 {% block sidebar %}
 {% if request.user.is_authenticated %}
 {% include 'aside.html' %}

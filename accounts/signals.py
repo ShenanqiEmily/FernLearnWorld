@@ -41,6 +41,7 @@ def social_login_creates_student(sender, request, user, sociallogin=None, **kwar
     (is_student=True, a Student row with level/program left blank).
     """
     from .models import Student
+    from subscriptions.models import Subscription
 
     user.is_active = True
     user.is_student = True
@@ -60,6 +61,9 @@ def social_login_creates_student(sender, request, user, sociallogin=None, **kwar
     user.save()
 
     Student.objects.get_or_create(student=user)
+
+    if not Subscription.objects.filter(user=user).exists():
+        Subscription.objects.create(user=user, tier="free", status="active")
 
 
 def post_save_account_receiver(sender, instance=None, created=False, *args, **kwargs):

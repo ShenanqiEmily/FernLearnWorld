@@ -186,6 +186,24 @@ AI Tutor | FernLearnWorld
     border:1px solid #fecdd3;
 }
 
+.at-upsell-bubble{
+    background:linear-gradient(135deg, #fce7f3, #ede9fe);
+    color:#831843;
+    border:1px solid #fbcfe8;
+}
+
+.at-upsell-btn{
+    display:inline-block;
+    margin-top:8px;
+    padding:8px 18px;
+    border-radius:999px;
+    background:linear-gradient(135deg, #ec4899, #8b5cf6);
+    color:white !important;
+    font-weight:800;
+    font-size:13px;
+    text-decoration:none;
+}
+
 .at-suggested-row{
     display:flex;
     flex-wrap:wrap;
@@ -320,6 +338,7 @@ AI Tutor | FernLearnWorld
 
 <script>
     window.AI_TUTOR_CHAT_URL = "{% url 'ai_tutor_chat' %}";
+    window.SUBSCRIBE_URL = "{% url 'subscriptions:tier_picker' %}";
 </script>
 
 <script src="{% static 'js/pages/ai_tutor.js' %}"></script>

@@ -1,11 +1,12 @@
 from datetime import timedelta
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.db.models.functions import TruncDate
 from django.http import Http404, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -13,6 +14,7 @@ from vocabulary.models import Vocabulary
 from vocabulary.views import award_badge
 
 from .models import LEVEL_CHOICES, FlashcardReview, GrammarPoint, KanjiCharacter
+from subscriptions.access import user_can_access_flashcard_level
 
 CATEGORY_MODELS = {
     "vocabulary": Vocabulary,
@@ -289,6 +291,13 @@ def study_session(request, category, group):
     queryset = model.objects.filter(**{group_field: group})
     if not queryset.exists():
         raise Http404("Deck not found")
+
+    if not user_can_access_flashcard_level(request.user, group):
+        messages.info(
+            request,
+            "ระดับนี้อยู่ในแพ็กเกจสมาชิก สมัครเลยเพื่อปลดล็อกคำศัพท์ทุกระดับ 🎉",
+        )
+        return redirect("subscriptions:tier_picker")
 
     all_ids = list(queryset.values_list("id", flat=True))
     due_ids = []

@@ -84,6 +84,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.contrib.sitemaps",
 ]
 
 # Third party apps
@@ -115,6 +116,7 @@ PROJECT_APPS = [
     "vocabulary.apps.VocabularyConfig",
     "flashcards.apps.FlashcardsConfig",
     "practice.apps.PracticeConfig",
+    "subscriptions.apps.SubscriptionsConfig",
       # Add virtual classroom app
 ]
 
@@ -376,6 +378,12 @@ REST_FRAMEWORK = {
 # Strip payment config
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
 STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY", default="")
+
+# Omise (Opn Payments) — subscription checkout. The key itself (pkey_test_/
+# skey_test_ vs pkey_live_/skey_live_) determines test vs live mode; no
+# separate "is_live" flag needed, swapping the env values is enough.
+OMISE_PUBLIC_KEY = config("OMISE_PUBLIC_KEY", default="")
+OMISE_SECRET_KEY = config("OMISE_SECRET_KEY", default="")
 
 # AI Tutor (Anthropic Claude API)
 ANTHROPIC_API_KEY = config("ANTHROPIC_API_KEY", default="")
