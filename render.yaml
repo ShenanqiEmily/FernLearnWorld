@@ -5,11 +5,8 @@
 # therefore never committed to git) — Render will prompt you to fill them in
 # once in the dashboard after the first deploy.
 
-databases:
-  - name: fernlearnworld-db
-    plan: free
-    databaseName: fernlearnworld
-    user: fernlearnworld
+# Database: hosted on Neon (not Render) — the old Render free Postgres
+# expired. DATABASE_URL is set manually in the Render dashboard below.
 
 services:
   - type: web
@@ -32,18 +29,13 @@ services:
                                       # by settings.py on top of this — add a
                                       # custom domain here too if you attach one
 
-      # --- Database (auto-wired to the block above) ---
+      # --- Database (Neon Postgres — paste the pooled connection string
+      # from the Neon console, including ?sslmode=require) ---
       - key: DATABASE_URL
-        fromDatabase:
-          name: fernlearnworld-db
-          property: connectionString
+        sync: false
 
       # --- Secrets you must fill in yourself in the Render dashboard ---
       - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_PUBLISHABLE_KEY
         sync: false
       - key: EMAIL_HOST_USER
         sync: false

@@ -178,8 +178,19 @@ DATABASE_URL = config("DATABASE_URL", default="")
 if DATABASE_URL:
     import dj_database_url
 
+    # Neon (and most managed Postgres) requires SSL. `ssl_require` forces
+    # sslmode=require even if the URL forgets it; set DB_SSL_REQUIRE=False
+    # only for a local non-SSL Postgres. `conn_health_checks` re-validates
+    # persistent connections, since Neon suspends idle compute and its
+    # pooler drops idle connections — without it the first request after
+    # a quiet period can fail with "server closed the connection".
     DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=config("DB_SSL_REQUIRE", default=True, cast=bool),
+        )
     }
 else:
     DATABASES = {
