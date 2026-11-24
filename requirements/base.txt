@@ -6,6 +6,9 @@ whitenoise>=6.2.0  # https://github.com/evansd/whitenoise
 # ------------------------------------------------------------------------------
 django==4.2.7  # https://www.djangoproject.com/
 django-model-utils==4.3.1  # https://github.com/jazzband/django-model-utils
+# django-model-utils 4.3.1 imports pkg_resources, which setuptools>=81 removed.
+# Remove this pin only after upgrading django-model-utils to 5.x.
+setuptools<81
 django-crispy-forms>=1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
 crispy-bootstrap5>=0.7  # https://github.com/django-crispy-forms/crispy-bootstrap5
 django-filter>=23.5 # https://github.com/carltongibson/django-filter
