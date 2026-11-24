@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-{{ course.title }}
-{% endblock title %}
+{% block title %}{{ course.title }} — เรียน{{ seo_language }} {{ level_label }} | FernLearnWorld{% endblock title %}
+{% block meta_description %}เรียน{{ seo_language }} {{ level_label }}: {{ course.title|striptags|truncatechars:80 }} คำศัพท์ {{ vocab_count }} คำ พร้อมประโยคตัวอย่างและฝึกออกเสียง กับ FernLearnWorld{% if course.summary %} — {{ course.summary|striptags|truncatechars:80 }}{% endif %}{% endblock meta_description %}
+{% block og_type %}article{% endblock og_type %}
+{% block og_title %}{{ course.title }} — เรียน{{ seo_language }} {{ level_label }} | FernLearnWorld{% endblock og_title %}
+{% block og_description %}เรียน{{ seo_language }} {{ level_label }} คำศัพท์ {{ vocab_count }} คำ พร้อมประโยคตัวอย่างและฝึกออกเสียง{% if course.summary %} — {{ course.summary|striptags|truncatechars:100 }}{% endif %}{% endblock og_description %}
 
 {% block content %}
 

@@ -132,6 +132,11 @@ def get_course_filter_for_level(program, selected_level):
     return Q()
 
 
+def seo_language_for_level(level):
+    """Thai language name for page titles/meta: HSK* -> Chinese, else Japanese."""
+    return "ภาษาจีน" if normalize_level_value(level).startswith("HSK") else "ภาษาญี่ปุ่น"
+
+
 def calculate_level_progress(user, courses):
     """
     Calculate level progress from UserLessonProgress.completed=True only.
@@ -141,13 +146,18 @@ def calculate_level_progress(user, courses):
     """
     total_lessons = courses.count()
 
-    completed_course_ids = set(
-        UserLessonProgress.objects.filter(
-            user=user,
-            course__in=courses,
-            completed=True,
-        ).values_list("course_id", flat=True)
-    )
+    # Course pages are public (SEO) — anonymous visitors simply have no
+    # progress yet instead of crashing on filter(user=AnonymousUser).
+    if not user.is_authenticated:
+        completed_course_ids = set()
+    else:
+        completed_course_ids = set(
+            UserLessonProgress.objects.filter(
+                user=user,
+                course__in=courses,
+                completed=True,
+            ).values_list("course_id", flat=True)
+        )
 
     completed_lessons = len(completed_course_ids)
 
@@ -237,7 +247,7 @@ def get_program_level_config(program, requested_level):
         "course_filter": Q(),
     }
 
-@method_decorator([login_required], name="dispatch")
+# Public (no login) so search engines can index the course catalogue.
 class ProgramFilterView(FilterView):
     filterset_class = ProgramFilter
     template_name = "course/program_list.html"
@@ -274,7 +284,8 @@ def program_add(request):
     )
 
 
-@login_required
+# Public (no login) for SEO — lesson content itself is still gated in
+# vocabulary/views.py (login + subscription paywall).
 def program_detail(request, pk):
     program = get_object_or_404(Program, pk=pk)
 
@@ -350,6 +361,12 @@ def program_detail(request, pk):
             "total_lessons": progress["total_lessons"],
             "level_progress_percent": progress["progress_percent"],
             "next_lesson": next_lesson,
+            "seo_language": seo_language_for_level(level_config["selected_level"]),
+            "canonical_url": (
+                f"{settings.SITE_URL}{request.path}?level={level_config['selected_level']}"
+                if level_config["selected_level"]
+                else f"{settings.SITE_URL}{request.path}"
+            ),
         },
     )
 
@@ -393,7 +410,7 @@ def program_delete(request, pk):
 # ########################################################
 # Course views
 # ########################################################
-@login_required
+# Public (no login) for SEO — see program_detail above.
 def course_single(request, slug):
     course = get_object_or_404(Course, slug=slug)
 
@@ -430,7 +447,7 @@ def course_single(request, slug):
     except ValueError:
         current_lesson_number = 1
 
-    is_completed = UserLessonProgress.objects.filter(
+    is_completed = request.user.is_authenticated and UserLessonProgress.objects.filter(
         user=request.user,
         course=course,
         completed=True,
@@ -471,6 +488,7 @@ def course_single(request, slug):
             "is_completed": is_completed,
             "is_final_lesson": is_final_lesson,
             "lesson_map_url": lesson_map_url,
+            "seo_language": seo_language_for_level(selected_level),
         },
     )
 

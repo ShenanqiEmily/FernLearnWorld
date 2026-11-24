@@ -71,6 +71,12 @@ AUTH_USER_MODEL = "accounts.User"
 # provider callback URLs). Single-site project, so this never changes.
 SITE_ID = 1
 
+# Public, canonical origin used for SEO — <link rel="canonical">, og:url,
+# og:image, sitemap.xml and robots.txt all build absolute URLs from this
+# instead of the request's Host header, so links always point at the real
+# domain (no www, https) even when the app is reached via *.onrender.com.
+SITE_URL = config("SITE_URL", default="https://fernlearnworld.com").rstrip("/")
+
 # Application definition
 
 DJANGO_APPS = [
@@ -153,6 +159,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.seo",
                 # 'django.template.context_processors.i18n',
                 # 'django.template.context_processors.media',
                 # 'django.template.context_processors.static',

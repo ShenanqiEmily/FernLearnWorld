@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-{{ display_course_title|default:program.title }} | Lesson Map
-{% endblock title %}
+{% block title %}เรียน{{ seo_language }} {{ level_label|default:program.title }} — บทเรียนทั้งหมด | FernLearnWorld{% endblock title %}
+{% block meta_description %}รวมบทเรียน{{ seo_language }}ระดับ {{ level_label }} {{ total_lessons }} บท บน FernLearnWorld เรียน{{ seo_language }}ออนไลน์ ฝึกคำศัพท์ ประโยค และออกเสียง เริ่มเรียนฟรี{% endblock meta_description %}
+{% block og_title %}เรียน{{ seo_language }} {{ level_label|default:program.title }} — บทเรียนทั้งหมด | FernLearnWorld{% endblock og_title %}
+{% block og_description %}รวมบทเรียน{{ seo_language }}ระดับ {{ level_label }} {{ total_lessons }} บท ฝึกคำศัพท์ ประโยค และออกเสียงกับ FernLearnWorld{% endblock og_description %}
 
 {% block content %}
 

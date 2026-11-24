@@ -48,6 +48,11 @@ def robots_txt(request):
     lines = [
         "User-agent: *",
         "Allow: /",
+        # Public pages listed in sitemap.xml that live under otherwise
+        # private prefixes — the longer (more specific) Allow wins over the
+        # Disallow below for Googlebot.
+        "Allow: /*/accounts/login/",
+        "Allow: /*/accounts/register/",
         "",
         "Disallow: /admin/",
         "Disallow: /accounts/",
@@ -59,13 +64,33 @@ def robots_txt(request):
         "Disallow: /*/flashcards/",
         "Disallow: /*/practice/",
         "Disallow: /*/ai-tutor/",
-        "Disallow: /*/programs/",
+        # Course catalogue / lesson pages are public; only the
+        # lecturer/admin and per-user pages under /programs/ are private.
+        "Disallow: /*/programs/add/",
+        "Disallow: /*/programs/*/edit/",
+        "Disallow: /*/programs/*/delete/",
+        "Disallow: /*/programs/*/course/add/",
+        "Disallow: /*/programs/course/delete/",
+        "Disallow: /*/programs/course/registration/",
+        "Disallow: /*/programs/course/drop/",
+        "Disallow: /*/programs/my_courses/",
+        "Disallow: /*/programs/course/assign/",
+        "Disallow: /*/programs/course/allocated/",
+        "Disallow: /*/programs/allocated_course/",
+        "Disallow: /*/programs/course/*/deallocate/",
+        "Disallow: /*/programs/course/*/documentations/",
+        "Disallow: /*/programs/course/*/video_tutorials/",
+        "Disallow: /*/result/",
+        "Disallow: /*/quiz/",
+        "Disallow: /*/classroom/",
+        "Disallow: /*/jet/",
+        "Disallow: /*/search/",
         "Disallow: /*/subscribe/checkout/",
         "Disallow: /*/subscribe/promptpay/",
         "Disallow: /*/subscribe/success/",
         "Disallow: /*/subscribe/check-coupon/",
         "",
-        f"Sitemap: {request.scheme}://{request.get_host()}/sitemap.xml",
+        f"Sitemap: {settings.SITE_URL}/sitemap.xml",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 

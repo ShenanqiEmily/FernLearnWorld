@@ -7,13 +7,15 @@ from django.views import defaults as default_views
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import JavaScriptCatalog
 
-from core.sitemaps import StaticViewSitemap
+from core.sitemaps import CourseSitemap, ProgramLevelSitemap, StaticViewSitemap
 from core.views import robots_txt
 
 admin.site.site_header = "Dj-LMS Admin"
 
 sitemaps = {
     "static": StaticViewSitemap,
+    "programs": ProgramLevelSitemap,
+    "courses": CourseSitemap,
 }
 
 urlpatterns = [
