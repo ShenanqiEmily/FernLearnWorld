@@ -15,8 +15,8 @@
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "FernLearnWorld",
-    "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}",
-    "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/fernLogo.png' %}",
+    "url": "{{ site_url }}{% url 'home' %}",
+    "logo": "{{ site_url }}{% static 'img/fernLogo.png' %}",
     "description": "แพลตฟอร์มเรียนภาษาญี่ปุ่นและภาษาจีนออนไลน์ ฝึกคำศัพท์ ประโยค ออกเสียง และสนทนากับ AI Tutor เพื่อเตรียมสอบ JLPT และ HSK"
 }
 </script>

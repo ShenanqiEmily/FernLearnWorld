@@ -77,6 +77,24 @@ SITE_ID = 1
 # domain (no www, https) even when the app is reached via *.onrender.com.
 SITE_URL = config("SITE_URL", default="https://fernlearnworld.com").rstrip("/")
 
+# Secondary hosts that core.middleware.CanonicalDomainRedirectMiddleware
+# 301-redirects to SITE_URL (same path + query) when DEBUG=False, so Google
+# stops indexing the *.onrender.com URL. The Render hostname is added
+# automatically when Render injects it.
+CANONICAL_REDIRECT_HOSTS = [
+    h for h in config(
+        "CANONICAL_REDIRECT_HOSTS",
+        default="fernlearnworld.onrender.com,www.fernlearnworld.com",
+    ).split(",") if h.strip()
+]
+if RENDER_EXTERNAL_HOSTNAME:
+    CANONICAL_REDIRECT_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# Never redirected on any host — keep Render's health check path here
+# (render.yaml healthCheckPath) so a 301 can't fail a deploy.
+CANONICAL_REDIRECT_EXEMPT_PATHS = [
+    p for p in config("CANONICAL_REDIRECT_EXEMPT_PATHS", default="/healthz").split(",") if p.strip()
+]
+
 # Application definition
 
 DJANGO_APPS = [
@@ -130,6 +148,8 @@ PROJECT_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS 
 
 MIDDLEWARE = [
+    # First, so secondary hosts get one 301 straight to the canonical domain.
+    "core.middleware.CanonicalDomainRedirectMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     # Must come after SessionMiddleware (reads session data) and before
