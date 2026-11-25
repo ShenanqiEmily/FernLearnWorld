@@ -74,17 +74,19 @@ SITE_ID = 1
 # Public, canonical origin used for SEO — <link rel="canonical">, og:url,
 # og:image, sitemap.xml and robots.txt all build absolute URLs from this
 # instead of the request's Host header, so links always point at the real
-# domain (no www, https) even when the app is reached via *.onrender.com.
-SITE_URL = config("SITE_URL", default="https://fernlearnworld.com").rstrip("/")
+# domain (https://www., the primary domain on Render) even when the app is reached via *.onrender.com.
+SITE_URL = config("SITE_URL", default="https://www.fernlearnworld.com").rstrip("/")
 
 # Secondary hosts that core.middleware.CanonicalDomainRedirectMiddleware
 # 301-redirects to SITE_URL (same path + query) when DEBUG=False, so Google
 # stops indexing the *.onrender.com URL. The Render hostname is added
-# automatically when Render injects it.
+# automatically when Render injects it. Do NOT list fernlearnworld.com /
+# www. here — Render already redirects apex -> www, and the middleware
+# ignores SITE_URL's www/apex twin anyway to prevent a redirect loop.
 CANONICAL_REDIRECT_HOSTS = [
     h for h in config(
         "CANONICAL_REDIRECT_HOSTS",
-        default="fernlearnworld.onrender.com,www.fernlearnworld.com",
+        default="fernlearnworld.onrender.com",
     ).split(",") if h.strip()
 ]
 if RENDER_EXTERNAL_HOSTNAME:

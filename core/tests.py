@@ -38,8 +38,8 @@ from core.middleware import CanonicalDomainRedirectMiddleware  # noqa: E402
 
 @override_settings(
     DEBUG=False,
-    SITE_URL="https://fernlearnworld.com",
-    CANONICAL_REDIRECT_HOSTS=["fernlearnworld.onrender.com", "www.fernlearnworld.com"],
+    SITE_URL="https://www.fernlearnworld.com",
+    CANONICAL_REDIRECT_HOSTS=["fernlearnworld.onrender.com"],
     CANONICAL_REDIRECT_EXEMPT_PATHS=["/healthz"],
 )
 class CanonicalDomainRedirectTests(SimpleTestCase):
@@ -47,18 +47,31 @@ class CanonicalDomainRedirectTests(SimpleTestCase):
         mw = CanonicalDomainRedirectMiddleware(lambda r: HttpResponse("ok"))
         return mw(RequestFactory().get(path, HTTP_HOST=host))
 
-    def test_onrender_host_301s_to_canonical_with_path_and_query(self):
+    def test_onrender_host_301s_to_www_with_path_and_query(self):
         resp = self._get("fernlearnworld.onrender.com")
         self.assertEqual(resp.status_code, 301)
-        self.assertEqual(resp["Location"], "https://fernlearnworld.com/th/courses/?page=2&utm_source=x")
+        self.assertEqual(resp["Location"], "https://www.fernlearnworld.com/th/courses/?page=2&utm_source=x")
 
-    def test_www_host_301s_to_apex(self):
-        resp = self._get("WWW.fernlearnworld.com:443", "/")
+    def test_onrender_host_is_case_and_port_insensitive(self):
+        resp = self._get("FernLearnWorld.onrender.com:443", "/")
         self.assertEqual(resp.status_code, 301)
-        self.assertEqual(resp["Location"], "https://fernlearnworld.com/")
+        self.assertEqual(resp["Location"], "https://www.fernlearnworld.com/")
 
-    def test_canonical_host_passes_through(self):
+    def test_www_and_apex_pass_through(self):
+        # Render redirects apex -> www itself; we must never touch either.
+        self.assertEqual(self._get("www.fernlearnworld.com").status_code, 200)
         self.assertEqual(self._get("fernlearnworld.com").status_code, 200)
+
+    @override_settings(
+        CANONICAL_REDIRECT_HOSTS=[
+            "fernlearnworld.onrender.com", "www.fernlearnworld.com", "fernlearnworld.com",
+        ]
+    )
+    def test_www_apex_twins_never_redirect_even_if_misconfigured(self):
+        # Regression: listing www/apex in env previously caused ERR_TOO_MANY_REDIRECTS.
+        self.assertEqual(self._get("www.fernlearnworld.com").status_code, 200)
+        self.assertEqual(self._get("fernlearnworld.com").status_code, 200)
+        self.assertEqual(self._get("fernlearnworld.onrender.com").status_code, 301)
 
     def test_localhost_passes_through(self):
         self.assertEqual(self._get("localhost:8000").status_code, 200)
@@ -76,18 +89,30 @@ class CanonicalDomainRedirectTests(SimpleTestCase):
 
 
 # Redirect disabled here so we can inspect what the page itself emits when
-# served on a non-canonical host.
-@override_settings(SITE_URL="https://fernlearnworld.com", ALLOWED_HOSTS=["*"], CANONICAL_REDIRECT_HOSTS=[])
+# served on a non-canonical host. No SITE_URL override: checks the real default.
+@override_settings(ALLOWED_HOSTS=["*"], CANONICAL_REDIRECT_HOSTS=[])
 class CanonicalSeoUrlTests(TestCase):
-    def test_canonical_tag_uses_main_domain_even_on_onrender_host(self):
-        resp = self.client.get("/th/", HTTP_HOST="fernlearnworld.onrender.com")
-        self.assertContains(resp, '<link rel="canonical" href="https://fernlearnworld.com/th/">')
-        self.assertNotContains(resp, "onrender.com")
+    def test_site_url_default_is_www(self):
+        from django.conf import settings
+        self.assertEqual(settings.SITE_URL, "https://www.fernlearnworld.com")
 
-    def test_sitemap_uses_main_domain(self):
+    def test_canonical_og_and_jsonld_use_www_even_on_onrender_host(self):
+        resp = self.client.get("/th/", HTTP_HOST="fernlearnworld.onrender.com")
+        self.assertContains(resp, '<link rel="canonical" href="https://www.fernlearnworld.com/th/">')
+        self.assertContains(resp, '<meta property="og:url" content="https://www.fernlearnworld.com/th/">')
+        self.assertContains(resp, '"url": "https://www.fernlearnworld.com/th/"')
+        self.assertNotContains(resp, "onrender.com")
+        self.assertNotContains(resp, "//fernlearnworld.com")
+
+    def test_sitemap_uses_www(self):
         resp = self.client.get("/sitemap.xml", HTTP_HOST="fernlearnworld.onrender.com")
         self.assertEqual(resp.status_code, 200)
         body = resp.content.decode()
-        self.assertIn("<loc>https://fernlearnworld.com/", body)
+        self.assertIn("<loc>https://www.fernlearnworld.com/", body)
         self.assertNotIn("onrender.com", body)
-        self.assertNotIn("http://fernlearnworld.com", body)
+        self.assertNotIn("//fernlearnworld.com", body)
+
+    def test_robots_sitemap_line_uses_www(self):
+        resp = self.client.get("/robots.txt", HTTP_HOST="fernlearnworld.onrender.com")
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Sitemap: https://www.fernlearnworld.com/sitemap.xml", resp.content.decode())
